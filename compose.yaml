@@ -8,7 +8,8 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-  back:
+  backend:
+    container_name: backend
     build:
       context: backend
       target: final
@@ -16,7 +17,8 @@ services:
       - 8080:8080
 
 
-  front:
+  frontend:
+    container_name: frontend
     build:
       context: frontend
     environment:
