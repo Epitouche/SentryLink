@@ -1,5 +1,37 @@
-<nav>
-  <a routerLink="/home">Home</a>
-</nav>
+<div class="flex h-screen">
+  <!-- Button to toggle the sidebar -->
+  <button
+    class="p-2 bg-blue-200 text-gray-800 rounded fixed top-4 left-4 z-10"
+    (click)="toggleSidebar()"
+  >
+    <mat-icon>{{ isOpen ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+  </button>
 
-<router-outlet></router-outlet>
+  <div
+    id="sidebar"
+    class="flex flex-col justify-start items-center w-16 sm:w-32 bg-slate-50 text-gray-800 fixed h-full border-2 shadow-md transition-transform duration-300"
+    [ngClass]="{ '-translate-x-full': !isOpen, 'translate-x-0': isOpen }"
+  >
+    <nav class="flex flex-col items-center gap-20 space-y-2 mt-16">
+      <a routerLink="/home" class="p-2 rounded hover:bg-blue-200">
+        <mat-icon>home</mat-icon>
+      </a>
+      <a href="#" class="p-2 rounded hover:bg-blue-200">
+        <mat-icon>person</mat-icon>
+      </a>
+      <a href="#" class="p-2 rounded hover:bg-blue-200">
+        <mat-icon>settings</mat-icon>
+      </a>
+      <a href="#" class="p-2 rounded hover:bg-blue-200">
+        <mat-icon>help</mat-icon>
+      </a>
+      <a href="#" class="p-2 rounded hover:bg-blue-200">
+        <mat-icon>logout</mat-icon>
+      </a>
+    </nav>
+  </div>
+
+  <div [ngClass]="{ 'ml-16 sm:ml-32': isOpen, 'ml-0': !isOpen }" class="flex-1 transition-all duration-300">
+    <router-outlet></router-outlet>
+  </div>
+</div>
