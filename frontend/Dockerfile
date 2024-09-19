@@ -24,6 +24,7 @@ FROM base as deps
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
 # Leverage bind mounts to package.json and package-lock.json to avoid having to copy them
 # into this layer.
+
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm \
@@ -67,6 +68,7 @@ COPY --from=build /usr/src/app/dist/frontend ./dist/frontend
 
 # Expose the port that the application listens on.
 EXPOSE 4200
+EXPOSE 4201
 
 # Run the application.
-CMD npm start
+CMD npx lite-server --baseDir="dist/frontend/browser"
