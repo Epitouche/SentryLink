@@ -1,1 +1,7 @@
 # SentryLink
+
+## Techno
+
+Angular
+
+Golang
