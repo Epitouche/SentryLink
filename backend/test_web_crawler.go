@@ -49,10 +49,10 @@ func Crawl(url string, depth int, fetcher Fetcher, urlsFetched *UrlsFetched) {
 	wg.Wait()
 }
 
-func main() {
-	urls := &UrlsFetched{fetched:make(map[string]bool)}
-	Crawl("https://golang.org/", 4, fetcher, urls)
-}
+// func main() {
+// 	urls := &UrlsFetched{fetched:make(map[string]bool)}
+// 	Crawl("https://golang.org/", 4, fetcher, urls)
+// }
 
 // fakeFetcher is Fetcher that returns canned results.
 type fakeFetcher map[string]*fakeResult
