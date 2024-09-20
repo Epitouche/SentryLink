@@ -23,8 +23,12 @@
     "@angular/platform-server": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@angular/ssr": "^18.2.5",
+    "@types/force-graph": "^1.26.1",
+    "d3": "^7.9.0",
     "express": "^4.18.2",
+    "force-graph": "^1.43.5",
     "lite-server": "^2.6.1",
+    "ngx-graph": "^0.9.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"
