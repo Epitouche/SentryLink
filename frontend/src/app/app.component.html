@@ -15,7 +15,7 @@
 
       <!-- Menu de navigation -->
       <nav class="flex flex-col items-center gap-20 mt-16">
-        <a routerLink="/home" class="p-2 rounded hover:bg-blue-200">
+        <a routerLink="/" class="p-2 rounded hover:bg-blue-200">
           <mat-icon>home</mat-icon>
           <p></p>
         </a>
@@ -31,9 +31,13 @@
         <a href="#" class="p-2 rounded hover:bg-blue-200">
           <mat-icon>logout</mat-icon>
         </a>
+        <a routerLink="/results" class="p-2 rounded hover:bg-blue-200">
+          Temp to see results page
+        </a>
       </nav>
     </div>
 
+    <!-- Main content area -->
     <div
       class="transition-all duration-300"
       [ngClass]="{ 'ml-40': isOpen, 'ml-20': !isOpen }"
@@ -42,10 +46,4 @@
     </div>
   </div>
 
-  <div
-    [ngClass]="{ 'ml-12 sm:ml-20': isOpen, 'ml-0': !isOpen }"
-    class="flex-1 transition-all duration-300"
-  >
-    <router-outlet></router-outlet>
-  </div>
 </div>
