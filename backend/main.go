@@ -18,6 +18,11 @@ func setupRouter() *gin.Engine {
 		c.String(http.StatusOK, "pong")
 	})
 
+	// get URL input frontend
+	r.POST("/url", func(c *gin.Context) {
+		c.String(http.StatusOK, "pong")
+	})
+
 	// Get user value
 	r.GET("/user/:name", func(c *gin.Context) {
 		user := c.Params.ByName("name")
