@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'MindMapPage',
+  name: 'ResultsPage',
 }
 </script>
 
