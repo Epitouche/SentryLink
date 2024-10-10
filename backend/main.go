@@ -4,8 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	// swaggerFiles "github.com/swaggo/files"
-	// ginSwagger "github.com/swaggo/gin-swagger"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/swag/example/basic/docs"
 )
 
 var db = make(map[string]string)
@@ -71,11 +72,23 @@ func setupRouter() *gin.Engine {
 		}
 	})
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+
+
 	return r
 }
 
 func main() {
 	r := setupRouter()
+
+	// Swagger 2.0 Meta Information
+	docs.SwaggerInfo.Title = "SentryLink - WebCrawler API"
+	docs.SwaggerInfo.Description = "SentryLink - API."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = []string{"https"}
+
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
