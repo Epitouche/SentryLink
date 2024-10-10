@@ -1,19 +1,132 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"sync"
 
 	"github.com/gin-gonic/gin"
+	// import the UrlsFetched struct from the service package of my project
 	// swaggerFiles "github.com/swaggo/files"
 	// ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var db = make(map[string]string)
 
+// -------------------Code that needs to be removed later-------------------
+type Fetcher interface {
+	// Fetch returns the body of URL and
+	// a slice of URLs found on that page.
+	Fetch(url string) (body string, urls []string, err error)
+}
+
+type result struct {
+	body string
+	urls []string
+}
+
+type fetcherService map[string]*result
+
+
+func (f fetcherService) Fetch(url string) (string, []string, error) {
+	if res, ok := f[url]; ok {
+		return res.body, res.urls, nil
+	}
+	return "", nil, fmt.Errorf("not found: %s", url)
+}
+
+type UrlsFetched struct {
+	mu sync.Mutex
+	fetched map[string]bool
+}
+
+func Crawl(url string, depth int, fetcher Fetcher, urlsFetched *UrlsFetched) {
+	if depth <= 0 {
+		return
+	}
+
+	urlsFetched.mu.Lock()
+	if urlsFetched.fetched[url] {
+		urlsFetched.mu.Unlock()
+		return
+	}
+	urlsFetched.fetched[url] = true
+	urlsFetched.mu.Unlock()
+
+	body, urls, err := fetcher.Fetch(url)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("found: %s %q\n", url, body)
+
+	var wg sync.WaitGroup
+	for _, u := range urls {
+		wg.Add(1)
+		go func(u string) {
+			defer wg.Done()
+			Crawl(u, depth-1, fetcher, urlsFetched)
+		}(u)
+	}
+	wg.Wait()
+}
+
+// -------------------Code that needs to be removed later-------------------
+
+
 func setupRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
+
+
+	// Crawler test
+	r.GET("/crawl/:link", func(c *gin.Context) {
+
+		urls := &UrlsFetched{
+			fetched: make(map[string]bool),
+		}
+		param := c.Params.ByName("link")
+
+		// Temporary code to test the crawler and need to be removed
+
+		var fetcher = fetcherService{
+			"https://golang.org/": &result{
+				"The Go Programming Language",
+				[]string{
+					"https://golang.org/pkg/",
+					"https://golang.org/cmd/",
+				},
+			},
+			"https://golang.org/pkg/": &result{
+				"Packages",
+				[]string{
+					"https://golang.org/",
+					"https://golang.org/cmd/",
+					"https://golang.org/pkg/fmt/",
+					"https://golang.org/pkg/os/",
+				},
+			},
+			"https://golang.org/pkg/fmt/": &result{
+				"Package fmt",
+				[]string{
+					"https://golang.org/",
+					"https://golang.org/pkg/",
+				},
+			},
+			"https://golang.org/pkg/os/": &result{
+				"Package os",
+				[]string{
+					"https://golang.org/",
+					"https://golang.org/pkg/",
+				},
+			},
+		}
+
+
+		Crawl("https://golang.org/", 4, fetcher, urls)
+		c.JSON(http.StatusOK, gin.H{"link": param})
+	})
 
 	// Ping test
 	r.GET("/ping", func(c *gin.Context) {
