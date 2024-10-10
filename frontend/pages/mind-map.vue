@@ -6,8 +6,12 @@
 
 <script>
 export default {
-  name: 'MindMapPage',
-}
+  name: "MindMapPage",
+};
+
+definePageMeta({
+  layout: "default",
+});
 </script>
 
 <style scoped>
