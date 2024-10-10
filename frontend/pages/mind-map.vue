@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Hello World</h1>
+    <h1>Hello MindMapPage</h1>
     <div ref="graph" class="graph-container"></div>
   </div>
 </template>
