@@ -36,40 +36,21 @@ const prev = () => {
 </script>
 
 <template>
-    <div class="carousel">
-        <button @click="prev" :disabled="currentIndex === 0" class="carousel-arrow"><Icon name="bytesize:chevron-left" size="40" /></button>
-        <div class="carousel-items">
-            <div v-for="(item, index) in displayedItems" :key="index" class="item-wrapper">
+    <div class="carousel flex justify-center items-center">
+        <button @click="prev" :disabled="currentIndex === 0" class="carousel-arrow p-4 cursor-pointer"><Icon name="bytesize:chevron-left" size="40" /></button>
+        <div class="carousel-items flex flex-row">
+            <div v-for="(item, index) in displayedItems" :key="index" class="item-wrapper p-8">
                 <component :is="props.componentType" :src="item" />
             </div>
         </div>
         <button @click="next" :disabled="currentIndex + displayNumber >= items.length"
-            class="carousel-arrow"><Icon name="bytesize:chevron-right" size="40" /></button>
+            class="carousel-arrow p-4 cursor-pointer"><Icon name="bytesize:chevron-right" size="40" /></button>
     </div>
 </template>
 
 <style scoped>
-.carousel {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.carousel-arrow {
-    padding: 1rem;
-    cursor: pointer;
-}
-
 .carousel-button:disabled {
     background-color: gray;
     cursor: not-allowed;
-}
-
-.carousel-items {
-    display: flex;
-}
-
-.item-wrapper {
-    padding: 2rem;
 }
 </style>
