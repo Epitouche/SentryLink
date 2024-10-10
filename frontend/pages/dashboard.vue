@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import ProjectPageCard from '@/components/ProjectPageCard.vue';
 
 const projects = ref([ // Get array of all of the user's projects: name, info, etc.
@@ -10,7 +10,9 @@ const projects = ref([ // Get array of all of the user's projects: name, info, e
     { name: 'Project 5', info: 'Information 5' },
     { name: 'Project 6', info: 'Information 6' },
     { name: 'Project 7', info: 'Information 7' },
-    { name: 'Project 8', info: 'Information 8' }
+    { name: 'Project 8', info: 'Information 8' },
+    { name: 'Project 9', info: 'Information 9' },
+    { name: 'Project 10', info: 'Information 10' }
 ]);
 
 const lastProject = ref({ // Get the last project the user worked on: name, broken links: image, name, url, etc.
@@ -37,42 +39,68 @@ const lastProject = ref({ // Get the last project the user worked on: name, brok
 
 const selectedCheckboxes = ref(lastProject.value.brokenLinks.map(() => false));
 
+const scaleValue = ref(1);
+const minScale = 1;
+const maxScale = 1;
+
+const updateScale = () => {
+    if (typeof window !== 'undefined') {
+        const widthScale = window.innerWidth / 2560;
+        const heightScale = window.innerHeight / 1600;
+        const newScale = Math.min(widthScale, heightScale);
+        scaleValue.value = Math.max(minScale, Math.min(newScale, maxScale)); // Clamp between min and max scale
+    }
+};
+
+onMounted(() => {
+    updateScale();
+    window.addEventListener('resize', updateScale);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateScale);
+});
 </script>
 
 <template>
-    <div class="header text-8xl font-[750] py-16 flex justify-end w-1/3">
-        <h1>Hello, Name</h1> <!-- Replace Name with logged in user's name -->
-    </div>
-
-    <div class="carousel">
-        <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="4" />
-    </div>
-
-    <div class="last-project-container pt-10">
-        <div class="last-project-header text-7xl font-[750] pl-28 pb-8">
-            <h2>Last Project: {{ lastProject.name }}</h2>
+    <div class="page-wrapper" :style="{ transform: `scale(${scaleValue})`, transformOrigin: 'top left' }">
+        <div class="header font-[750] flex justify-end w-1/3">
+            <h1>Hello, Name</h1>
         </div>
-        <div class="px-10 overflow-y-auto max-h-[47vh]">
-            <div v-for="(link, index) in lastProject.brokenLinks" :key="index" class="item">
-                <div class="flex flex-row justify-between py-4 px-8 items-center text-2xl">
-                    <div class="flex flex-row items-center gap-5">
-                        <div class="pr-5">
-                            <UCheckbox v-model="selectedCheckboxes[index]"  :ui="{base: 'h-7 w-7', rounded: 'rounded-none', border: 'border-2 border-black'}" name="checkbox" color="blue" />
+
+        <div class="carousel">
+            <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="5" />
+        </div>
+
+        <div class="last-project-container">
+            <div class="last-project-header font-[750] pl-28 pb-8">
+                <h2>Last Project: {{ lastProject.name }}</h2>
+            </div>
+
+            <div class="px-10 overflow-y-auto max-h-[50vh]">
+                <div v-for="(link, index) in lastProject.brokenLinks" :key="index" class="item">
+                    <div class="flex flex-row justify-between py-4 px-8 items-center text-2xl">
+                        <div class="flex flex-row items-center gap-5">
+                            <div class="pr-5">
+                                <UCheckbox v-model="selectedCheckboxes[index]"
+                                    :ui="{ base: 'h-7 w-7', rounded: 'rounded-none', border: 'border-2 border-black' }"
+                                    name="checkbox" color="blue" />
+                            </div>
+                            <UAvatar size="3xl" :src="link.image" alt="temp" />
+                            <div class="flex flex-col gap-2">
+                                <p><strong>{{ link.name }}</strong></p>
+                                <p>url:{{ link.url }}</p>
+                            </div>
                         </div>
-                        <UAvatar size="3xl" :src="link.image" alt="temp" />
-                        <div class="flex flex-col gap-2">
-                            <p><strong>{{ link.name }}</strong></p>
-                            <p>url:{{ link.url }}</p>
+                        <div>
+                            <p>{{ link.error }}</p>
                         </div>
-                    </div>
-                    <div>
-                        <p>{{ link.error }}</p>
-                    </div>
-                    <div>
-                        <p>{{ link.ping }}</p>
-                    </div>
-                    <div>
-                        <p>{{ link.nbPageLink }}</p>
+                        <div>
+                            <p>{{ link.ping }}</p>
+                        </div>
+                        <div>
+                            <p>{{ link.nbPageLink }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -81,9 +109,59 @@ const selectedCheckboxes = ref(lastProject.value.brokenLinks.map(() => false));
 </template>
 
 <style scoped>
+.page-wrapper {
+    transition: transform 0.2s ease;
+}
+
 .item:nth-child(even) {
     background-color: #F2F4F5;
     border: 1px solid #F2F4F5;
     border-radius: 1rem;
 }
+
+/* Responsive Typography */
+h1 {
+    font-size: clamp(1rem,56vw, 6rem);
+}
+
+h2 {
+    font-size: clamp(0.5rem, 4vw, 4.5rem);
+}
+
+.text-2xl {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+}
+
+.header {
+    padding: 2rem;
+}
+
+.carousel {
+    padding: 0.5rem;
+}
+
+.last-project-container {
+    padding-top: 2rem;
+}
 </style>
+
+<!-- Mine
+2560 x 1600
+
+Desktops
+1920 x 1080
+1366 x 768
+1280 x 1024
+1024 x 768
+
+Tablets
+1024 x 768
+768 x 1024
+962 x 601
+601 x 962
+
+Mobiles
+375 x 667
+414 x 736
+360 x 800
+390 x 844 -->
