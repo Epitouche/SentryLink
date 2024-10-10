@@ -39,7 +39,7 @@ const prev = () => {
     <div class="carousel flex justify-center items-center">
         <button @click="prev" :disabled="currentIndex === 0" class="carousel-arrow p-4 cursor-pointer"><Icon name="bytesize:chevron-left" size="40" /></button>
         <div class="carousel-items flex flex-row">
-            <div v-for="(item, index) in displayedItems" :key="index" class="item-wrapper p-8">
+            <div v-for="(item, index) in displayedItems" :key="index" class="item-wrapper py-10 px-12">
                 <component :is="props.componentType" :src="item" />
             </div>
         </div>

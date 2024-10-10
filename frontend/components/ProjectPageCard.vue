@@ -21,8 +21,8 @@ const props = defineProps({
 
 <style scoped>
 .card {
-    border: 2px solid #DCDDDE;
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    border: 3px solid #DCDDDE;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
 }
 
 .card-info {
