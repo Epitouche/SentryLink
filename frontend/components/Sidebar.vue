@@ -2,37 +2,41 @@
   <div>
     <div class="flex flex-col w-28 bg-cprimary text-white h-screen">
       <ul class="flex flex-col items-center h-full gap-10 pt-10">
-        <button
-          class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark hover:text-sky-300"
+        <ULink
+          active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
+          inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300"
         >
           <u-icon name="material-symbols:menu" class="w-6 h-6" />
-        </button>
+        </ULink>
         <li>
-          <button
-            class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark hover:text-sky-300"
-            to="/"
+          <ULink
+            active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
+            inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 "
+            to="/dashboard"
           >
             <u-icon name="material-symbols:dashboard" class="w-6 h-6" />
             <p>Dashboard</p>
-          </button>
+          </ULink>
         </li>
         <li>
-          <button
-            class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark hover:text-sky-300"
-            to="/"
+          <ULink
+            active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
+            inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300"
+            to="/settings"
           >
             <u-icon name="material-symbols:settings" class="w-6 h-6" />
             Settings
-          </button>
+          </ULink>
         </li>
         <li>
-          <button
-            class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark hover:text-sky-300"
-            to="/"
+          <ULink
+            active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
+            inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300"
+            to="/profile"
           >
             <u-icon name="material-symbols:person" class="w-6 h-6" />
             Profile
-          </button>
+          </ULink>
         </li>
       </ul>
     </div>
