@@ -11,8 +11,8 @@ import * as d3 from 'd3';
 /**
  * MindMapPage Component
  * 
- * This Vue component renders a mind map using D3.js. It creates a force-directed graph
- * with nodes and links, and allows for interactive dragging of nodes.
+ * This Vue component renders a mind map using D3.js. It creates a graph with nodes and links,
+ * and allows for interactive dragging of nodes with attraction forces applied to linked nodes.
  * 
  * Component Name: MindMapPage
  * 
@@ -20,19 +20,25 @@ import * as d3 from 'd3';
  * - mounted: Calls the createGraph method to initialize the graph when the component is mounted.
  * 
  * Methods:
- * - createGraph: Initializes the D3.js graph, sets up the simulation, and appends SVG elements for nodes and links.
- * - dragStarted: Handles the start of a drag event on a node, setting fixed positions and restarting the simulation.
- * - dragged: Updates the fixed positions of a node during a drag event.
- * - dragEnded: Handles the end of a drag event on a node, releasing fixed positions and stopping the simulation.
+ * - createGraph: Initializes the graph with nodes and links, sets up the D3 simulation, and defines the ticked function to update positions.
+ * - dragStarted: Handles the start of a drag event, setting fixed positions and adding attraction forces.
+ * - dragged: Updates the position of the dragged node during the drag event.
+ * - dragEnded: Handles the end of a drag event, removing fixed positions and attraction forces.
+ * - addAttractionForce: Adds an attraction force to the simulation for nodes linked to the dragged node.
+ * - removeAttractionForce: Removes the attraction force from the simulation.
  * 
- * D3.js Configuration:
- * - Data: An array of nodes with id and group properties.
- * - Links: An array of links with source and target properties.
- * - SVG: Appends an SVG element to the component's graph reference with specified width and height.
- * - Simulation: Configures the force simulation with link, charge, and center forces.
- * - Nodes: Appends circle elements for each node, with colors based on their group and drag event handlers.
- * - Links: Appends line elements for each link, with specified stroke width and color.
- * - Ticked: Updates the positions of nodes and links on each tick of the simulation.
+ * Data:
+ * - data: Array of node objects with id and group properties.
+ * - links: Array of link objects with source and target properties.
+ * 
+ * D3.js Elements:
+ * - svg: The SVG container for the graph.
+ * - simulation: The D3 force simulation for the graph.
+ * - link: The lines representing links between nodes.
+ * - node: The circles representing nodes.
+ * 
+ * Styles:
+ * - Scoped styles for the component, including styles for the h1 element and the graph container.
  */
 export default {
   name: 'MindMapPage',
@@ -65,7 +71,7 @@ export default {
         .attr('height', height);
 
       const simulation = d3.forceSimulation(data)
-        .force('link', d3.forceLink(links).id(d => d.id).distance(50))
+        .force('link', d3.forceLink(links).id(d => d.id).distance(100))
         .force('charge', d3.forceManyBody().strength(-300))
         .force('center', d3.forceCenter(width / 2, height / 2));
 
@@ -85,9 +91,9 @@ export default {
         .attr('r', 10)
         .attr('fill', d => (d.group === 'A' ? '#ff6347' : d.group === 'B' ? '#4682b4' : '#32cd32'))
         .call(d3.drag()
-          .on('start', (event, d) => this.dragStarted(event, d, simulation))
+          .on('start', (event, d) => this.dragStarted(event, d, simulation, links))
           .on('drag', this.dragged)
-          .on('end', (event, d) => this.dragEnded(event, d, simulation)));
+          .on('end', (event, d) => this.dragEnded(event, d, simulation, links)));
 
       const ticked = () => {
         link
@@ -103,20 +109,46 @@ export default {
 
       simulation.on('tick', ticked);
     },
-    dragStarted(event, d, simulation) {
+
+    dragStarted(event, d, simulation, links) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
       d.fy = d.y;
+
+      this.addAttractionForce(simulation, d, links);
     },
+
     dragged(event, d) {
       d.fx = event.x;
       d.fy = event.y;
     },
-    dragEnded(event, d, simulation) {
+
+    dragEnded(event, d, simulation, links) {
       if (!event.active) simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
+
+      this.removeAttractionForce(simulation);
     },
+
+    addAttractionForce(simulation, draggedNode, links) {
+      const linkedNodes = links
+        .filter(l => l.source.id === draggedNode.id || l.target.id === draggedNode.id)
+        .map(l => (l.source.id === draggedNode.id ? l.target : l.source));
+
+      const attractionForce = (alpha) => {
+        linkedNodes.forEach(linkedNode => {
+          linkedNode.vx += (draggedNode.x - linkedNode.x) * 0.1 * alpha;
+          linkedNode.vy += (draggedNode.y - linkedNode.y) * 0.1 * alpha;
+        });
+      };
+
+      simulation.force('attraction', attractionForce);
+    },
+
+    removeAttractionForce(simulation) {
+      simulation.force('attraction', null);
+    }
   },
 };
 </script>
@@ -128,6 +160,6 @@ h1 {
 }
 
 .graph-container {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 </style>
