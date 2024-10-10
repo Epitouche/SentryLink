@@ -37,28 +37,26 @@ const prev = () => {
 
 <template>
     <div class="carousel">
-        <button @click="prev" :disabled="currentIndex === 0" class="carousel-arrow">Previous</button>
+        <button @click="prev" :disabled="currentIndex === 0" class="carousel-arrow"><Icon name="bytesize:chevron-left" size="40" /></button>
         <div class="carousel-items">
             <div v-for="(item, index) in displayedItems" :key="index" class="item-wrapper">
                 <component :is="props.componentType" :src="item" />
             </div>
         </div>
         <button @click="next" :disabled="currentIndex + displayNumber >= items.length"
-            class="carousel-arrow">Next</button>
+            class="carousel-arrow"><Icon name="bytesize:chevron-right" size="40" /></button>
     </div>
 </template>
 
 <style scoped>
 .carousel {
     display: flex;
+    justify-content: center;
     align-items: center;
 }
 
 .carousel-arrow {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+    padding: 1rem;
     cursor: pointer;
 }
 
@@ -69,12 +67,9 @@ const prev = () => {
 
 .carousel-items {
     display: flex;
-    overflow: hidden;
-    flex-grow: 1;
 }
 
 .item-wrapper {
-    flex: 0 0 25%;
-    padding: 10px;
+    padding: 2rem;
 }
 </style>

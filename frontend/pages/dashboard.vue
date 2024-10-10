@@ -3,14 +3,14 @@ import { ref } from 'vue';
 import ProjectPageCard from '@/components/ProjectPageCard.vue';
 
 const projects = ref([ // Get array of all of the user's projects: name, info, and link
-    { name: 'Project Name 1', info: 'Information 1' },
-    { name: 'Project Name 2', info: 'Information 2' },
-    { name: 'Project Name 3', info: 'Information 3' },
-    { name: 'Project Name 4', info: 'Information 4' },
-    { name: 'Project Name 5', info: 'Information 5' },
-    { name: 'Project Name 6', info: 'Information 6' },
-    { name: 'Project Name 7', info: 'Information 7' },
-    { name: 'Project Name 8', info: 'Information 8' }
+    { name: 'Project 1', info: 'Information 1' },
+    { name: 'Project 2', info: 'Information 2' },
+    { name: 'Project 3', info: 'Information 3' },
+    { name: 'Project 4', info: 'Information 4' },
+    { name: 'Project 5', info: 'Information 5' },
+    { name: 'Project 6', info: 'Information 6' },
+    { name: 'Project 7', info: 'Information 7' },
+    { name: 'Project 8', info: 'Information 8' }
 ]);
 
 </script>
@@ -20,9 +20,11 @@ const projects = ref([ // Get array of all of the user's projects: name, info, a
         <h1>Hello, Name</h1> <!-- Replace Name with logged in user's name -->
     </div>
 
-    <UContainer>
-        <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="4" />
-    </UContainer>
+    <!-- <UContainer>
+        <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="7" />
+    </UContainer> -->
+
+    <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="4" /> <!-- testing -->
 
     <UContainer>
         <h2>Last Project: Project Name</h2>
