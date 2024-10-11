@@ -26,8 +26,12 @@
 
 <script>
 export default {
-  name: 'ResultsPage',
-}
+  name: "ResultsPage",
+};
+
+definePageMeta({
+  layout: "default",
+});
 </script>
 
 <style scoped>

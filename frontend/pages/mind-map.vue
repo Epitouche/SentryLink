@@ -8,38 +8,6 @@
 <script>
 import * as d3 from 'd3';
 
-/**
- * MindMapPage Component
- * 
- * This Vue component renders a mind map using D3.js. It creates a graph with nodes and links,
- * and allows for interactive dragging of nodes with attraction forces applied to linked nodes.
- * 
- * Component Name: MindMapPage
- * 
- * Lifecycle Hooks:
- * - mounted: Calls the createGraph method to initialize the graph when the component is mounted.
- * 
- * Methods:
- * - createGraph: Initializes the graph with nodes and links, sets up the D3 simulation, and defines the ticked function to update positions.
- * - dragStarted: Handles the start of a drag event, setting fixed positions and adding attraction forces.
- * - dragged: Updates the position of the dragged node during the drag event.
- * - dragEnded: Handles the end of a drag event, removing fixed positions and attraction forces.
- * - addAttractionForce: Adds an attraction force to the simulation for nodes linked to the dragged node.
- * - removeAttractionForce: Removes the attraction force from the simulation.
- * 
- * Data:
- * - data: Array of node objects with id and group properties.
- * - links: Array of link objects with source and target properties.
- * 
- * D3.js Elements:
- * - svg: The SVG container for the graph.
- * - simulation: The D3 force simulation for the graph.
- * - link: The lines representing links between nodes.
- * - node: The circles representing nodes.
- * 
- * Styles:
- * - Scoped styles for the component, including styles for the h1 element and the graph container.
- */
 export default {
   name: 'MindMapPage',
   mounted() {
@@ -49,10 +17,10 @@ export default {
     createGraph() {
       const data = [
         { id: 1, group: 'A' },
-        { id: 2, group: 'A' },
-        { id: 3, group: 'B' },
+        { id: 2, group: 'B' },
+        { id: 3, group: 'C' },
         { id: 4, group: 'B' },
-        { id: 5, group: 'C' },
+        { id: 5, group: 'A' },
       ];
 
       const links = [
@@ -131,24 +99,28 @@ export default {
       this.removeAttractionForce(simulation);
     },
 
-    addAttractionForce(simulation, draggedNode, links) {
-      const linkedNodes = links
-        .filter(l => l.source.id === draggedNode.id || l.target.id === draggedNode.id)
-        .map(l => (l.source.id === draggedNode.id ? l.target : l.source));
+    addAttractionForce(simulation, node, links) {
+      // Here, we create a new attraction force based on the current node
+      simulation.force('attract', (alpha) => {
+        links.forEach(link => {
+          if (link.source.id === node.id || link.target.id === node.id) {
+            const target = link.source.id === node.id ? link.target : link.source;
+            const dx = target.x - node.x;
+            const dy = target.y - node.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const strength = 0.1; // Adjust the strength of the attraction
 
-      const attractionForce = (alpha) => {
-        linkedNodes.forEach(linkedNode => {
-          linkedNode.vx += (draggedNode.x - linkedNode.x) * 0.1 * alpha;
-          linkedNode.vy += (draggedNode.y - linkedNode.y) * 0.1 * alpha;
+            // Update the positions
+            node.vx += (dx / distance) * strength;
+            node.vy += (dy / distance) * strength;
+          }
         });
-      };
-
-      simulation.force('attraction', attractionForce);
+      });
     },
 
     removeAttractionForce(simulation) {
-      simulation.force('attraction', null);
-    }
+      simulation.force('attract', null); // Remove the attraction force
+    },
   },
 };
 </script>
