@@ -21,12 +21,12 @@ const props = defineProps({
 
 <style scoped>
 .card {
-    border: 3px solid #DCDDDE;
+    border: 3px solid #F2F4F5;
     box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
 }
 
 .card-info {
-    background-color: #DCDDDE;
-    border: 2px solid #DCDDDE;
+    background-color: #F2F4F5;
+    border: 2px solid #F2F4F5;
 }
 </style>

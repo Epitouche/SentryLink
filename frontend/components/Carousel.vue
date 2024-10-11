@@ -18,46 +18,26 @@ const props = defineProps({
 
 const currentIndex = ref(0);
 
-const responsiveDisplayNumber = ref(props.displayNumber);
-
-const updateDisplayNumber = () => {
-    if (window.innerWidth < 768) {
-        responsiveDisplayNumber.value = 1;
-    } else if (window.innerWidth < 1024) {
-        responsiveDisplayNumber.value = 2;
-    } else { 
-        responsiveDisplayNumber.value = props.displayNumber;
-    }
-};
-
 const displayedItems = computed(() => {
-    return props.items.slice(currentIndex.value, currentIndex.value + responsiveDisplayNumber.value);
+    return props.items.slice(currentIndex.value, currentIndex.value + props.displayNumber);
 });
 
 const next = () => {
-    if (currentIndex.value + responsiveDisplayNumber.value < props.items.length) {
-        currentIndex.value += responsiveDisplayNumber.value;
+    if (currentIndex.value + props.displayNumber < props.items.length) {
+        currentIndex.value += props.displayNumber;
     }
 };
 
 const prev = () => {
     if (currentIndex.value > 0) {
-        currentIndex.value -= responsiveDisplayNumber.value;
+        currentIndex.value -= props.displayNumber;
     }
 };
 
-onMounted(() => {
-    updateDisplayNumber();
-    window.addEventListener('resize', updateDisplayNumber);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', updateDisplayNumber);
-});
 </script>
 
 <template>
-    <div class="carousel flex justify-center items-center">
+    <div class="carousel flex justify-center items-center py-4">
         <button @click="prev" :disabled="currentIndex === 0" class="carousel-arrow p-4 cursor-pointer">
             <Icon name="bytesize:chevron-left" size="40" />
         </button>
