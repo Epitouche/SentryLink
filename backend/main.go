@@ -20,6 +20,12 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
+type CrawlResult struct {
+	found    map[string]string
+	notFound map[string]bool
+	mu       sync.Mutex
+}
+
 type result struct {
 	body string
 	urls []string
@@ -40,35 +46,44 @@ type UrlsFetched struct {
 	fetched map[string]bool
 }
 
-func Crawl(url string, depth int, fetcher Fetcher, urlsFetched *UrlsFetched) {
+// Crawl uses fetcher to recursively crawl pages starting with url, to a maximum of depth.
+func Crawl(url string, depth int, fetcher Fetcher, urlsFetched *UrlsFetched, result *CrawlResult) {
 	if depth <= 0 {
 		return
 	}
 
+	// Lock to avoid race condition
 	urlsFetched.mu.Lock()
 	if urlsFetched.fetched[url] {
 		urlsFetched.mu.Unlock()
-		return
+		return // Already fetched
 	}
-	urlsFetched.fetched[url] = true
+	urlsFetched.fetched[url] = true // Mark URL as fetched
 	urlsFetched.mu.Unlock()
 
 	body, urls, err := fetcher.Fetch(url)
 	if err != nil {
-		fmt.Println(err)
+		// Append to not found list
+		result.mu.Lock()
+		result.notFound[url] = true
+		result.mu.Unlock()
 		return
 	}
-	fmt.Printf("found: %s %q\n", url, body)
+
+	// Append to found list
+	result.mu.Lock()
+	result.found[url] = body
+	result.mu.Unlock()
 
 	var wg sync.WaitGroup
 	for _, u := range urls {
 		wg.Add(1)
 		go func(u string) {
 			defer wg.Done()
-			Crawl(u, depth-1, fetcher, urlsFetched)
+			Crawl(u, depth-1, fetcher, urlsFetched, result)
 		}(u)
 	}
-	wg.Wait()
+	wg.Wait() // Wait for all goroutines to finish
 }
 
 // -------------------Code that needs to be removed later-------------------
@@ -86,7 +101,12 @@ func setupRouter() *gin.Engine {
 		urls := &UrlsFetched{
 			fetched: make(map[string]bool),
 		}
-		param := c.Params.ByName("link")
+
+		results := &CrawlResult{
+			found:    make(map[string]string),
+			notFound: make(map[string]bool),
+		}
+		// param := c.Params.ByName("link")
 
 		// Temporary code to test the crawler and need to be removed
 
@@ -124,8 +144,13 @@ func setupRouter() *gin.Engine {
 		}
 
 
-		Crawl("https://golang.org/", 4, fetcher, urls)
-		c.JSON(http.StatusOK, gin.H{"link": param})
+		Crawl("https://golang.org/", 4, fetcher, urls, results)
+		fmt.Print("\nall urls in result \n", results.found)
+
+		c.JSON(http.StatusOK, gin.H{"https://golang.org/": map[string]interface{}{
+			"found":    results.found,
+			"notFound": results.notFound,
+		}})
 	})
 
 	// Ping test
