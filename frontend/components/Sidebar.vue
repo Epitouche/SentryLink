@@ -50,6 +50,5 @@
         </li>
       </ul>
     </div>
-    <NuxtPage />
   </div>
 </template>
