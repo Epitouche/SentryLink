@@ -1,54 +1,44 @@
 <template>
-  <div class="flex flex-row">
-    <div class="flex flex-col w-28 bg-cprimary text-white h-screen">
-      <ul class="flex flex-col items-center h-full gap-10 pt-10">
+  <div
+    class="flex flex-col w-20 h-min p-4 bg-white shadow-md border-2 rounded-3xl border-gray-200 dark:bg-cprimary-dark dark:text-white dark:border-cprimary-dark"
+  >
+    <ul class="flex flex-col items-center h-full">
+      <li>
         <ULink
-          active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
-          inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300"
+          active-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300 black:text-sky-300 text-sky-500"
+          inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300"
+          to="/"
         >
-          <u-icon name="material-symbols:menu" class="w-6 h-6" />
+          <u-icon name="material-symbols:home-rounded" class="w-6 h-6" />
         </ULink>
-        <li>
-          <ULink
-            active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
-            inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300"
-            to="/"
-          >
-            <u-icon name="material-symbols:home" class="w-6 h-6" />
-            <p>Home</p>
-          </ULink>
-        </li>
-        <li>
-          <ULink
-            active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
-            inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 "
-            to="/dashboard"
-          >
-            <u-icon name="material-symbols:dashboard" class="w-6 h-6" />
-            <p>Dashboard</p>
-          </ULink>
-        </li>
-        <li>
-          <ULink
-            active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
-            inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300"
-            to="/settings"
-          >
-            <u-icon name="material-symbols:settings" class="w-6 h-6" />
-            <p>Settings</p>
-          </ULink>
-        </li>
-        <li>
-          <ULink
-            active-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300 text-sky-300"
-            inactive-class="flex flex-col justify-center items-center rounded-md w-24 h-14 hover:bg-cprimary-dark transition-colors duration-300"
-            to="/profile"
-          >
-            <u-icon name="material-symbols:person" class="w-6 h-6" />
-            <p>Profile</p>
-          </ULink>
-        </li>
-      </ul>
-    </div>
+      </li>
+      <li>
+        <ULink
+          active-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300 black:text-sky-300 text-sky-500"
+          inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300 "
+          to="/dashboard"
+        >
+          <u-icon name="material-symbols:dashboard-rounded" class="w-6 h-6" />
+        </ULink>
+      </li>
+      <li>
+        <ULink
+          active-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300 black:text-sky-300 text-sky-500"
+          inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300"
+          to="/settings"
+        >
+          <u-icon name="material-symbols:settings-rounded" class="w-6 h-6" />
+        </ULink>
+      </li>
+      <li>
+        <ULink
+          active-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300 black:text-sky-300 text-sky-500"
+          inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300"
+          to="/profile"
+        >
+          <u-icon name="material-symbols:person-rounded" class="w-6 h-6" />
+        </ULink>
+      </li>
+    </ul>
   </div>
 </template>
