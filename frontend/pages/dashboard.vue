@@ -136,8 +136,8 @@ const handleFormSubmit = handleSubmit(onSubmit);
 </script>
 
 <template>
-    <div name="page-wrapper" class="px-8 py-20 flex flex-col gap-10">
-        <div name="header" class="flex flex-row justify-between items-center px-20 pb-10">
+    <div name="page-wrapper" class="px-8 py-20 flex flex-col gap-16">
+        <div name="header" class="flex flex-row justify-between items-center px-20">
             <h1 class="text-8xl font-[750]">Hello, Name</h1>
             <div name="new-project-button-and-form">
                 <UPopover overlay v-model:open="popoverState">
@@ -165,11 +165,13 @@ const handleFormSubmit = handleSubmit(onSubmit);
             <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="5" />
         </div>
 
-        <div name="last-project">
-            <h2 class="text-8xl font-[750]">Last Project: {{ lastProject.name }}</h2>
-            <div name="last-project-table">
-                <UInput v-model="linkSearch" placeholder="Filter links..." />
-                <div class="scrollable">
+        <div name="last-project" class="flex flex-col gap-12">
+            <h2 class="text-7xl font-[750] px-20">Last Project: {{ lastProject.name }}</h2>
+            <div name="last-project-container flex flex-col">
+                <div name="link-search" class="flex justify-end px-2 pb-2">
+                    <UInput v-model="linkSearch" placeholder="Filter links..." color="black" class="w-1/4" />
+                </div>
+                <div name="table" class="scrollable border-2 border-black rounded-xl">
                     <UTable v-model="selected" :columns="columns" :rows="filteredRows" @select="select">
                         <template #name-data="{ row }">
                             <div class="flex flex-row gap-2">
@@ -189,7 +191,7 @@ const handleFormSubmit = handleSubmit(onSubmit);
 
 <style scoped>
 .scrollable {
-    max-height: 200px;
+    max-height: 200px; /* set max-height with rem or other, not px */
     overflow-y: auto;
 }
 </style>
