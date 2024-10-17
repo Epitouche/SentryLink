@@ -46,7 +46,7 @@ const prev = () => {
                 <component :is="props.componentType" :src="item" />
             </div>
         </div>
-        <button @click="next" :disabled="currentIndex + responsiveDisplayNumber >= items.length"
+        <button @click="next" :disabled="currentIndex >= items.length"
             class="carousel-arrow p-4 cursor-pointer">
             <Icon name="bytesize:chevron-right" size="40" />
         </button>

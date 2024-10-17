@@ -15,8 +15,11 @@
     "@nuxt/ui": "^2.18.7",
     "@nuxt/ui-pro": "^1.4.3",
     "nuxt": "^3.13.0",
+    "vee-validate": "^4.13.2",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-infinite-scroll": "^2.0.2",
+    "vue-router": "latest",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@iconify-json/bytesize": "^1.2.0",

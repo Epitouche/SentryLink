@@ -1,6 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import ProjectPageCard from '@/components/ProjectPageCard.vue';
+import { useField, useForm } from 'vee-validate';
+import * as yup from 'yup';
 
 const projects = ref([ // Get array of all of the user's projects: name, info, etc.
     { name: 'Project 1', info: 'Information 1' },
@@ -28,12 +30,6 @@ const lastProject = ref({ // Get the last project the user worked on: name, brok
         { id: 8, image: 'https://picsum.photos/id/1070/600/400', name: 'Broken Link 8', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
         { id: 9, image: 'https://picsum.photos/id/1080/600/400', name: 'Broken Link 9', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
         { id: 10, image: 'https://picsum.photos/id/1001/600/400', name: 'Broken Link 10', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
-        { id: 11, image: 'https://picsum.photos/id/1009/600/400', name: 'Broken Link 11', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
-        { id: 12, image: 'https://picsum.photos/id/1006/600/400', name: 'Broken Link 12', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
-        { id: 13, image: 'https://picsum.photos/id/1005/600/400', name: 'Broken Link 13', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
-        { id: 14, image: 'https://picsum.photos/id/1004/600/400', name: 'Broken Link 14', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
-        { id: 15, image: 'https://picsum.photos/id/1003/600/400', name: 'Broken Link 15', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
-        { id: 16, image: 'https://picsum.photos/id/1002/600/400', name: 'Broken Link 16', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
     ]
 });
 
@@ -44,35 +40,20 @@ const columns = ref([
     { key: 'nbPageLink', label: 'Number', sortable: true }
 ]);
 
-const page = ref(1);
-const rowsPerPage = 5;
-
 const linkSearch = ref('');
 
 const filteredRows = computed(() => {
-  let filtered = lastProject.value.pageLinks;
+    let filtered = lastProject.value.pageLinks;
 
-  if (linkSearch.value) {
-    filtered = filtered.filter((pageLink) => {
-      return Object.values(pageLink).some((value) => {
-        return String(value).toLowerCase().includes(linkSearch.value.toLowerCase());
-      });
-    });
-  }
+    if (linkSearch.value) {
+        filtered = filtered.filter((pageLink) => {
+            return Object.values(pageLink).some((value) => {
+                return String(value).toLowerCase().includes(linkSearch.value.toLowerCase());
+            });
+        });
+    }
 
-  const start = (page.value - 1) * rowsPerPage;
-  const end = start + rowsPerPage;
-  return filtered.slice(start, end);
-});
-
-const pageCount = computed(() => {
-  const filtered = lastProject.value.pageLinks.filter((pageLink) => {
-    return Object.values(pageLink).some((value) => {
-      return String(value).toLowerCase().includes(linkSearch.value.toLowerCase());
-    });
-  });
-
-  return Math.ceil(filtered.length / rowsPerPage);
+    return filtered;
 });
 
 function select(row) {
@@ -84,43 +65,131 @@ function select(row) {
     }
 };
 
-const selected = ref([lastProject.pageLinks]);
+const selected = ref([]);
+
+const itemsPerPage = 5;
+const displayedPageLinks = ref([]);
+const currentPage = ref(0);
+
+function loadMoreItems() {
+    const startIndex = currentPage.value * itemsPerPage;
+    const nextPageLinks = lastProject.value.pageLinks.slice(startIndex, startIndex + itemsPerPage);
+
+    displayedPageLinks.value = [...displayedPageLinks.value, ...nextPageLinks];
+
+    currentPage.value++;
+}
+
+function onScroll() {
+    const scrollableDiv = document.querySelector('.scrollable');
+    const threshold = 1;  // You can customize this threshold
+
+    if (scrollableDiv.scrollTop + scrollableDiv.clientHeight >= scrollableDiv.scrollHeight - threshold) {
+        loadMoreItems();
+    }
+}
+
+onMounted(() => {
+    loadMoreItems();
+    window.addEventListener('scroll', onScroll);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', onScroll);
+});
+
+const popoverState = ref(false);
+
+const state = ref({
+    name: '',
+    info: '',
+});
+
+// Define validation schema for the new project form
+const projectSchema = yup.object({
+    name: yup.string().required('Project name is required'),
+    info: yup.string().required('Project info is required'),
+});
+
+// Initialize Vee-Validate form
+const { handleSubmit, resetForm } = useForm({
+    validationSchema: projectSchema
+});
+
+// Set up fields with validation
+const { value: name, errorMessage: nameError } = useField('name');
+const { value: info, errorMessage: infoError } = useField('info');
+
+const onSubmit = (values) => {
+    if (nameError.value || infoError.value) {
+        console.log('Validation errors:', nameError.value, infoError.value);
+        return;
+    }
+    console.log('Submitted values:', values);
+    projects.value.push({ name: values.name, info: values.info });
+    resetForm();
+    popoverState.value = !popoverState.value;
+};
+
+const handleFormSubmit = handleSubmit(onSubmit);
 
 </script>
 
 <template>
-    <div class="page-wrapper" :style="{ transform: `scale(${scaleValue})`, transformOrigin: 'top left' }">
-        <div class="header text-8xl font-[750]">
-            <h1>Hello, Name</h1>
+    <div name="page-wrapper" class="px-8 py-20 flex flex-col gap-10">
+        <div name="header" class="flex flex-row justify-between items-center px-20 pb-10">
+            <h1 class="text-8xl font-[750]">Hello, Name</h1>
+            <div name="new-project-button-and-form">
+                <UPopover overlay v-model:open="popoverState">
+                    <UButton color="blue" label="New Project" icon="bytesize:plus" />
+                    <template #panel>
+                        <UForm :state="state" @submit="handleFormSubmit" class="">
+                            <UFormGroup label="Project Name" name="name">
+                                <UInput v-model="name" placeholder="Enter project name" />
+                                <span v-if="nameError" class="text-red-600">{{ nameError }}</span>
+                            </UFormGroup>
+
+                            <UFormGroup label="Project Info" name="info">
+                                <UInput v-model="info" placeholder="Enter project info" />
+                                <span v-if="infoError" class="text-red-600">{{ infoError }}</span>
+                            </UFormGroup>
+
+                            <UButton type="submit">Submit</UButton>
+                        </UForm>
+                    </template>
+                </UPopover>
+            </div>
         </div>
 
-        <div class="carousel">
+        <div name="projects-carousel">
             <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="5" />
         </div>
 
-        <div>
-            <div class="last-project-header text-8xl font-[750]">
-                <h2>Last Project: {{ lastProject.name }}</h2>
-            </div>
-
-            <div>
+        <div name="last-project">
+            <h2 class="text-8xl font-[750]">Last Project: {{ lastProject.name }}</h2>
+            <div name="last-project-table">
                 <UInput v-model="linkSearch" placeholder="Filter links..." />
-                <UTable v-model="selected" :columns="columns" :rows="filteredRows" @select="select" />
-                <UPagination v-model="page" :page-count="pageCount" :total="filteredRows.length" />
+                <div class="scrollable">
+                    <UTable v-model="selected" :columns="columns" :rows="filteredRows" @select="select">
+                        <template #name-data="{ row }">
+                            <div class="flex flex-row gap-2">
+                                <UAvatar :src="row.image" alt="image" />
+                                <div class="flex flex-col">
+                                    <p><strong>{{ row.name }}</strong></p>
+                                    <p>{{ row.url }}</p>
+                                </div>
+                            </div>
+                        </template>
+                    </UTable>
+                </div>
             </div>
-
         </div>
     </div>
 </template>
 
 <style scoped>
-.page-wrapper {
-    transition: transform 0.2s ease;
+.scrollable {
+    max-height: 200px;
+    overflow-y: auto;
 }
-
-/* .item:nth-child(even) {
-    background-color: #F2F4F5;
-    border: 1px solid #F2F4F5;
-    border-radius: 1rem;
-} */
 </style>
