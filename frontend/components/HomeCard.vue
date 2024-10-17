@@ -18,7 +18,6 @@ const props = defineProps<{
 
 <template>
   <div class="flex flex-col md:flex-row max-w-screen-xl gap-10 " data-aos="fade-up">
-    <!-- Si isReversed est vrai -->
     <div class="flex flex-col md:flex-row gap-10" v-if="isReversed">
       <img :src="image" alt="" class="w-full md:w-1/2 object-cover" />
       <div class="flex flex-col gap-5 justify-center p-4">
@@ -28,7 +27,6 @@ const props = defineProps<{
       </div>
     </div>
 
-    <!-- Sinon, disposition normale -->
     <div class="flex flex-col md:flex-row gap-10" v-else>
       <div class="flex flex-col gap-5 justify-center w-full md:w-1/2 p-4">
         <h1 class="text-2xl md:text-3xl font-bold">{{ title }}</h1>
