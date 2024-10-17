@@ -1,17 +1,20 @@
 <template>
   <div>
     <h1>Mind Map</h1>
-    <Graph :graphData="graphData" />
+    <Graph3D :graphData="graphData" />
+    <!-- <Graph2D :graphData="graphData" /> -->
   </div>
 </template>
 
 <script>
-import Graph from '@/components/3DGraph.vue'; // Adjust the import path as needed
+import Graph3D from '@/components/3DGraph.vue'; // Adjust the import path as needed
+// import Graph2D from '@/components/2DGraph.vue'; // Adjust the import path as needed
 
 export default {
   name: 'MindMapPage',
   components: {
-    Graph,
+    Graph3D,
+    // Graph2D,
   },
   data() {
     return {
