@@ -30,6 +30,16 @@ const lastProject = ref({ // Get the last project the user worked on: name, brok
         { id: 8, image: 'https://picsum.photos/id/1070/600/400', name: 'Broken Link 8', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
         { id: 9, image: 'https://picsum.photos/id/1080/600/400', name: 'Broken Link 9', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
         { id: 10, image: 'https://picsum.photos/id/1001/600/400', name: 'Broken Link 10', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 1, image: 'https://picsum.photos/id/1000/600/400', name: 'Broken Link 1', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 2, image: 'https://picsum.photos/id/1010/600/400', name: 'Broken Link 2', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 3, image: 'https://picsum.photos/id/1020/600/400', name: 'Broken Link 3', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 4, image: 'https://picsum.photos/id/1001/600/400', name: 'Broken Link 4', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 5, image: 'https://picsum.photos/id/1040/600/400', name: 'Broken Link 5', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 6, image: 'https://picsum.photos/id/1050/600/400', name: 'Broken Link 6', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 7, image: 'https://picsum.photos/id/1060/600/400', name: 'Broken Link 7', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 8, image: 'https://picsum.photos/id/1070/600/400', name: 'Broken Link 8', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 9, image: 'https://picsum.photos/id/1080/600/400', name: 'Broken Link 9', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
+        { id: 10, image: 'https://picsum.photos/id/1001/600/400', name: 'Broken Link 10', url: 'https://www.google.com', error: 'msg: 404 page not found', ping: '40ms', nbPageLink: 3 },
     ]
 });
 
@@ -136,7 +146,7 @@ const handleFormSubmit = handleSubmit(onSubmit);
 </script>
 
 <template>
-    <div name="page-wrapper" class="px-8 py-20 flex flex-col gap-16">
+    <div name="page-wrapper" class="flex flex-col gap-16 px-6 py-6 h-[100vh]">
         <div name="header" class="flex flex-row justify-between items-center px-20">
             <h1 class="text-8xl font-[750]">Hello, Name</h1>
             <div name="new-project-button-and-form">
@@ -165,13 +175,14 @@ const handleFormSubmit = handleSubmit(onSubmit);
             <Carousel :component-type="ProjectPageCard" :items="projects" :display-number="5" />
         </div>
 
-        <div name="last-project" class="flex flex-col gap-12">
-            <h2 class="text-7xl font-[750] px-20">Last Project: {{ lastProject.name }}</h2>
-            <div name="last-project-container flex flex-col">
-                <div name="link-search" class="flex justify-end px-2 pb-2">
-                    <UInput v-model="linkSearch" placeholder="Filter links..." color="black" class="w-1/4" />
+        <div name="last-project" class="flex flex-col gap-3">
+            <h2 class="text-8xl font-[750] px-20">Last Project: {{ lastProject.name }}</h2>
+            <div name="last-project-container" class="flex flex-col gap-2">
+                <div name="link-search" class="flex justify-end px-2">
+                    <UInput v-model="linkSearch" placeholder="Filter links..." color="white" variant="none" size="xl"
+                        icon="bytesize:search" :trailing="true" class="w-1/4 border-2 border-black rounded-2xl" />
                 </div>
-                <div name="table" class="scrollable border-2 border-black rounded-xl">
+                <div name="table" class="scrollable border-2 border-black rounded-2xl">
                     <UTable v-model="selected" :columns="columns" :rows="filteredRows" @select="select">
                         <template #name-data="{ row }">
                             <div class="flex flex-row gap-2">
@@ -191,7 +202,8 @@ const handleFormSubmit = handleSubmit(onSubmit);
 
 <style scoped>
 .scrollable {
-    max-height: 200px; /* set max-height with rem or other, not px */
+    /* flex: 1; */
+    max-height: 40vh;
     overflow-y: auto;
 }
 </style>

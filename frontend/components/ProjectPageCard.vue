@@ -14,7 +14,7 @@ const props = defineProps({
     <div class="card rounded-3xl p-3">
         <div class="card-content flex flex-col gap-8">
             <div class="card-title text-center text-5xl font-medium py-2 px-4">{{ src.name }}</div>
-            <div class="card-info text-5xl font-normal rounded-2xl py-4 px-6">{{ src.info }}</div>
+            <div class="card-info text-4xl font-normal rounded-2xl py-4 px-6">{{ src.info }}</div>
         </div>
     </div>
 </template>
