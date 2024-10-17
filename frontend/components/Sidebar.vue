@@ -9,7 +9,7 @@
           inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300"
           to="/"
         >
-          <u-icon name="material-symbols:home-rounded" class="w-6 h-6" />
+          <u-icon name="material-symbols:home-rounded" class="w-10 h-10" />
         </ULink>
       </li>
       <li>
@@ -18,7 +18,7 @@
           inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300 "
           to="/dashboard"
         >
-          <u-icon name="material-symbols:dashboard-rounded" class="w-6 h-6" />
+          <u-icon name="material-symbols:dashboard-rounded" class="w-10 h-10" />
         </ULink>
       </li>
       <li>
@@ -27,7 +27,7 @@
           inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300"
           to="/settings"
         >
-          <u-icon name="material-symbols:settings-rounded" class="w-6 h-6" />
+          <u-icon name="material-symbols:settings-rounded" class="w-10 h-10" />
         </ULink>
       </li>
       <li>
@@ -36,7 +36,7 @@
           inactive-class="flex justify-center items-center rounded-md p-2 hover:bg-cprimary-light dark:hover:bg-cprimary transition-colors duration-300"
           to="/profile"
         >
-          <u-icon name="material-symbols:person-rounded" class="w-6 h-6" />
+          <u-icon name="material-symbols:person-rounded" class="w-10 h-10" />
         </ULink>
       </li>
     </ul>
