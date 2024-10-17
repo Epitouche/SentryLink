@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HomeCard from "~/components/HomeCard.vue";
+import PriceCard from "~/components/PriceCard.vue";
 
 const InfoCard = {
   title: "Title",
@@ -45,5 +46,22 @@ const InfoCard = {
       :content="InfoCard.content"
       :image="InfoCard.image"
     />
+    <div class="flex flex-row gap-10">
+      <PriceCard
+        plan="Free"
+        :price="0"
+        :features="['Feature 1', 'Feature 2']"
+      />
+      <PriceCard class="flex flex-row gap-10"
+        plan="Pro"
+        :price="30"
+        :features="['Feature 1', 'Feature 2', 'Feature 3']"
+      />
+      <PriceCard class="flex flex-row gap-10"
+        plan="Enterprise"
+        :price="80"
+        :features="['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4']"
+      />
+    </div>
   </div>
 </template>

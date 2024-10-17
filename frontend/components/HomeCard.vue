@@ -11,22 +11,25 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-row max-w-screen-xl">
-    <div class="flex flex-row gap-10" v-if="isReversed">
-      <img :src="image" alt="" class="w-1/2 object-cover" />
+  <div class="flex flex-col md:flex-row max-w-screen-xl gap-10">
+    <!-- Si isReversed est vrai -->
+    <div class="flex flex-col md:flex-row gap-10" v-if="isReversed">
+      <img :src="image" alt="" class="w-full md:w-1/2 object-cover" />
       <div class="flex flex-col gap-5 justify-center p-4">
-        <h1 class="text-3xl font-bold">{{ title }}</h1>
-        <h2 class="text-xl opacity-50">{{ subtitle }}</h2>
+        <h1 class="text-2xl md:text-3xl font-bold">{{ title }}</h1>
+        <h2 class="text-lg md:text-xl opacity-50">{{ subtitle }}</h2>
         <p>{{ content }}</p>
       </div>
     </div>
-    <div class="flex flex-row gap-10" v-else>
-      <div class="flex flex-col gap-5 justify-center w-1/2 p-4">
-        <h1 class="text-3xl font-bold">{{ title }}</h1>
-        <h2 class="text-xl opacity-50">{{ subtitle }}</h2>
+
+    <!-- Sinon, disposition normale -->
+    <div class="flex flex-col md:flex-row gap-10" v-else>
+      <div class="flex flex-col gap-5 justify-center w-full md:w-1/2 p-4">
+        <h1 class="text-2xl md:text-3xl font-bold">{{ title }}</h1>
+        <h2 class="text-lg md:text-xl opacity-50">{{ subtitle }}</h2>
         <p>{{ content }}</p>
       </div>
-      <img :src="image" alt="" class="w-1/2 object-cover" />
+      <img :src="image" alt="" class="w-full md:w-1/2 object-cover" />
     </div>
   </div>
 </template>
