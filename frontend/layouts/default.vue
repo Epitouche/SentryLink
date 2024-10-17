@@ -15,4 +15,3 @@ import Sidebar from "@/components/Sidebar.vue";
     </main>
   </div>
 </template>
-y

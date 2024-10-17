@@ -13,13 +13,14 @@
     "@nuxt/ui": "^2.18.7",
     "@nuxt/ui-pro": "^1.4.3",
     "3d-force-graph": "^1.73.4",
-    "force-graph": "^1.44.2",
     "d3": "^7.9.0",
+    "force-graph": "^1.44.2",
     "nuxt": "^3.13.0",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
+    "@types/aos": "^3.0.7",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13"
