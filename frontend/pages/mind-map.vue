@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h1>Mind Map</h1>
-    <PillButton link1="/mind-map" link2="/mind-map" name1="2D" name2="3D" color1="bg-red-500" color2="bg-blue-500"/>
+    <div class="justify-end items-end flex">
+      <PillButton link1="/mind-map" link2="/mind-map" name1="2D" name2="3D" color1="bg-red-500" color2="bg-blue-500"/>
+    </div>
     <Graph3D :graphData="graphData" />
     <!-- <Graph2D :graphData="graphData" /> -->
   </div>
