@@ -64,10 +64,6 @@ services:
   #   container_name: pgadmin
   #   ports:
   #     - "8081:80"
-  #   volumes:
-  #     - ./pgadmin/pgadmin4.db:/var/lib/pgadmin/pgadmin4.db
-  #     - ./pgadmin/config_local.py:/pgadmin4/config_local.py # Important
-  #     # - ./pgadmin/servers.json:/pgadmin4/servers.json
   #   environment:
   #     PGADMIN_DEFAULT_EMAIL: "user@domain.com"
   #     PGADMIN_DEFAULT_PASSWORD: "password"
