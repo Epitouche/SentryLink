@@ -25,7 +25,7 @@
             // Create the graph
             const Graph = ForceGraph3D()(this.$refs.graph)
               .graphData(this.graphData)
-              .backgroundColor('#f5f5f5')
+              .backgroundColor('#ffffff')
               .nodeLabel('name')
               .nodeAutoColorBy('group')
               .cameraPosition({ z: 200 }) // Adjust camera position if needed
