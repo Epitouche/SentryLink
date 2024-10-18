@@ -3,15 +3,14 @@ import Sidebar from "@/components/Sidebar.vue";
 </script>
 
 <template>
-  <div class="flex min-h-screen">
-    <div class="fixed h-screen flex items-center justify-center">
-      <aside class="sticky p-4">
-        <Sidebar />
-      </aside>
+  <div class="relative">
+    <aside class="fixed z-50 top-1/2 left-0 transform -translate-y-1/2 p-4">
+      <Sidebar />
+    </aside>
+    <div class="flex min-h-screen">
+      <main class="flex-1 p-4">
+        <NuxtPage />
+      </main>
     </div>
-
-    <main class="flex-1 p-4">
-      <NuxtPage />
-    </main>
   </div>
 </template>
