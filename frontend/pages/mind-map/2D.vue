@@ -1,24 +1,24 @@
 <template>
   <div>
     <div class="justify-end items-end flex">
-      <PillButton link1="/mind-map" link2="/mind-map" name1="2D" name2="3D" color1="bg-red-500" color2="bg-blue-500"/>
+      <PillButton link1="/mind-map/2D" link2="/mind-map/3D" name1="2D" name2="3D" color1="bg-red-500" color2="bg-blue-500"/>
     </div>
-    <Graph3D :graphData="graphData" />
+    <div>
+      <Graph2D :graphData="graphData" />
+    </div>
     <!-- <Graph2D :graphData="graphData" /> -->
   </div>
 </template>
 
 <script>
 import PillButton from '@/components/PillButton.vue';
-import Graph3D from '@/components/3DGraph.vue'; // Adjust the import path as needed
-// import Graph2D from '@/components/2DGraph.vue'; // Adjust the import path as needed
+import Graph2D from '@/components/2DGraph.vue'; // Adjust the import path as needed
 
 export default {
   name: 'MindMapPage',
   components: {
-    Graph3D,
     PillButton,
-    // Graph2D,
+    Graph2D,
   },
   data() {
     return {
