@@ -4,12 +4,11 @@
 	"name": "Backend",
 	"dockerComposeFile": "../../compose.dev.yaml",
 	"service": "backend",
-	"shutdownAction": "none",
+	// "shutdownAction": "none",
 	"workspaceFolder": "/workspace/backend",
 
-	"postCreateCommand": "go mod download",
-	"postStartCommand": "go run main.go",
-	// "postStartCommand": "gin --appPort 8080 --port 3000 --path /app --buildArgs --all --buildArgs -o --buildArgs /app/main --buildArgs /app/main.go --buildArgs run",
+	"postCreateCommand": "go mod download && go install github.com/codegangsta/gin@latest",
+	"postStartCommand": "gin --appPort 8000 --port 8080",
 
 	"customizations": {
 		"vscode": {
@@ -18,7 +17,9 @@
 				"golang.Go",
 				"Dhikilabs.gin-snippets",
 				"766b.go-outliner",
-				"premparihar.gotestexplorer"
+				"premparihar.gotestexplorer",
+				"Tyriar.lorem-ipsum",
+				"ZaferAYAN.lorem-picsum"
 			]
 		}
 	},

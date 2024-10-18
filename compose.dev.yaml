@@ -9,7 +9,7 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
     networks:
       - app-networks
@@ -24,30 +24,50 @@ services:
     networks:
       - app-networks
 
-  db:
-    image: postgres
-    restart: always
-    user: postgres
-    secrets:
-      - db-password
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: admin
+      DB_HOST: postgres
+    ports:
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=example
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-    expose:
-      - 5432
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     networks:
       - app-networks
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    build:
+      context: .
+      target: pgadmin
+      dockerfile: Dockerfile
+    container_name: pgadmin
+    ports:
+      - "8081:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_ENHANCED_CSFR: 'False'
+    networks:
+      - app-networks
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   db-data:
-secrets:
-  db-password:
-    file: db/password.txt
+# secrets:
+#   db-password:
+#     file: db/password.txt
 networks:
   app-networks:

@@ -4,7 +4,7 @@
 	"name": "Frontend",
 	"dockerComposeFile": "../../compose.dev.yaml",
 	"service": "frontend",
-	"shutdownAction": "none",
+	// "shutdownAction": "none",
 	"workspaceFolder": "/workspace/frontend",
 
 	"postCreateCommand": "npm install",
