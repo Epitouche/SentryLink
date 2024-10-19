@@ -16,7 +16,9 @@
 			"extensions": [
 				"bradlc.vscode-tailwindcss",
 				"hollowtree.vue-snippets",
-				"Nuxtr.nuxt-vscode-extentions"
+				"Nuxtr.nuxt-vscode-extentions",
+				"Tyriar.lorem-ipsum",
+				"ZaferAYAN.lorem-picsum"
 			]
 		}
 	},
