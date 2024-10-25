@@ -10,7 +10,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type VideoController interface {
+type LinkController interface {
 	FindAll() []schemas.Link
 	Save(ctx *gin.Context) error
 	Update(ctx *gin.Context) error
@@ -24,7 +24,7 @@ type controller struct {
 
 var validate *validator.Validate
 
-func New(service service.LinkService) VideoController {
+func New(service service.LinkService) LinkController {
 	validate = validator.New()
 	return &controller{
 		service: service,
@@ -36,16 +36,17 @@ func (c *controller) FindAll() []schemas.Link {
 }
 
 func (c *controller) Save(ctx *gin.Context) error {
-	var video schemas.Link
-	err := ctx.ShouldBindJSON(&video)
+	var link schemas.Link
+	err := ctx.ShouldBindJSON(&link)
 	if err != nil {
 		return err
 	}
-	err = validate.Struct(video)
+
+	err = validate.Struct(link)
 	if err != nil {
 		return err
 	}
-	c.service.Save(video)
+	c.service.Save(link)
 	return nil
 }
 
@@ -84,8 +85,8 @@ func (c *controller) Delete(ctx *gin.Context) error {
 func (c *controller) ShowAll(ctx *gin.Context) {
 	links := c.service.FindAll()
 	data := gin.H{
-		"title":  "Link Page",
-		"videos": links,
+		"title": "Link Page",
+		"links": links,
 	}
 	ctx.HTML(http.StatusOK, "index.html", data)
 }

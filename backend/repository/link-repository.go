@@ -18,15 +18,20 @@ type database struct {
 	connection *gorm.DB
 }
 
-func NewLinkRepository(db *gorm.DB) LinkRepository {
-	dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func NewLinkRepository() LinkRepository {
+	dsn := "host=postgres user=admin password=password dbname=mydatabase port=5432 sslmode=disable TimeZone=Europe/Paris"
+	conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&schemas.Link{}, &schemas.LinkInfo{})
+	// err = conn.AutoMigrate(&schemas.Link{}, &schemas.LinkInfo{})
+	err = conn.AutoMigrate(&schemas.LinkUrl{}, &schemas.Link{})
+	if err != nil {
+		panic("failed to migrate database")
+	}
+	println("Connection to database established")
 	return &database{
-		connection: db,
+		connection: conn,
 	}
 }
 
