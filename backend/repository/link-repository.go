@@ -49,6 +49,7 @@ func (db *database) Delete(video schemas.Link) {
 
 func (db *database) FindAll() []schemas.Link {
 	var links []schemas.Link
-	db.connection.Set("gorm:auto_preload", true).Find(&links)
+	db.connection = db.connection.Debug() // Enable debugging
+	db.connection.Preload("UrlId").Find(&links)
 	return links
 }
