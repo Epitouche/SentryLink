@@ -7,7 +7,7 @@
 	// "shutdownAction": "none",
 	"workspaceFolder": "/workspace/frontend",
 
-	"postCreateCommand": "npm install",
+	"postCreateCommand": "sudo chown node -R /home/node/.zinit && sudo chown node -R /home/node/.zsh_history && sudo chown node -R /home/node/.ssh && npm install",
 	"postStartCommand": "npx nuxt dev",
 
 	"customizations": {
