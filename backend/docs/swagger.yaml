@@ -1,0 +1,174 @@
+definitions:
+  api.LinkApi:
+    type: object
+  schemas.JWT:
+    properties:
+      token:
+        type: string
+    type: object
+  schemas.Response:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/token:
+    post:
+      description: Authenticates a user and provides a JWT to Authorize API calls
+      operationId: Authentication
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      summary: Provides a JSON Web Token
+  /videos:
+    get:
+      consumes:
+      - application/json
+      description: Get all the existing videos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.LinkApi'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - bearerAuth: []
+      summary: List existing videos
+      tags:
+      - videos
+      - list
+    post:
+      consumes:
+      - application/json
+      description: Create a new video
+      parameters:
+      - description: Create video
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/api.LinkApi'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - bearerAuth: []
+      summary: Create new videos
+      tags:
+      - videos
+      - create
+  /videos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a single video
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - bearerAuth: []
+      - bearerAuth: []
+      summary: Remove videos
+      tags:
+      - videos
+    put:
+      consumes:
+      - application/json
+      description: Update a single video
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update video
+        in: body
+        name: video
+        required: true
+        schema:
+          $ref: '#/definitions/api.LinkApi'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - bearerAuth: []
+      - bearerAuth: []
+      summary: Update videos
+      tags:
+      - videos
+securityDefinitions:
+  bearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
