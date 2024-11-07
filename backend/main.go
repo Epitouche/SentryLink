@@ -12,8 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var db = make(map[string]string)
-
 func setupRouter() *gin.Engine {
 	router := gin.Default()
 
@@ -57,5 +55,8 @@ func setupRouter() *gin.Engine {
 func main() {
 	router := setupRouter()
 	// Listen and Server in 0.0.0.0:8000
-	router.Run(":8000")
+	err := router.Run(":8000")
+	if err != nil {
+		panic("Error when running the server")
+	}
 }

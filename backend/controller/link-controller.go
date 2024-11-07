@@ -46,7 +46,10 @@ func (c *controller) Save(ctx *gin.Context) error {
 	if err != nil {
 		return err
 	}
-	c.service.Save(link)
+	err = c.service.Save(link)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -78,7 +81,10 @@ func (c *controller) Delete(ctx *gin.Context) error {
 		return err
 	}
 	link.Id = id
-	c.service.Delete(link)
+	err = c.service.Delete(link)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
