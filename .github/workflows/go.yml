@@ -14,7 +14,7 @@ on:
 jobs:
 
   build:
-    runs-on: [self-hosted]
+    runs-on: [self-hosted, Linux]
     container:
       image: golang:1.20
     steps:
