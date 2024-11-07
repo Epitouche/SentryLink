@@ -31,8 +31,12 @@ jobs:
       - name: Build
         run: go build -buildvcs=false
 
+      - name: install Golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0  -buildvcs=false
+
       - name: Golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0  -buildvcs=false && golangci-lint run
+        run: golangci-lint run
+
 
       - name: Test
         run: go test -buildvcs=false
