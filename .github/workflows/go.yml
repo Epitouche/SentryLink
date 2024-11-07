@@ -12,7 +12,6 @@ on:
       - " ga-ignore-"
 
 jobs:
-
   build:
     runs-on: [self-hosted, Linux]
     container:
@@ -21,19 +20,19 @@ jobs:
       run:
         working-directory: ./backend
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: change directory
-      run: pwd
+      - name: change directory
+        run: pwd
 
-    - name: Setup go
-      run: go mod download
+      - name: Setup go
+        run: go mod download
 
-    - name: Build
-      run: go build -buildvcs=false
+      - name: Build
+        run: go build -buildvcs=false
 
-    - name: Golangci-lint
-      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0 && golangci-lint run
+      - name: Golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0  -buildvcs=false && golangci-lint run
 
-    - name: Test
-      run: go test -buildvcs=false
+      - name: Test
+        run: go test -buildvcs=false
