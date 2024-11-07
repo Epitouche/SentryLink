@@ -20,8 +20,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup go
-      run: go mod init
+    - name: change directory
+      run: cd backend
 
     - name: Setup go
       run: go mod download
