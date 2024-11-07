@@ -14,7 +14,7 @@ defaults:
 
 jobs:
   detect-modules:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       modules: ${{ steps.set-modules.outputs.modules }}
     steps:
@@ -27,7 +27,7 @@ jobs:
 
   golangci-lint:
     needs: detect-modules
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
