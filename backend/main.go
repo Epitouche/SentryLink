@@ -15,8 +15,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-var db = make(map[string]string)
-
 func setupRouter() *gin.Engine {
 
 	docs.SwaggerInfo.Title = "SentryLink API"
