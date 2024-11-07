@@ -8,6 +8,10 @@ env:
   GO_VERSION: stable
   GOLANGCI_LINT_VERSION: v1.60
 
+defaults:
+  run:
+    working-directory:  ./backend
+
 jobs:
   detect-modules:
     runs-on: ubuntu-latest
