@@ -1,0 +1,28 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+	"name": "Frontend",
+	"dockerComposeFile": "../../compose.dev.yaml",
+	"service": "frontend",
+	// "shutdownAction": "none",
+	"workspaceFolder": "/workspace/frontend",
+
+	"postCreateCommand": "npm install",
+	"postStartCommand": "npx nuxt dev",
+
+	"customizations": {
+		"vscode": {
+			"settings": {},
+			"extensions": [
+				"bradlc.vscode-tailwindcss",
+				"hollowtree.vue-snippets",
+				"Nuxtr.nuxt-vscode-extentions"
+			]
+		}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		3000
+	]
+}

@@ -1,0 +1,73 @@
+services:
+  backend:
+    image: mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
+    volumes:
+      - .:/workspace:cached
+    command: sleep infinity
+    # links:
+    #   - frontend
+    ports:
+      - 8080:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-networks
+
+  frontend:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+    volumes:
+      - .:/workspace:cached
+    command: sleep infinity
+    ports:
+      - 3000:3000
+    networks:
+      - app-networks
+
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: admin
+      DB_HOST: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-networks
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    build:
+      context: .
+      target: pgadmin
+      dockerfile: Dockerfile
+    container_name: pgadmin
+    ports:
+      - "8081:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_ENHANCED_CSFR: 'False'
+    networks:
+      - app-networks
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  db-data:
+# secrets:
+#   db-password:
+#     file: db/password.txt
+networks:
+  app-networks:

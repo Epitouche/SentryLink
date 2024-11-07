@@ -13,49 +13,72 @@ services:
     build:
       context: backend
       target: final
+      dockerfile: Dockerfile
     ports:
-      - 8080:8080
-
+      - 8080:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-networks
 
   frontend:
     container_name: frontend
     build:
       context: frontend
+      target: final
+      dockerfile: Dockerfile
     environment:
       NODE_ENV: production
     ports:
       - 3000:3000
       - 3001:3001
+    networks:
+      - app-networks
 
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: admin
+      DB_HOST: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-networks
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # pgadmin:
+  #   build:
+  #     context: .
+  #     target: pgadmin
+  #     dockerfile: Dockerfile
+  #   container_name: pgadmin
+  #   ports:
+  #     - "8081:80"
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: "user@domain.com"
+  #     PGADMIN_DEFAULT_PASSWORD: "password"
+  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
+  #     PGADMIN_CONFIG_ENHANCED_CSFR: 'False'
+  #   networks:
+  #     - app-networks
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+
+volumes:
+  db-data:
 # secrets:
 #   db-password:
 #     file: db/password.txt
+networks:
+  app-networks:

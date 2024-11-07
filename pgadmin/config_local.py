@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+CSRF_ENABLED = False
+CSRF_SESSION_KEY = "2bb9ef6f0efe470816d1514c6db9e5f1eaf0b9a73db572744b6c952db5443c48"
+WTF_CSRF_ENABLED = False

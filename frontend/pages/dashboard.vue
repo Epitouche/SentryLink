@@ -47,7 +47,7 @@ const columns = ref([
     { key: 'name', label: 'Name', sortable: true },
     { key: 'error', label: 'Value', sortable: true },
     { key: 'ping', label: 'Ping', sortable: true },
-    { key: 'nbPageLink', label: 'Number', sortable: true }
+    { key: 'nbPageLink', label: 'Number', sortable: true },
 ]);
 
 const linkSearch = ref('');
@@ -180,10 +180,11 @@ const handleFormSubmit = handleSubmit(onSubmit);
             <div name="last-project-container" class="flex flex-col gap-2">
                 <div name="link-search" class="flex justify-end px-2">
                     <UInput v-model="linkSearch" placeholder="Filter links..." color="white" variant="none" size="xl"
-                        icon="bytesize:search" :trailing="true" class="w-1/4 border-2 border-black rounded-2xl" />
+                        icon="bytesize:search" :trailing="true" class="w-1/4 border-2 border-black rounded-2xl p-1" />
                 </div>
-                <div name="table" class="scrollable border-2 border-black rounded-2xl">
-                    <UTable v-model="selected" :columns="columns" :rows="filteredRows" @select="select">
+
+                <div name="table" class="fixed border-2 border-black rounded-2xl">
+                    <UTable v-model="selected" :columns="columns" :rows="filteredRows" :ui="{ default: { sortButton: { color: 'black' } } , thead: 'fixed z-10 border-b-2 border-black bg-red-500', th: { padding: 'py-6' }, td: { color: 'text-black', size: 'text-md' } }" @select="select" class="UTable"> <!-- sticky top-0 z-10 -->
                         <template #name-data="{ row }">
                             <div class="flex flex-row gap-2">
                                 <UAvatar :src="row.image" alt="image" />
@@ -201,9 +202,14 @@ const handleFormSubmit = handleSubmit(onSubmit);
 </template>
 
 <style scoped>
-.scrollable {
+.UTable {
     /* flex: 1; */
     max-height: 40vh;
     overflow-y: auto;
+}
+
+::v-deep .UTable th button span {
+    color: black;
+    font-size: large;
 }
 </style>

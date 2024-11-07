@@ -3,21 +3,14 @@ import Sidebar from "@/components/Sidebar.vue";
 </script>
 
 <template>
-  <div class="flex min-h-screen">
-    <!-- Conteneur pour gérer le comportement sticky -->
-    <div class="relative">
-      <!-- Sidebar sticky à 50% de la vue -->
-      <aside class="sticky top-[40vh] p-4">
-        <Sidebar />
-      </aside>
+  <div class="relative">
+    <aside class="fixed z-50 top-1/2 left-0 transform -translate-y-1/2 p-4">
+      <Sidebar />
+    </aside>
+    <div class="flex min-h-screen">
+      <main class="flex-1 p-4">
+        <NuxtPage />
+      </main>
     </div>
-
-    <!-- Contenu de la page -->
-    <main class="flex-1 p-4 overflow-auto">
-      <NuxtPage />
-      <!-- Contenu long pour activer le scroll -->
-      <div class="h-[200vh]">
-      </div>
-    </main>
   </div>
 </template>

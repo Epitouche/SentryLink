@@ -4,7 +4,7 @@
   
   <script>
   export default {
-    name: '3DGraph',
+    name: '2DGraph',
     props: {
       graphData: {
         type: Object,
@@ -12,20 +12,20 @@
       },
     },
     mounted() {
-      this.create3DGraph();
+      this.create2DGraph();
     },
     methods: {
-      async create3DGraph() {
+      async create2DGraph() {
         // Check if running in the client environment
         if (process.client) {
           try {
             // Dynamically import the library
-            const ForceGraph3D = (await import('3d-force-graph')).default;
+            const ForceGraph2D = (await import('force-graph')).default;
   
             // Create the graph
-            const Graph = ForceGraph3D()(this.$refs.graph)
+            const Graph = ForceGraph2D()(this.$refs.graph)
               .graphData(this.graphData)
-              .backgroundColor('#ffffff')
+              .backgroundColor('#f5f5f5')
               .nodeLabel('name')
               .nodeAutoColorBy('group')
               .cameraPosition({ z: 200 }) // Adjust camera position if needed
