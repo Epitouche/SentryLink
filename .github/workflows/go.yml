@@ -1,39 +1,39 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
-name: Go backend
+name: golangci-lint
 
 on:
-  push:
-    branches-ignore:
-      - " ga-ignore-"
   pull_request:
-    branches-ignore:
-      - " ga-ignore-"
+  push:
+
+env:
+  GO_VERSION: stable
+  GOLANGCI_LINT_VERSION: v1.60
 
 jobs:
-  build:
-    runs-on: [self-hosted, Linux]
-    container:
-      image: golang:1.22
-    defaults:
-      run:
-        working-directory: ./backend
+  detect-modules:
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.set-modules.outputs.modules }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - id: set-modules
+        run: echo "modules=$(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')" >> $GITHUB_OUTPUT
 
-      - name: Setup go
-        run: go mod download
-
-      - name: Build
-        run: go build -buildvcs=false
-
-      - name: install Golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
-
-      - name: Golangci-lint
-        run: golangci-lint run
-
-
-      - name: Test
-        run: go test -buildvcs=false
+  golangci-lint:
+    needs: detect-modules
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: golangci-lint ${{ matrix.modules }}
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          working-directory: ${{ matrix.modules }}
