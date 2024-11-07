@@ -12,7 +12,9 @@
 
 	"customizations": {
 		"vscode": {
-			"settings": {},
+			"settings": {
+				"editor.formatOnSave": true
+			},
 			"extensions": [
 				"bradlc.vscode-tailwindcss",
 				"hollowtree.vue-snippets",
