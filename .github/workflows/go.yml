@@ -22,21 +22,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: change directory
-        run: pwd
+      - name: set environment variables
+        run: export GOFLAGS="-buildvcs=false"
 
       - name: Setup go
         run: go mod download
 
       - name: Build
-        run: go build -buildvcs=false
+        run: go build
 
       - name: install Golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0  -buildvcs=false
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
 
       - name: Golangci-lint
         run: golangci-lint run
 
 
       - name: Test
-        run: go test -buildvcs=false
+        run: go test
