@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-import AOS from "aos";
-import "aos/dist/aos.css";
-
-onMounted(() => {
-  AOS.init();
-});
 
 const props = defineProps<{
   title: string;
@@ -17,7 +11,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row max-w-screen-xl gap-10 " data-aos="fade-up">
+  <div class="flex flex-col md:flex-row max-w-screen-xl gap-10 ">
     <div class="flex flex-col md:flex-row gap-10" v-if="isReversed">
       <img :src="image" alt="" class="w-full md:w-1/2 object-cover" />
       <div class="flex flex-col gap-5 justify-center p-4">

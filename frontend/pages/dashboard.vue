@@ -150,21 +150,21 @@ const handleFormSubmit = handleSubmit(onSubmit);
         <div name="header" class="flex flex-row justify-between items-center px-20">
             <h1 class="text-8xl font-[750]">Hello, Name</h1>
             <div name="new-project-button-and-form">
-                <UPopover overlay v-model:open="popoverState">
-                    <UButton color="blue" label="New Project" icon="bytesize:plus" />
+                <UPopover overlay v-model:open="popoverState" :popper="{ placement: 'auto', offsetDistance: 500, offsetSkid: 500 }" class="UPopover">
+                    <UButton color="blue" label="Project" icon="bytesize:plus" class="px-4 py-2 text-xl font-medium"/>
                     <template #panel>
-                        <UForm :state="state" @submit="handleFormSubmit" class="">
-                            <UFormGroup label="Project Name" name="name">
-                                <UInput v-model="name" placeholder="Enter project name" />
+                        <UForm :state="state" @submit="handleFormSubmit" class="flex flex-col gap-10 p-10 pt-14">
+                            <UFormGroup label="Project Name" name="name" class="UFormGroup">
+                                <UInput v-model="name" placeholder="Enter project name" size="xl" class="UInput" />
                                 <span v-if="nameError" class="text-red-600">{{ nameError }}</span>
                             </UFormGroup>
 
-                            <UFormGroup label="Project Info" name="info">
-                                <UInput v-model="info" placeholder="Enter project info" />
+                            <UFormGroup label="Project Info" name="info" class="UFormGroup">
+                                <UInput v-model="info" placeholder="Enter project info" size="xl" class="UInput" />
                                 <span v-if="infoError" class="text-red-600">{{ infoError }}</span>
                             </UFormGroup>
 
-                            <UButton type="submit">Submit</UButton>
+                            <UButton type="submit" class="w-auto text-2xl self-end px-5 py-2">Submit</UButton>
                         </UForm>
                     </template>
                 </UPopover>
@@ -177,14 +177,17 @@ const handleFormSubmit = handleSubmit(onSubmit);
 
         <div name="last-project" class="flex flex-col gap-3">
             <h2 class="text-8xl font-[750] px-20">Last Project: {{ lastProject.name }}</h2>
-            <div name="last-project-container" class="flex flex-col gap-2">
+            <div name="last-project-container" class="flex flex-col gap-5">
                 <div name="link-search" class="flex justify-end px-2">
                     <UInput v-model="linkSearch" placeholder="Filter links..." color="white" variant="none" size="xl"
                         icon="bytesize:search" :trailing="true" class="w-1/4 border-2 border-black rounded-2xl p-1" />
                 </div>
-
-                <div name="table" class="fixed border-2 border-black rounded-2xl">
-                    <UTable v-model="selected" :columns="columns" :rows="filteredRows" :ui="{ default: { sortButton: { color: 'black' } } , thead: 'fixed z-10 border-b-2 border-black bg-red-500', th: { padding: 'py-6' }, td: { color: 'text-black', size: 'text-md' } }" @select="select" class="UTable"> <!-- sticky top-0 z-10 -->
+                <!-- <div name="table" class="fixed border-2 border-black rounded-2xl"> -->
+                <div name="table" class="border-2 border-black rounded-2xl">
+                    <!-- <UTable v-model="selected" :columns="columns" :rows="filteredRows" :ui="{ default: { sortButton: { color: 'black' } } , thead: 'fixed z-10 border-b-2 border-black bg-red-500', th: { padding: 'py-6' }, td: { color: 'text-black', size: 'text-md' } }" @select="select" class="UTable"> sticky top-0 z-10 -->
+                    <UTable v-model="selected" :columns="columns" :rows="filteredRows"
+                        :ui="{ default: { sortButton: { color: 'black' } }, thead: 'border-b-2 border-black', th: { padding: 'py-6' }, td: { color: 'text-black', size: 'text-md' } }"
+                        @select="select" class="UTable"> <!-- sticky top-0 z-10 -->
                         <template #name-data="{ row }">
                             <div class="flex flex-row gap-2">
                                 <UAvatar :src="row.image" alt="image" />
@@ -204,12 +207,30 @@ const handleFormSubmit = handleSubmit(onSubmit);
 <style scoped>
 .UTable {
     /* flex: 1; */
-    max-height: 40vh;
+    max-height: 45vh;
     overflow-y: auto;
 }
 
 ::v-deep .UTable th button span {
     color: black;
     font-size: large;
+}
+
+::v-deep .UPopover div.z-50.group {
+    /* background-color: red; */
+    width: 40%;
+    /* height: 50%; */
+}
+
+::v-deep .UFormGroup label {
+    font-size: 1.5rem;
+}
+
+::v-deep .UInput {
+    padding-top: 0.5rem;
+}
+
+::v-deep .UInput ::placeholder {
+    font-size: 1.4rem;
 }
 </style>

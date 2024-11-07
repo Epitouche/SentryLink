@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import AOS from "aos";
-import "aos/dist/aos.css";
+// import AOS from "aos";
+// import "aos/dist/aos.css";
 
-onMounted(() => {
-  AOS.init();
-});
+// onMounted(() => {
+//   AOS.init();
+// });
 </script>
 <template>
   <div
     class="flex flex-col w-20 h-min p-4 bg-white shadow-md border-2 rounded-3xl border-gray-200 dark:bg-cprimary-dark dark:text-white dark:border-cprimary-dark"
-    data-aos="fade-right"
+
   >
+  <!-- data-aos="fade-up" -->
     <ul class="flex flex-col items-center h-full">
       <li>
         <u-link
