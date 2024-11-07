@@ -22,14 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: set environment variables
-        run: export GOFLAGS="-buildvcs=false"
-
       - name: Setup go
         run: go mod download
 
       - name: Build
-        run: go build
+        run: go build -buildvcs=false
 
       - name: install Golangci-lint
         run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
@@ -39,4 +36,4 @@ jobs:
 
 
       - name: Test
-        run: go test
+        run: go test -buildvcs=false
