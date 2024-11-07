@@ -23,6 +23,9 @@ jobs:
     - name: change directory
       run: cd backend
 
+    - name: change directory
+      run: pwd
+
     - name: Setup go
       run: go mod download
 
