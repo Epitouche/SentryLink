@@ -31,8 +31,8 @@ func NewLinkAPI(loginController controller.LoginController,
 // @Produce json
 // @Param username formData string true "Username"
 // @Param password formData string true "Password"
-// @Success 200 {object} dto.JWT
-// @Failure 401 {object} dto.Response
+// @Success 200 {object} schemas.JWT
+// @Failure 401 {object} schemas.Response
 // @Router /auth/token [post]
 func (api *LinkApi) Authenticate(ctx *gin.Context) {
 	token := api.loginController.Login(ctx)
@@ -54,8 +54,8 @@ func (api *LinkApi) Authenticate(ctx *gin.Context) {
 // @Tags videos,list
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} entity.Video
-// @Failure 401 {object} dto.Response
+// @Success 200 {array} api.LinkApi
+// @Failure 401 {object} schemas.Response
 // @Router /videos [get]
 func (api *LinkApi) GetLink(ctx *gin.Context) {
 	ctx.JSON(200, api.linkController.FindAll())
@@ -68,10 +68,10 @@ func (api *LinkApi) GetLink(ctx *gin.Context) {
 // @Tags videos,create
 // @Accept  json
 // @Produce  json
-// @Param video body entity.Video true "Create video"
-// @Success 200 {object} dto.Response
-// @Failure 400 {object} dto.Response
-// @Failure 401 {object} dto.Response
+// @Param video body api.LinkApi true "Create video"
+// @Success 200 {object} schemas.Response
+// @Failure 400 {object} schemas.Response
+// @Failure 401 {object} schemas.Response
 // @Router /videos [post]
 func (api *LinkApi) CreateLink(ctx *gin.Context) {
 	err := api.linkController.Save(ctx)
@@ -95,10 +95,10 @@ func (api *LinkApi) CreateLink(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param  id path int true "Video ID"
-// @Param video body entity.Video true "Update video"
-// @Success 200 {object} dto.Response
-// @Failure 400 {object} dto.Response
-// @Failure 401 {object} dto.Response
+// @Param video body api.LinkApi true "Update video"
+// @Success 200 {object} schemas.Response
+// @Failure 400 {object} schemas.Response
+// @Failure 401 {object} schemas.Response
 // @Router /videos/{id} [put]
 func (api *LinkApi) UpdateLink(ctx *gin.Context) {
 	err := api.linkController.Update(ctx)
@@ -122,9 +122,9 @@ func (api *LinkApi) UpdateLink(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param  id path int true "Video ID"
-// @Success 200 {object} dto.Response
-// @Failure 400 {object} dto.Response
-// @Failure 401 {object} dto.Response
+// @Success 200 {object} schemas.Response
+// @Failure 400 {object} schemas.Response
+// @Failure 401 {object} schemas.Response
 // @Router /videos/{id} [delete]
 func (api *LinkApi) DeleteLink(ctx *gin.Context) {
 	err := api.linkController.Delete(ctx)
