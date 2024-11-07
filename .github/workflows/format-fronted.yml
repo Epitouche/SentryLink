@@ -1,0 +1,29 @@
+name: format frontend
+
+on:
+  pull_request:
+  push:
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+jobs:
+  run-front-lint:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          prettier: true

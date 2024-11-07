@@ -1,4 +1,4 @@
-name: golangci-lint
+name: format backend
 
 on:
   pull_request:
