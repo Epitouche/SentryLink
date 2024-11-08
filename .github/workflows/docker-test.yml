@@ -9,9 +9,23 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          clean: true
+
+      - run: whoami
+
+      - run: pwd
 
       - name: Run build
         run: docker compose up --build -d
 
       - name: Run tests
         run: docker compose down
+
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
