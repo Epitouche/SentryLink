@@ -17,7 +17,8 @@
 				"golang.Go",
 				"Dhikilabs.gin-snippets",
 				"766b.go-outliner",
-				"premparihar.gotestexplorer"
+				"premparihar.gotestexplorer",
+				"saxon-chuang.go-imports-sorter"
 			]
 		}
 	},

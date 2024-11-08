@@ -3,9 +3,10 @@ package api
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/Tom-Mendy/SentryLink/controller"
 	"github.com/Tom-Mendy/SentryLink/schemas"
-	"github.com/gin-gonic/gin"
 )
 
 type LinkApi struct {

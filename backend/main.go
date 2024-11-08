@@ -6,17 +6,17 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
+	"github.com/subosito/gotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"github.com/Tom-Mendy/SentryLink/api"
 	"github.com/Tom-Mendy/SentryLink/controller"
 	"github.com/Tom-Mendy/SentryLink/docs"
 	"github.com/Tom-Mendy/SentryLink/middlewares"
 	"github.com/Tom-Mendy/SentryLink/repository"
 	"github.com/Tom-Mendy/SentryLink/service"
-	"github.com/gin-gonic/gin"
-	"github.com/subosito/gotenv"
-
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Generate a random CSRF token

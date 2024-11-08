@@ -6,7 +6,7 @@ import (
 )
 
 type UrlsFetched struct {
-	mu sync.Mutex
+	mu      sync.Mutex
 	fetched map[string]bool
 }
 

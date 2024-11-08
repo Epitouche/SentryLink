@@ -15,7 +15,6 @@ type result struct {
 
 type fetcherService map[string]*result
 
-
 func (f fetcherService) Fetch(url string) (string, []string, error) {
 	if res, ok := f[url]; ok {
 		return res.body, res.urls, nil
