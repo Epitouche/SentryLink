@@ -64,7 +64,7 @@ func setupRouter() *gin.Engine {
 	docs.SwaggerInfo.Title = "SentryLink API"
 	docs.SwaggerInfo.Description = "SentryLink - Crawler API"
 	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:5000"
+	docs.SwaggerInfo.Host = "localhost:8080"
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
