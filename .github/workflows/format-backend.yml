@@ -48,7 +48,7 @@ jobs:
             fetch-depth: 0
             clean: true
 
-      - name: golangci-lint
+      - name: move .git to backend
         run: mv .git ./backend
 
       - name: golangci-lint

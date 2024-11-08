@@ -33,7 +33,7 @@ jobs:
         run: npm install -y eslint
 
       - name: eslint
-        run: eslint .
+        run: npx eslint .
       # - name: Run linters
       #   uses: wearerequired/lint-action@v2
       #   with:
