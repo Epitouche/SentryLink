@@ -11,21 +11,26 @@ defaults:
 jobs:
   run-front-lint:
     runs-on: self-hosted
+    container:
+      image: pipelinecomponents/eslint:latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 20
+      - name: eslint
+        run: eslint .
 
-      - name: Install Node.js dependencies
-        run: npm ci
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: 20
 
-      - name: Install Node.js dependencies
-        run: npm install -y eslint
+      # - name: Install Node.js dependencies
+      #   run: npm ci
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
+      # - name: Install Node.js dependencies
+      #   run: npm install -y eslint
+
+      # - name: Run linters
+      #   uses: wearerequired/lint-action@v2
+      #   with:
+      #     eslint: true
