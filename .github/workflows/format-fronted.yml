@@ -11,8 +11,6 @@ defaults:
 jobs:
   run-front-lint:
     runs-on: self-hosted
-    container:
-      image: node:latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
