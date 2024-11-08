@@ -26,6 +26,8 @@ jobs:
       #   with:
       #     node-version: 20
 
+      - run: whoami
+
       - name: Install Node.js dependencies
         run: npm ci
 
