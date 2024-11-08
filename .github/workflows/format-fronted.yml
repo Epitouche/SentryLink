@@ -12,24 +12,25 @@ jobs:
   run-front-lint:
     runs-on: self-hosted
     container:
-      image: pipelinecomponents/eslint:latest
+      image: node:latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
-      - name: eslint
-        run: eslint .
 
       # - name: Set up Node.js
       #   uses: actions/setup-node@v1
       #   with:
       #     node-version: 20
 
-      # - name: Install Node.js dependencies
-      #   run: npm ci
+      - name: Install Node.js dependencies
+        run: npm ci
 
-      # - name: Install Node.js dependencies
-      #   run: npm install -y eslint
+      - name: Install Node.js dependencies
+        run: npm install -y eslint
 
+      - name: eslint
+        run: eslint .
       # - name: Run linters
       #   uses: wearerequired/lint-action@v2
       #   with:
