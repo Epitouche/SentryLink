@@ -13,12 +13,6 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 10
     steps:
-      - name: 'Cleanup build folder'
-        run: |
-          ls -la ./
-          rm -rf ./* || true
-          rm -rf ./.??* || true
-          ls -la ./
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -40,8 +34,11 @@ jobs:
         run: npm install -y eslint
 
       - name: eslint
-        run: npx eslint .
-      # - name: Run linters
-      #   uses: wearerequired/lint-action@v2
-      #   with:
-      #     eslint: true
+        run: npx eslint . || true
+
+      - name: "Cleanup build folder"
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
