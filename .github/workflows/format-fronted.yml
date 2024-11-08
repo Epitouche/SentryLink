@@ -20,13 +20,14 @@ jobs:
           fetch-depth: 0
           clean: true
 
-
       # - name: Set up Node.js
       #   uses: actions/setup-node@v1
       #   with:
       #     node-version: 20
 
       - run: whoami
+
+      - run: pwd
 
       - name: Install Node.js dependencies
         run: npm ci
