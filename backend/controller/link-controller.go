@@ -71,7 +71,11 @@ func (c *controller) Update(ctx *gin.Context) error {
 	if err != nil {
 		return err
 	}
-	c.service.Update(link)
+
+	err = c.service.Update(link)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
