@@ -10,8 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-              fetch-depth: 0
-              clean: true
+          fetch-depth: 0
+          clean: true
+
+      - run: whoami
 
       - name: Run build
         run: docker compose up --build -d

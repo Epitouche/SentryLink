@@ -48,6 +48,8 @@ jobs:
             fetch-depth: 0
             clean: true
 
+      - run: whoami
+
       - name: golangci-lint
         working-directory:  ./backend
         run: golangci-lint run -buildvcs=false
