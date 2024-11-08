@@ -1,7 +1,10 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"net/http"
+	"os"
 
 	"github.com/Tom-Mendy/SentryLink/api"
 	"github.com/Tom-Mendy/SentryLink/controller"
@@ -10,10 +13,51 @@ import (
 	"github.com/Tom-Mendy/SentryLink/repository"
 	"github.com/Tom-Mendy/SentryLink/service"
 	"github.com/gin-gonic/gin"
+	"github.com/subosito/gotenv"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+// Generate a random CSRF token
+func generateCSRFToken() (string, error) {
+	bytes := make([]byte, 16)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
+
+func redirectToGithub(c *gin.Context) {
+
+	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	if clientID == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "GITHUB_CLIENT_ID is not set"})
+		return
+	}
+	// Generate the CSRF token
+	state, err := generateCSRFToken()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate CSRF token"})
+		return
+	}
+
+	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
+	c.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
+
+	// Construct the GitHub authorization URL
+	redirectURI := "http://localhost:" + os.Getenv("APP_PORT") + "/integrations/github/oauth2/callback"
+	authURL := "https://github.com/login/oauth/authorize" +
+		"?client_id=" + clientID +
+		"&response_type=code" +
+		"&scope=repo" +
+		"&redirect_uri=" + redirectURI +
+		"&state=" + state
+
+	// Redirect to GitHub's OAuth page
+	c.Redirect(http.StatusFound, authURL)
+}
 
 func setupRouter() *gin.Engine {
 
@@ -61,7 +105,16 @@ func setupRouter() *gin.Engine {
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	router.GET("/auth/github", redirectToGithub)
+
 	return router
+}
+
+func init() {
+	err := gotenv.Load()
+	if err != nil {
+		panic("Error loading .env file")
+	}
 }
 
 // @securityDefinitions.apiKey bearerAuth
