@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"github.com/Tom-Mendy/SentryLink/schemas"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/Tom-Mendy/SentryLink/schemas"
 )
 
 type LinkRepository interface {
