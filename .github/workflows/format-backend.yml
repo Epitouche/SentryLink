@@ -15,8 +15,6 @@ defaults:
 jobs:
   detect-modules:
     runs-on: self-hosted
-    container:
-      image: ubuntu
     outputs:
       modules: ${{ steps.set-modules.outputs.modules }}
     steps:
@@ -28,18 +26,9 @@ jobs:
       - id: set-modules
         run: echo "modules=$(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')" >> $GITHUB_OUTPUT
 
-      - name: "Cleanup build folder"
-        run: |
-          ls -la ./
-          rm -rf ./* || true
-          rm -rf ./.??* || true
-          ls -la ./
-
   golangci-lint:
     needs: detect-modules
     runs-on: self-hosted
-    container:
-      image: ubuntu
     strategy:
       matrix:
         modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
@@ -55,10 +44,3 @@ jobs:
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           working-directory: ${{ matrix.modules }}
-
-      - name: "Cleanup build folder"
-        run: |
-          ls -la ./
-          rm -rf ./* || true
-          rm -rf ./.??* || true
-          ls -la ./
