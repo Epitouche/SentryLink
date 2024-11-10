@@ -27,4 +27,4 @@ jobs:
         run: npm install -y eslint
 
       - name: eslint
-        run: npx eslint . || true
+        run: npx eslint .
