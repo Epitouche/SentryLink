@@ -14,18 +14,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          fetch-depth: 0
-          clean: true
-
-      # - name: Set up Node.js
-      #   uses: actions/setup-node@v1
-      #   with:
-      #     node-version: 20
-
-      - run: whoami
-
-      - run: pwd
+          node-version: '20'
 
       - name: Install Node.js dependencies
         run: npm ci
@@ -34,11 +27,4 @@ jobs:
         run: npm install -y eslint
 
       - name: eslint
-        run: npx eslint . || true
-
-      - name: "Cleanup build folder"
-        run: |
-          ls -la ./
-          rm -rf ./* || true
-          rm -rf ./.??* || true
-          ls -la ./
+        run: npx eslint .
