@@ -10,15 +10,17 @@ import (
 )
 
 type LinkApi struct {
-	loginController controller.LoginController
-	linkController  controller.LinkController
+	loginController       controller.LoginController
+	linkController        controller.LinkController
+	githubTokenController controller.GithubTokenController
 }
 
 func NewLinkAPI(loginController controller.LoginController,
-	linkController controller.LinkController) *LinkApi {
+	linkController controller.LinkController, githubTokenController controller.GithubTokenController) *LinkApi {
 	return &LinkApi{
-		loginController: loginController,
-		linkController:  linkController,
+		loginController:       loginController,
+		linkController:        linkController,
+		githubTokenController: githubTokenController,
 	}
 }
 

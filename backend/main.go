@@ -19,6 +19,7 @@ import (
 	"github.com/Tom-Mendy/SentryLink/docs"
 	"github.com/Tom-Mendy/SentryLink/middlewares"
 	"github.com/Tom-Mendy/SentryLink/repository"
+	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
 )
 
@@ -63,18 +64,12 @@ func redirectToGithub(c *gin.Context) {
 	c.Redirect(http.StatusFound, authURL)
 }
 
-type GitHubTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	Scope       string `json:"scope"`
-	TokenType   string `json:"token_type"`
-}
-
-func getGithubAccessToken(code string) (GitHubTokenResponse, error) {
+func getGithubAccessToken(code string) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	clientSecret := os.Getenv("GITHUB_SECRET")
 	appPort := os.Getenv("APP_PORT")
 	if clientID == "" || clientSecret == "" || appPort == "" {
-		return GitHubTokenResponse{}, errors.New("GITHUB_CLIENT_ID or GITHUB_SECRET or APP_PORT is not set")
+		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_CLIENT_ID or GITHUB_SECRET or APP_PORT is not set")
 	}
 	redirectURI := "http://localhost:" + appPort + "/auth/github/callback"
 
@@ -88,7 +83,7 @@ func getGithubAccessToken(code string) (GitHubTokenResponse, error) {
 
 	req, err := http.NewRequest("POST", apiURL, nil)
 	if err != nil {
-		return GitHubTokenResponse{}, err
+		return schemas.GitHubTokenResponse{}, err
 	}
 	req.URL.RawQuery = data.Encode()
 	req.Header.Set("Accept", "application/json")
@@ -98,13 +93,13 @@ func getGithubAccessToken(code string) (GitHubTokenResponse, error) {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return GitHubTokenResponse{}, err
+		return schemas.GitHubTokenResponse{}, err
 	}
 	defer resp.Body.Close()
 
-	var result GitHubTokenResponse
+	var result schemas.GitHubTokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return GitHubTokenResponse{}, err
+		return schemas.GitHubTokenResponse{}, err
 	}
 
 	return result, nil
@@ -127,16 +122,19 @@ func setupRouter() *gin.Engine {
 	})
 
 	var (
-		linkRepository repository.LinkRepository = repository.NewLinkRepository()
-		linkService    service.LinkService       = service.New(linkRepository)
-		loginService   service.LoginService      = service.NewLoginService()
-		jwtService     service.JWTService        = service.NewJWTService()
+		linkRepository        repository.LinkRepository        = repository.NewLinkRepository()
+		linkService           service.LinkService              = service.NewLinkService(linkRepository)
+		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository()
+		githubTokenService    service.GithubTokenService       = service.NewGithubTokenService(githubTokenRepository)
+		loginService          service.LoginService             = service.NewLoginService()
+		jwtService            service.JWTService               = service.NewJWTService()
 
-		linkController  controller.LinkController  = controller.New(linkService)
-		loginController controller.LoginController = controller.NewLoginController(loginService, jwtService)
+		linkController        controller.LinkController        = controller.NewLinkController(linkService)
+		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
+		loginController       controller.LoginController       = controller.NewLoginController(loginService, jwtService)
 	)
 
-	linkApi := api.NewLinkAPI(loginController, linkController)
+	linkApi := api.NewLinkAPI(loginController, linkController, githubTokenController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
@@ -187,7 +185,7 @@ func setupRouter() *gin.Engine {
 	})
 
 	router.POST("/auth/github/callback", func(c *gin.Context) {
-		var githubTokenResponse GitHubTokenResponse
+		var githubTokenResponse schemas.GitHubTokenResponse
 		githubTokenResponse.AccessToken = c.Query("access_token")
 		if githubTokenResponse.AccessToken == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "missing code"})
@@ -195,6 +193,15 @@ func setupRouter() *gin.Engine {
 		}
 		githubTokenResponse.Scope = c.Query("scope")
 		githubTokenResponse.TokenType = c.Query("token_type")
+
+		// Save the token to the database
+
+		// service.GithubTokenService.Save(schemas.GithubToken{
+		// 	AccessToken: githubTokenResponse.AccessToken,
+		// 	Scope:       githubTokenResponse.Scope,
+		// 	TokenType:   githubTokenResponse.TokenType,
+		// 	User:,
+		// })
 
 		c.JSON(http.StatusOK, gin.H{"access_token": githubTokenResponse})
 	})
