@@ -13,7 +13,7 @@ put the database password in db/password.txt:
 ```bash
 echo '[PASSWORD]' >> db/password.txt
 ```
-
+****
 ### Dev
 
 #### Frontend
