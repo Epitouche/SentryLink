@@ -25,7 +25,11 @@ export default function HomeScreen() {
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
           Press{' '}
           <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
+            {Platform.select({
+              ios: 'cmd + d',
+              android: 'cmd + m',
+              web: 'F12'
+            })}
           </ThemedText>{' '}
           to open developer tools.
         </ThemedText>
@@ -33,7 +37,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 2: Explore</ThemedText>
         <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app zefpùhidsv:kjrea;vjaeoumvg.
+          Tap the Explore tab to learn more about what's included in this starter app.
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
