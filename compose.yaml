@@ -11,7 +11,7 @@ services:
   backend:
     container_name: backend
     build:
-      target: final
+      target: finalBackend
       dockerfile: Dockerfile
     ports:
       - 8080:8000
@@ -26,7 +26,7 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: frontend
+      target: baseFrontend
       dockerfile: Dockerfile
     environment:
       NODE_ENV: production

@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=backend/,target=. \
     CGO_ENABLED=0 GOARCH=$TARGETARCH go build -o /bin/server .
 
-FROM alpine:latest AS final
+FROM alpine:latest AS finalBackend
 
 WORKDIR /bin
 
@@ -50,13 +50,23 @@ RUN adduser \
     appuser
 USER appuser
 
-# Copy the executable from the "buildBackend" stage.
 COPY --from=buildBackend /bin/server /bin/
 
 ENV GIN_MODE=release
 
-# Expose the port that the application listens on.
 EXPOSE 8080
 
-# What the container should run when it is started.
 ENTRYPOINT [ "/bin/server" ]
+
+# Frontend
+FROM node:20.12.2-alpine as baseFrontend
+
+WORKDIR /usr/src/app
+
+COPY frontend/ .
+
+RUN npm install
+
+EXPOSE 3000
+
+CMD ["npx",  "nuxt",  "dev"]
