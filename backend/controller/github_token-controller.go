@@ -11,39 +11,39 @@ import (
 	"github.com/Tom-Mendy/SentryLink/service"
 )
 
-type LinkController interface {
-	FindAll() []schemas.Link
+type GithubTokenController interface {
+	FindAll() []schemas.GithubToken
 	Save(ctx *gin.Context) error
 	Update(ctx *gin.Context) error
 	Delete(ctx *gin.Context) error
 	ShowAll(ctx *gin.Context)
 }
 
-type linkController struct {
-	service service.LinkService
+type githubTokenController struct {
+	service service.GithubTokenService
 }
 
-var validateLink *validator.Validate
+var validateGithubToken *validator.Validate
 
-func NewLinkController(service service.LinkService) LinkController {
-	validateLink = validator.New()
-	return &linkController{
+func NewGithubTokenController(service service.GithubTokenService) GithubTokenController {
+	validateGithubToken = validator.New()
+	return &githubTokenController{
 		service: service,
 	}
 }
 
-func (c *linkController) FindAll() []schemas.Link {
+func (c *githubTokenController) FindAll() []schemas.GithubToken {
 	return c.service.FindAll()
 }
 
-func (c *linkController) Save(ctx *gin.Context) error {
-	var link schemas.Link
+func (c *githubTokenController) Save(ctx *gin.Context) error {
+	var link schemas.GithubToken
 	err := ctx.ShouldBindJSON(&link)
 	if err != nil {
 		return err
 	}
 
-	err = validateLink.Struct(link)
+	err = validateGithubToken.Struct(link)
 	if err != nil {
 		return err
 	}
@@ -54,8 +54,8 @@ func (c *linkController) Save(ctx *gin.Context) error {
 	return nil
 }
 
-func (c *linkController) Update(ctx *gin.Context) error {
-	var link schemas.Link
+func (c *githubTokenController) Update(ctx *gin.Context) error {
+	var link schemas.GithubToken
 	err := ctx.ShouldBindJSON(&link)
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func (c *linkController) Update(ctx *gin.Context) error {
 	}
 	link.Id = id
 
-	err = validateLink.Struct(link)
+	err = validateGithubToken.Struct(link)
 	if err != nil {
 		return err
 	}
@@ -79,21 +79,21 @@ func (c *linkController) Update(ctx *gin.Context) error {
 	return nil
 }
 
-func (c *linkController) Delete(ctx *gin.Context) error {
-	var link schemas.Link
+func (c *githubTokenController) Delete(ctx *gin.Context) error {
+	var token schemas.GithubToken
 	id, err := strconv.ParseUint(ctx.Param("id"), 0, 0)
 	if err != nil {
 		return err
 	}
-	link.Id = id
-	err = c.service.Delete(link)
+	token.Id = id
+	err = c.service.Delete(token)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *linkController) ShowAll(ctx *gin.Context) {
+func (c *githubTokenController) ShowAll(ctx *gin.Context) {
 	links := c.service.FindAll()
 	data := gin.H{
 		"title": "Link Page",

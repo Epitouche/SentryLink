@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"github.com/Tom-Mendy/SentryLink/schemas"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/Tom-Mendy/SentryLink/schemas"
 )
 
 type LinkRepository interface {
@@ -14,8 +14,8 @@ type LinkRepository interface {
 	FindAll() []schemas.Link
 }
 
-type database struct {
-	connection *gorm.DB
+type linkRepository struct {
+	db *schemas.Database
 }
 
 func NewLinkRepository() LinkRepository {
@@ -30,26 +30,28 @@ func NewLinkRepository() LinkRepository {
 		panic("failed to migrate database")
 	}
 	println("Connection to database established")
-	return &database{
-		connection: conn,
+	return &linkRepository{
+		db: &schemas.Database{
+			Connection: conn,
+		},
 	}
 }
 
-func (db *database) Save(video schemas.Link) {
-	db.connection.Create(&video)
+func (repo *linkRepository) Save(video schemas.Link) {
+	repo.db.Connection.Create(&video)
 }
 
-func (db *database) Update(video schemas.Link) {
-	db.connection.Save(&video)
+func (repo *linkRepository) Update(video schemas.Link) {
+	repo.db.Connection.Save(&video)
 }
 
-func (db *database) Delete(video schemas.Link) {
-	db.connection.Delete(&video)
+func (repo *linkRepository) Delete(video schemas.Link) {
+	repo.db.Connection.Delete(&video)
 }
 
-func (db *database) FindAll() []schemas.Link {
+func (repo *linkRepository) FindAll() []schemas.Link {
 	var links []schemas.Link
-	db.connection = db.connection.Debug() // Enable debugging
-	db.connection.Preload("UrlId").Find(&links)
+	repo.db.Connection = repo.db.Connection.Debug() // Enable debugging
+	repo.db.Connection.Preload("UrlId").Find(&links)
 	return links
 }

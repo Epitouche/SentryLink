@@ -16,7 +16,7 @@ type linkService struct {
 	repository repository.LinkRepository
 }
 
-func New(videoRepository repository.LinkRepository) LinkService {
+func NewLinkService(videoRepository repository.LinkRepository) LinkService {
 	return &linkService{
 		repository: videoRepository,
 	}
