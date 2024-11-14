@@ -1,31 +1,74 @@
 # SentryLink
 
-## Techno
+## Table of Contents
 
-Nuxt
+- [SentryLink](#sentrylink)
+  - [Table of Contents](#table-of-contents)
+  - [General Info](#general-info)
+  - [Technologies](#technologies)
+    - [Application](#application)
+      - [Application Frontend](#application-frontend)
+      - [Application Backend](#application-backend)
+      - [Application Database](#application-database)
+    - [Monitoring](#monitoring)
+      - [Monitoring Frontend](#monitoring-frontend)
+      - [Monitoring Backend](#monitoring-backend)
+      - [Monitoring Database](#monitoring-database)
+  - [Installation](#installation)
+    - [Dev](#dev)
+      - [Dev Frontend](#dev-frontend)
+      - [Dev Backend](#dev-backend)
+    - [Production](#production)
+  - [Overview](#overview)
 
-Golang
+## General Info
 
-## Install / Run
+SentryLink is an web app that detect dead link of a web site.
 
-put the database password in db/password.txt:
+## Technologies
 
-```bash
-echo '[PASSWORD]' >> db/password.txt
-```
-****
+### Application
+
+#### Application Frontend
+
+- Nuxt
+  - TailwindCSS
+
+#### Application Backend
+
+- Golang
+  - Gin Framework
+
+#### Application Database
+
+- Postgres
+
+### Monitoring
+
+#### Monitoring Frontend
+
+#### Monitoring Backend
+
+#### Monitoring Database
+
+- PGAdmin
+
+## Installation
+
 ### Dev
 
-#### Frontend
+Install [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) in VSCode
 
-open `backend` dev container
-switch to `frontend` container
-start dev to Frontend
+#### Dev Frontend
 
-#### Backend
+open `backend` dev container with : `Dev Containers: Rebuild and Reopen in Container` -> `backend`
+switch to `frontend` container with : `Dev Containers: Switch Container` -> `frontend`
+start dev to frontend
 
-open `frontend` dev container
-switch to `backend` container
+#### Dev Backend
+
+open `frontend` dev container with : `Dev Containers: Rebuild and Reopen in Container` -> `frontend`
+switch to `backend` container with : `Dev Containers: Switch Container` -> `backend`
 start dev to backend
 
 ### Production
@@ -33,3 +76,7 @@ start dev to backend
 ```bash
 docker compose up --build -d
 ```
+
+## Overview
+
+image

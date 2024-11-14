@@ -1,0 +1,17 @@
+name: test docker
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  test-docker:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run build
+        run: docker compose up --build -d
+
+      - name: Run tests
+        run: docker compose down

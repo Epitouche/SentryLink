@@ -1,0 +1,30 @@
+name: format frontend
+
+on:
+  pull_request:
+  push:
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+jobs:
+  run-front-lint:
+    runs-on: self-hosted
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Install Node.js dependencies
+        run: npm install -y eslint
+
+      - name: eslint
+        run: npx eslint .

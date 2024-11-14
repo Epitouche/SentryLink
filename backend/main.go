@@ -1,79 +1,131 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/subosito/gotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	"github.com/Tom-Mendy/SentryLink/api"
+	"github.com/Tom-Mendy/SentryLink/controller"
+	"github.com/Tom-Mendy/SentryLink/docs"
+	"github.com/Tom-Mendy/SentryLink/middlewares"
+	"github.com/Tom-Mendy/SentryLink/repository"
+	"github.com/Tom-Mendy/SentryLink/service"
 )
 
-var db = make(map[string]string)
-
-func setupRouter() *gin.Engine {
-	// Disable Console Color
-	// gin.DisableConsoleColor()
-	r := gin.Default()
-
-	// Ping test
-	r.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
-
-	// get URL input frontend
-	r.POST("/url", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
-
-	// Get user value
-	r.GET("/user/:name", func(c *gin.Context) {
-		user := c.Params.ByName("name")
-		value, ok := db[user]
-		if ok {
-			c.JSON(http.StatusOK, gin.H{"user": user, "value": value})
-		} else {
-			c.JSON(http.StatusOK, gin.H{"user": user, "status": "no value"})
-		}
-	})
-
-	// Authorized group (uses gin.BasicAuth() middleware)
-	// Same than:
-	// authorized := r.Group("/")
-	// authorized.Use(gin.BasicAuth(gin.Credentials{
-	//	  "foo":  "bar",
-	//	  "manu": "123",
-	//}))
-	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
-		"foo":  "bar", // user:foo password:bar
-		"manu": "123", // user:manu password:123
-	}))
-
-	/* example curl for /admin with basicauth header
-	   Zm9vOmJhcg== is base64("foo:bar")
-
-		curl -X POST \
-	  	http://localhost:8080/admin \
-	  	-H 'authorization: Basic Zm9vOmJhcg==' \
-	  	-H 'content-type: application/json' \
-	  	-d '{"value":"bar"}'
-	*/
-	authorized.POST("admin", func(c *gin.Context) {
-		user := c.MustGet(gin.AuthUserKey).(string)
-
-		// Parse JSON
-		var json struct {
-			Value string `json:"value" binding:"required"`
-		}
-
-		if c.Bind(&json) == nil {
-			db[user] = json.Value
-			c.JSON(http.StatusOK, gin.H{"status": "ok"})
-		}
-	})
-
-	return r
+// Generate a random CSRF token
+func generateCSRFToken() (string, error) {
+	bytes := make([]byte, 16)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
 }
 
+func redirectToGithub(c *gin.Context) {
+
+	clientID := os.Getenv("GITHUB_CLIENT_ID")
+	if clientID == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "GITHUB_CLIENT_ID is not set"})
+		return
+	}
+	// Generate the CSRF token
+	state, err := generateCSRFToken()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate CSRF token"})
+		return
+	}
+
+	// Store the CSRF token in session (you can replace this with a session library or in-memory storage)
+	c.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
+
+	// Construct the GitHub authorization URL
+	redirectURI := "http://localhost:" + os.Getenv("APP_PORT") + "/integrations/github/oauth2/callback"
+	authURL := "https://github.com/login/oauth/authorize" +
+		"?client_id=" + clientID +
+		"&response_type=code" +
+		"&scope=repo" +
+		"&redirect_uri=" + redirectURI +
+		"&state=" + state
+
+	// Redirect to GitHub's OAuth page
+	c.Redirect(http.StatusFound, authURL)
+}
+
+func setupRouter() *gin.Engine {
+
+	docs.SwaggerInfo.Title = "SentryLink API"
+	docs.SwaggerInfo.Description = "SentryLink - Crawler API"
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:5000"
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = []string{"http"}
+
+	router := gin.Default()
+
+	// Ping test
+	router.GET("/ping", func(c *gin.Context) {
+		c.String(http.StatusOK, "pong")
+	})
+
+	var (
+		linkRepository repository.LinkRepository = repository.NewLinkRepository()
+		linkService    service.LinkService       = service.New(linkRepository)
+		loginService   service.LoginService      = service.NewLoginService()
+		jwtService     service.JWTService        = service.NewJWTService()
+
+		linkController  controller.LinkController  = controller.New(linkService)
+		loginController controller.LoginController = controller.NewLoginController(loginService, jwtService)
+	)
+
+	linkApi := api.NewLinkAPI(loginController, linkController)
+
+	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
+	{
+		login := apiRoutes.Group("/auth")
+		{
+			login.POST("/token", linkApi.Authenticate)
+		}
+
+		links := apiRoutes.Group("/links", middlewares.AuthorizeJWT())
+		{
+			links.GET("", linkApi.GetLink)
+			links.POST("", linkApi.CreateLink)
+			links.PUT(":id", linkApi.UpdateLink)
+			links.DELETE(":id", linkApi.DeleteLink)
+		}
+
+	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	router.GET("/auth/github", redirectToGithub)
+
+	return router
+}
+
+func init() {
+	err := gotenv.Load()
+	if err != nil {
+		panic("Error loading .env file")
+	}
+}
+
+// @securityDefinitions.apiKey bearerAuth
+// @in header
+// @name Authorization
 func main() {
-	r := setupRouter()
-	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8080")
+	router := setupRouter()
+
+	// Listen and Server in 0.0.0.0:8000
+	err := router.Run(":8000")
+	if err != nil {
+		panic("Error when running the server")
+	}
 }
