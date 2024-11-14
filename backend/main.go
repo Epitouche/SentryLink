@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/subosito/gotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -111,10 +110,10 @@ func setupRouter() *gin.Engine {
 }
 
 func init() {
-	err := gotenv.Load()
-	if err != nil {
-		panic("Error loading .env file")
-	}
+	// err := .Load()
+	// if err != nil {
+	// 	panic("Error loading .env file")
+	// }
 }
 
 // @securityDefinitions.apiKey bearerAuth
