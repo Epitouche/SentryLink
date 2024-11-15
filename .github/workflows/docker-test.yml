@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up environment
+        run: cp backend/.env.example backend/.env
+
       - name: Run build
         run: docker compose up --build -d
 
