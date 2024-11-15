@@ -34,5 +34,6 @@ func Connection() *gorm.DB {
 	if err != nil {
 		panic("failed to connect database")
 	}
+	println("Connection to database established")
 	return conn
 }

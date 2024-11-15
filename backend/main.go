@@ -55,7 +55,7 @@ func redirectToGithub(c *gin.Context) {
 	c.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
 
 	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:" + appPort + "/auth/github/callback"
+	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
 	authURL := "https://github.com/login/oauth/authorize" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
@@ -69,12 +69,18 @@ func redirectToGithub(c *gin.Context) {
 
 func getGithubAccessToken(code string) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
-	clientSecret := os.Getenv("GITHUB_SECRET")
-	appPort := os.Getenv("APP_PORT")
-	if clientID == "" || clientSecret == "" || appPort == "" {
-		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_CLIENT_ID or GITHUB_SECRET or APP_PORT is not set")
+	if clientID == "" {
+		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_CLIENT_ID is not set")
 	}
-	redirectURI := "http://localhost:" + appPort + "/auth/github/callback"
+	clientSecret := os.Getenv("GITHUB_SECRET")
+	if clientSecret == "" {
+		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_SECRET is not set")
+	}
+	appPort := os.Getenv("APP_PORT")
+	if appPort == "" {
+		return schemas.GitHubTokenResponse{}, errors.New("APP_PORT is not set")
+	}
+	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
 
 	apiURL := "https://github.com/login/oauth/access_token"
 
@@ -158,9 +164,9 @@ func setupRouter() *gin.Engine {
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	router.GET("/auth/github", redirectToGithub)
+	router.GET("/github/auth", redirectToGithub)
 
-	router.GET("/auth/github/callback", func(c *gin.Context) {
+	router.GET("/github/auth/callback", func(c *gin.Context) {
 		code := c.Query("code")
 		if code == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "missing code"})
@@ -186,28 +192,6 @@ func setupRouter() *gin.Engine {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"access_token": githubTokenResponse.AccessToken, "state": state})
-	})
-
-	router.POST("/auth/github/callback", func(c *gin.Context) {
-		var githubTokenResponse schemas.GitHubTokenResponse
-		githubTokenResponse.AccessToken = c.Query("access_token")
-		if githubTokenResponse.AccessToken == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "missing code"})
-			return
-		}
-		githubTokenResponse.Scope = c.Query("scope")
-		githubTokenResponse.TokenType = c.Query("token_type")
-
-		// Save the token to the database
-
-		// service.GithubTokenService.Save(schemas.GithubToken{
-		// 	AccessToken: githubTokenResponse.AccessToken,
-		// 	Scope:       githubTokenResponse.Scope,
-		// 	TokenType:   githubTokenResponse.TokenType,
-		// 	User:,
-		// })
-
-		c.JSON(http.StatusOK, gin.H{"access_token": githubTokenResponse})
 	})
 
 	// view request received but not found

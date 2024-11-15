@@ -23,7 +23,6 @@ func NewGithubTokenRepository(conn *gorm.DB) GithubTokenRepository {
 	if err != nil {
 		panic("failed to migrate database")
 	}
-	println("Connection to database established")
 	return &githubTokenRepository{
 		db: &schemas.Database{
 			Connection: conn,
