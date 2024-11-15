@@ -131,14 +131,20 @@ func setupRouter() *gin.Engine {
 	})
 
 	var (
-		databaseConnection    *gorm.DB                         = database.Connection()
-		linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
-		linkService           service.LinkService              = service.NewLinkService(linkRepository)
-		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
-		githubTokenService    service.GithubTokenService       = service.NewGithubTokenService(githubTokenRepository)
-		loginService          service.LoginService             = service.NewLoginService()
-		jwtService            service.JWTService               = service.NewJWTService()
+		// Database connection
+		databaseConnection *gorm.DB = database.Connection()
 
+		// Repositories
+		linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
+		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
+
+		// Services
+		linkService        service.LinkService        = service.NewLinkService(linkRepository)
+		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
+		loginService       service.LoginService       = service.NewLoginService()
+		jwtService         service.JWTService         = service.NewJWTService()
+
+		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
 		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
 		loginController       controller.LoginController       = controller.NewLoginController(loginService, jwtService)
@@ -151,6 +157,7 @@ func setupRouter() *gin.Engine {
 		login := apiRoutes.Group("/auth")
 		{
 			login.POST("/token", linkApi.Authenticate)
+			login.POST("/register", linkApi.Registration)
 		}
 
 		links := apiRoutes.Group("/links", middlewares.AuthorizeJWT())

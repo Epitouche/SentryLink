@@ -50,6 +50,19 @@ func (api *LinkApi) Authenticate(ctx *gin.Context) {
 	}
 }
 
+func (api *LinkApi) Registration(ctx *gin.Context) {
+	token := api.loginController.Login(ctx)
+	if token != "" {
+		ctx.JSON(http.StatusOK, &schemas.JWT{
+			Token: token,
+		})
+	} else {
+		ctx.JSON(http.StatusUnauthorized, &schemas.Response{
+			Message: "Not Authorized",
+		})
+	}
+}
+
 // GetLink godoc
 // @Security bearerAuth
 // @Summary List existing videos
