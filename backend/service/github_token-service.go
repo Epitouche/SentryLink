@@ -16,9 +16,9 @@ type githubTokenService struct {
 	repository repository.GithubTokenRepository
 }
 
-func NewGithubTokenService(videoRepository repository.GithubTokenRepository) GithubTokenService {
+func NewGithubTokenService(githubTokenRepository repository.GithubTokenRepository) GithubTokenService {
 	return &githubTokenService{
-		repository: videoRepository,
+		repository: githubTokenRepository,
 	}
 }
 

@@ -10,15 +10,15 @@ import (
 )
 
 type LinkApi struct {
-	loginController       controller.UserController
+	userController        controller.UserController
 	linkController        controller.LinkController
 	githubTokenController controller.GithubTokenController
 }
 
-func NewLinkAPI(loginController controller.UserController,
+func NewLinkAPI(userController controller.UserController,
 	linkController controller.LinkController, githubTokenController controller.GithubTokenController) *LinkApi {
 	return &LinkApi{
-		loginController:       loginController,
+		userController:        userController,
 		linkController:        linkController,
 		githubTokenController: githubTokenController,
 	}
@@ -38,7 +38,7 @@ func NewLinkAPI(loginController controller.UserController,
 // @Failure 401 {object} schemas.Response
 // @Router /auth/token [post]
 func (api *LinkApi) Authenticate(ctx *gin.Context) {
-	token := api.loginController.Login(ctx)
+	token := api.userController.Login(ctx)
 	if token != "" {
 		ctx.JSON(http.StatusOK, &schemas.JWT{
 			Token: token,
@@ -51,7 +51,7 @@ func (api *LinkApi) Authenticate(ctx *gin.Context) {
 }
 
 func (api *LinkApi) Registration(ctx *gin.Context) {
-	token := api.loginController.Login(ctx)
+	token := api.userController.Registration(ctx)
 	if token != "" {
 		ctx.JSON(http.StatusOK, &schemas.JWT{
 			Token: token,
