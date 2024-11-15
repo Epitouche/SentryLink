@@ -157,8 +157,8 @@ func setupRouter() *gin.Engine {
 	{
 		auth := apiRoutes.Group("/auth")
 		{
-			auth.POST("/token", linkApi.Authenticate)
-			auth.POST("/register", linkApi.Registration)
+			auth.POST("/login", linkApi.Login)
+			auth.POST("/register", linkApi.Register)
 		}
 
 		links := apiRoutes.Group("/links", middlewares.AuthorizeJWT())

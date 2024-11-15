@@ -9,7 +9,7 @@ import (
 
 type UserController interface {
 	Login(ctx *gin.Context) string
-	Registration(ctx *gin.Context) string
+	Register(ctx *gin.Context) string
 }
 
 type userController struct {
@@ -26,7 +26,7 @@ func NewUserController(userService service.UserService,
 }
 
 func (controller *userController) Login(ctx *gin.Context) string {
-	var credentials schemas.Credentials
+	var credentials schemas.LoginCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
 		return ""
@@ -38,13 +38,13 @@ func (controller *userController) Login(ctx *gin.Context) string {
 	return ""
 }
 
-func (controller *userController) Registration(ctx *gin.Context) string {
-	var credentials schemas.Credentials
+func (controller *userController) Register(ctx *gin.Context) string {
+	var credentials schemas.RegisterCredentials
 	err := ctx.ShouldBind(&credentials)
 	if err != nil {
 		return ""
 	}
-	isAuthenticated := controller.userService.Login(credentials.Username, credentials.Password)
+	isAuthenticated := controller.userService.Registration(credentials.Username, credentials.Email, credentials.Password)
 	if isAuthenticated {
 		return controller.jWtService.GenerateToken(credentials.Username, true)
 	}

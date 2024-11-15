@@ -37,7 +37,7 @@ func NewLinkAPI(userController controller.UserController,
 // @Success 200 {object} schemas.JWT
 // @Failure 401 {object} schemas.Response
 // @Router /auth/token [post]
-func (api *LinkApi) Authenticate(ctx *gin.Context) {
+func (api *LinkApi) Login(ctx *gin.Context) {
 	token := api.userController.Login(ctx)
 	if token != "" {
 		ctx.JSON(http.StatusOK, &schemas.JWT{
@@ -50,8 +50,8 @@ func (api *LinkApi) Authenticate(ctx *gin.Context) {
 	}
 }
 
-func (api *LinkApi) Registration(ctx *gin.Context) {
-	token := api.userController.Registration(ctx)
+func (api *LinkApi) Register(ctx *gin.Context) {
+	token := api.userController.Register(ctx)
 	if token != "" {
 		ctx.JSON(http.StatusOK, &schemas.JWT{
 			Token: token,
