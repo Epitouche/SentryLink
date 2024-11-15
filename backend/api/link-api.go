@@ -10,12 +10,12 @@ import (
 )
 
 type LinkApi struct {
-	loginController       controller.LoginController
+	loginController       controller.UserController
 	linkController        controller.LinkController
 	githubTokenController controller.GithubTokenController
 }
 
-func NewLinkAPI(loginController controller.LoginController,
+func NewLinkAPI(loginController controller.UserController,
 	linkController controller.LinkController, githubTokenController controller.GithubTokenController) *LinkApi {
 	return &LinkApi{
 		loginController:       loginController,

@@ -1,22 +1,22 @@
 package service
 
-type LoginService interface {
-	Login(username string, password string) bool
+type UserService interface {
+	User(username string, password string) bool
 }
 
-type loginService struct {
+type userService struct {
 	authorizedUsername string
 	authorizedPassword string
 }
 
-func NewLoginService() LoginService {
-	return &loginService{
+func NewUserService() UserService {
+	return &userService{
 		authorizedUsername: "root",
 		authorizedPassword: "password",
 	}
 }
 
-func (service *loginService) Login(username string, password string) bool {
+func (service *userService) User(username string, password string) bool {
 	return service.authorizedUsername == username &&
 		service.authorizedPassword == password
 }

@@ -56,7 +56,7 @@ func redirectToGithub(c *gin.Context) {
 
 	// Construct the GitHub authorization URL
 	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
-	authURL := "https://github.com/login/oauth/authorize" +
+	authURL := "https://github.com/user/oauth/authorize" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
 		"&scope=repo" +
@@ -82,7 +82,7 @@ func getGithubAccessToken(code string) (schemas.GitHubTokenResponse, error) {
 	}
 	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
 
-	apiURL := "https://github.com/login/oauth/access_token"
+	apiURL := "https://github.com/user/oauth/access_token"
 
 	data := url.Values{}
 	data.Set("client_id", clientID)
@@ -141,23 +141,23 @@ func setupRouter() *gin.Engine {
 		// Services
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
 		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-		loginService       service.LoginService       = service.NewLoginService()
+		userService        service.UserService        = service.NewUserService()
 		jwtService         service.JWTService         = service.NewJWTService()
 
 		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
 		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
-		loginController       controller.LoginController       = controller.NewLoginController(loginService, jwtService)
+		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
 	)
 
-	linkApi := api.NewLinkAPI(loginController, linkController, githubTokenController)
+	linkApi := api.NewLinkAPI(userController, linkController, githubTokenController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
-		login := apiRoutes.Group("/auth")
+		auth := apiRoutes.Group("/auth")
 		{
-			login.POST("/token", linkApi.Authenticate)
-			login.POST("/register", linkApi.Registration)
+			auth.POST("/token", linkApi.Authenticate)
+			auth.POST("/register", linkApi.Registration)
 		}
 
 		links := apiRoutes.Group("/links", middlewares.AuthorizeJWT())
