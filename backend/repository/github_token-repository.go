@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	"github.com/Tom-Mendy/SentryLink/schemas"
@@ -19,14 +18,8 @@ type githubTokenRepository struct {
 	db *schemas.Database
 }
 
-func NewGithubTokenRepository() GithubTokenRepository {
-	dsn := "host=postgres user=admin password=password dbname=mydatabase port=5432 sslmode=disable TimeZone=Europe/Paris"
-	conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	// err = conn.AutoMigrate(&schemas.Link{}, &schemas.LinkInfo{})
-	err = conn.AutoMigrate(&schemas.GithubToken{})
+func NewGithubTokenRepository(conn *gorm.DB) GithubTokenRepository {
+	err := conn.AutoMigrate(&schemas.GithubToken{})
 	if err != nil {
 		panic("failed to migrate database")
 	}

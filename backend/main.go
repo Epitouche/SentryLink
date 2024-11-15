@@ -10,12 +10,15 @@ import (
 	"os"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/Tom-Mendy/SentryLink/api"
 	"github.com/Tom-Mendy/SentryLink/controller"
+	"github.com/Tom-Mendy/SentryLink/database"
 	"github.com/Tom-Mendy/SentryLink/docs"
 	"github.com/Tom-Mendy/SentryLink/middlewares"
 	"github.com/Tom-Mendy/SentryLink/repository"
@@ -122,9 +125,10 @@ func setupRouter() *gin.Engine {
 	})
 
 	var (
-		linkRepository        repository.LinkRepository        = repository.NewLinkRepository()
+		databaseConnection    *gorm.DB                         = database.Connection()
+		linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
 		linkService           service.LinkService              = service.NewLinkService(linkRepository)
-		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository()
+		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
 		githubTokenService    service.GithubTokenService       = service.NewGithubTokenService(githubTokenRepository)
 		loginService          service.LoginService             = service.NewLoginService()
 		jwtService            service.JWTService               = service.NewJWTService()
