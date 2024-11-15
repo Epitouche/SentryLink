@@ -16,21 +16,14 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.kaisell.mobile",
-      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kaisell.mobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "e0d042c7-62d5-4cde-9f0e-6d7c05481fa8"
-      }
-    },
-    "owner": "kaisell"
+    }
   }
 }
