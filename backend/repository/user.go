@@ -45,14 +45,12 @@ func (repo *userRepository) Delete(user schemas.User) {
 
 func (repo *userRepository) FindAll() []schemas.User {
 	var users []schemas.User
-	repo.db.Connection = repo.db.Connection.Debug() // Enable debugging
 	repo.db.Connection.Find(&users)
 	return users
 }
 
 func (repo *userRepository) FindByEmail(email string) []schemas.User {
 	var users []schemas.User
-	repo.db.Connection = repo.db.Connection.Debug() // Enable debugging
-	repo.db.Connection.Find(&users).Where("email = ?", email)
+	repo.db.Connection.Where(&schemas.User{Email: email}).Find(&users)
 	return users
 }

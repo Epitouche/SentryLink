@@ -43,7 +43,6 @@ func (repo *linkRepository) Delete(video schemas.Link) {
 
 func (repo *linkRepository) FindAll() []schemas.Link {
 	var links []schemas.Link
-	repo.db.Connection = repo.db.Connection.Debug() // Enable debugging
 	repo.db.Connection.Preload("UrlId").Find(&links)
 	return links
 }

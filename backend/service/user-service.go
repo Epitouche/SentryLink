@@ -31,7 +31,8 @@ func (service *userService) Login(username string, password string) bool {
 
 func (service *userService) Registration(username string, email string, password string) bool {
 	userWiththis := service.repository.FindByEmail(email)
-	if userWiththis != nil {
+	println(userWiththis)
+	if len(userWiththis) != 0 {
 		return false
 	}
 	newUser := schemas.User{

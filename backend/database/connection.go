@@ -35,5 +35,6 @@ func Connection() *gorm.DB {
 		panic("failed to connect database")
 	}
 	println("Connection to database established")
+	conn = conn.Debug() // Enable debugging
 	return conn
 }

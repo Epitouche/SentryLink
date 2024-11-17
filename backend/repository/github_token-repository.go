@@ -44,7 +44,6 @@ func (repo *githubTokenRepository) Delete(token schemas.GithubToken) {
 
 func (repo *githubTokenRepository) FindAll() []schemas.GithubToken {
 	var tokens []schemas.GithubToken
-	repo.db.Connection = repo.db.Connection.Debug() // Enable debugging
 	repo.db.Connection.Find(&tokens)
 	return tokens
 }

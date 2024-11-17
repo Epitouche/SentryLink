@@ -45,29 +45,29 @@ func NewLinkAPI(userController controller.UserController,
 // @Failure 401 {object} schemas.Response
 // @Router /auth/token [post]
 func (api *LinkApi) Login(ctx *gin.Context) {
-	token := api.userController.Login(ctx)
-	if token != "" {
-		ctx.JSON(http.StatusOK, &schemas.JWT{
-			Token: token,
-		})
-	} else {
+	token, err := api.userController.Login(ctx)
+	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, &schemas.Response{
-			Message: "Not Authorized",
+			Message: err.Error(),
 		})
+		return
 	}
+	ctx.JSON(http.StatusOK, &schemas.JWT{
+		Token: token,
+	})
 }
 
 func (api *LinkApi) Register(ctx *gin.Context) {
-	token := api.userController.Register(ctx)
-	if token != "" {
-		ctx.JSON(http.StatusOK, &schemas.JWT{
-			Token: token,
+	token, err := api.userController.Register(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusConflict, &schemas.Response{
+			Message: err.Error(),
 		})
-	} else {
-		ctx.JSON(http.StatusUnauthorized, &schemas.Response{
-			Message: "Not Authorized",
-		})
+		return
 	}
+	ctx.JSON(http.StatusCreated, &schemas.JWT{
+		Token: token,
+	})
 }
 
 // GetLink godoc
