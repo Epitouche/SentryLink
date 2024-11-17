@@ -79,12 +79,16 @@ func setupRouter() *gin.Engine {
 			links.DELETE(":id", linkApi.DeleteLink)
 		}
 
-	}
-	github := router.Group("/github")
-	{
-		github.GET("/auth", linkApi.RedirectToGithub)
+		github := apiRoutes.Group("/github")
+		{
+			github.GET("/auth", func(c *gin.Context) {
+				linkApi.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+			})
 
-		github.GET("/auth/callback", linkApi.HandleGithubTokenCallback)
+			github.GET("/auth/callback", func(c *gin.Context) {
+				linkApi.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+			})
+		}
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

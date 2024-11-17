@@ -172,7 +172,7 @@ func generateCSRFToken() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-func (api *LinkApi) RedirectToGithub(c *gin.Context) {
+func (api *LinkApi) RedirectToGithub(c *gin.Context, path string) {
 
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
@@ -195,7 +195,7 @@ func (api *LinkApi) RedirectToGithub(c *gin.Context) {
 	c.SetCookie("latestCSRFToken", state, 3600, "/", "localhost", false, true)
 
 	// Construct the GitHub authorization URL
-	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
+	redirectURI := "http://localhost:" + appPort + path
 	authURL := "https://github.com/login/oauth/authorize" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
@@ -207,7 +207,7 @@ func (api *LinkApi) RedirectToGithub(c *gin.Context) {
 	c.Redirect(http.StatusFound, authURL)
 }
 
-func GetGithubAccessToken(code string) (schemas.GitHubTokenResponse, error) {
+func GetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
 		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_CLIENT_ID is not set")
@@ -220,7 +220,7 @@ func GetGithubAccessToken(code string) (schemas.GitHubTokenResponse, error) {
 	if appPort == "" {
 		return schemas.GitHubTokenResponse{}, errors.New("APP_PORT is not set")
 	}
-	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
+	redirectURI := "http://localhost:" + appPort + path
 
 	apiURL := "https://github.com/login/oauth/access_token"
 
@@ -254,7 +254,7 @@ func GetGithubAccessToken(code string) (schemas.GitHubTokenResponse, error) {
 	return result, nil
 }
 
-func (api *LinkApi) HandleGithubTokenCallback(c *gin.Context) {
+func (api *LinkApi) HandleGithubTokenCallback(c *gin.Context, path string) {
 	code := c.Query("code")
 	if code == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "missing code"})
@@ -273,7 +273,7 @@ func (api *LinkApi) HandleGithubTokenCallback(c *gin.Context) {
 		return
 	}
 
-	githubTokenResponse, err := GetGithubAccessToken(code)
+	githubTokenResponse, err := GetGithubAccessToken(code, path)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get access token because " + err.Error()})
 		return
