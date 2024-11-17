@@ -22,7 +22,6 @@ func NewLinkRepository(conn *gorm.DB) LinkRepository {
 	if err != nil {
 		panic("failed to migrate database")
 	}
-	println("Connection to database established")
 	return &linkRepository{
 		db: &schemas.Database{
 			Connection: conn,
