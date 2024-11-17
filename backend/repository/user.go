@@ -12,6 +12,7 @@ type UserRepository interface {
 	Delete(user schemas.User)
 	FindAll() []schemas.User
 	FindByEmail(email string) []schemas.User
+	FindByUserName(username string) []schemas.User
 }
 
 // Define a struct that embeds `*schemas.Database` and implements `UserRepository`
@@ -52,5 +53,11 @@ func (repo *userRepository) FindAll() []schemas.User {
 func (repo *userRepository) FindByEmail(email string) []schemas.User {
 	var users []schemas.User
 	repo.db.Connection.Where(&schemas.User{Email: email}).Find(&users)
+	return users
+}
+
+func (repo *userRepository) FindByUserName(username string) []schemas.User {
+	var users []schemas.User
+	repo.db.Connection.Where(&schemas.User{Username: username}).Find(&users)
 	return users
 }

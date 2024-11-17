@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/Tom-Mendy/SentryLink/database"
 	"github.com/Tom-Mendy/SentryLink/repository"
 	"github.com/Tom-Mendy/SentryLink/schemas"
 )
@@ -25,20 +26,31 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 }
 
 func (service *userService) Login(username string, password string) bool {
-	return service.authorizedUsername == username &&
-		service.authorizedPassword == password
+	userWiththisUserName := service.repository.FindByUserName(username)
+	if len(userWiththisUserName) == 0 {
+		return false
+	}
+	for _, user := range userWiththisUserName {
+		if database.DoPasswordsMatch(user.Password, password) {
+			return true
+		}
+	}
+	return false
 }
 
 func (service *userService) Registration(username string, email string, password string) bool {
-	userWiththis := service.repository.FindByEmail(email)
-	println(userWiththis)
-	if len(userWiththis) != 0 {
+	userWiththisEmail := service.repository.FindByEmail(email)
+	if len(userWiththisEmail) != 0 {
+		return false
+	}
+	hashedPassword, err := database.HashPassword(password)
+	if err != nil {
 		return false
 	}
 	newUser := schemas.User{
 		Username: username,
 		Email:    email,
-		Password: password,
+		Password: hashedPassword,
 	}
 	service.repository.Save(newUser)
 	return true
