@@ -65,6 +65,7 @@ func setupRouter() *gin.Engine {
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
+		// User Auth
 		auth := apiRoutes.Group("/auth")
 		{
 			auth.POST("/login", linkApi.Login)
@@ -79,6 +80,7 @@ func setupRouter() *gin.Engine {
 			links.DELETE(":id", linkApi.DeleteLink)
 		}
 
+		// Github
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
