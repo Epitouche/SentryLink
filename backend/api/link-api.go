@@ -196,7 +196,7 @@ func (api *LinkApi) RedirectToGithub(c *gin.Context) {
 
 	// Construct the GitHub authorization URL
 	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
-	authURL := "https://github.com/user/oauth/authorize" +
+	authURL := "https://github.com/login/oauth/authorize" +
 		"?client_id=" + clientID +
 		"&response_type=code" +
 		"&scope=repo" +
@@ -222,7 +222,7 @@ func GetGithubAccessToken(code string) (schemas.GitHubTokenResponse, error) {
 	}
 	redirectURI := "http://localhost:" + appPort + "/github/auth/callback"
 
-	apiURL := "https://github.com/user/oauth/access_token"
+	apiURL := "https://github.com/login/oauth/access_token"
 
 	data := url.Values{}
 	data.Set("client_id", clientID)
