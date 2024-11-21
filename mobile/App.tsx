@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { View, Text, Button, TextInput, StyleSheet, StatusBar } from 'react-native';
 
 export default function App() {
   const [responseData, setResponseData] = useState<string | null>(null);
@@ -25,6 +24,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" /> {/* Native StatusBar */}
       <Text>Enter the IP address to ping:</Text>
       <TextInput
         style={styles.input}
@@ -40,7 +40,6 @@ export default function App() {
           <Text>{responseData}</Text>
         </View>
       )}
-      <StatusBar style="auto" />
     </View>
   );
 }
