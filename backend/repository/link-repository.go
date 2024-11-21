@@ -30,19 +30,31 @@ func NewLinkRepository(conn *gorm.DB) LinkRepository {
 }
 
 func (repo *linkRepository) Save(video schemas.Link) {
-	repo.db.Connection.Create(&video)
+	err := repo.db.Connection.Create(&video)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *linkRepository) Update(video schemas.Link) {
-	repo.db.Connection.Save(&video)
+	err := repo.db.Connection.Save(&video)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *linkRepository) Delete(video schemas.Link) {
-	repo.db.Connection.Delete(&video)
+	err := repo.db.Connection.Delete(&video)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *linkRepository) FindAll() []schemas.Link {
 	var links []schemas.Link
-	repo.db.Connection.Preload("UrlId").Find(&links)
+	err := repo.db.Connection.Preload("UrlId").Find(&links)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 	return links
 }

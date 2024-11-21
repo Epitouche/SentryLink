@@ -31,19 +31,31 @@ func NewGithubTokenRepository(conn *gorm.DB) GithubTokenRepository {
 }
 
 func (repo *githubTokenRepository) Save(token schemas.GithubToken) {
-	repo.db.Connection.Create(&token)
+	err := repo.db.Connection.Create(&token)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *githubTokenRepository) Update(token schemas.GithubToken) {
-	repo.db.Connection.Save(&token)
+	err := repo.db.Connection.Save(&token)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *githubTokenRepository) Delete(token schemas.GithubToken) {
-	repo.db.Connection.Delete(&token)
+	err := repo.db.Connection.Delete(&token)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *githubTokenRepository) FindAll() []schemas.GithubToken {
 	var tokens []schemas.GithubToken
-	repo.db.Connection.Find(&tokens)
+	err := repo.db.Connection.Find(&tokens)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 	return tokens
 }

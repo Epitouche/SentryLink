@@ -35,6 +35,10 @@ func Connection() *gorm.DB {
 		panic("failed to connect database")
 	}
 	println("Connection to database established")
-	conn = conn.Debug() // Enable debugging
+
+	os.Getenv("GIN_MODE") // Set
+	if os.Getenv("GIN_MODE") != "release" {
+		conn = conn.Debug() // Enable debugging
+	}
 	return conn
 }

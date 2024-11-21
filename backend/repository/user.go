@@ -33,31 +33,49 @@ func NewUserRepository(conn *gorm.DB) UserRepository {
 }
 
 func (repo *userRepository) Save(user schemas.User) {
-	repo.db.Connection.Create(&user)
+	err := repo.db.Connection.Create(&user)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *userRepository) Update(user schemas.User) {
-	repo.db.Connection.Save(&user)
+	err := repo.db.Connection.Save(&user)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *userRepository) Delete(user schemas.User) {
-	repo.db.Connection.Delete(&user)
+	err := repo.db.Connection.Delete(&user)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
 func (repo *userRepository) FindAll() []schemas.User {
 	var users []schemas.User
-	repo.db.Connection.Find(&users)
+	err := repo.db.Connection.Find(&users)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 	return users
 }
 
 func (repo *userRepository) FindByEmail(email string) []schemas.User {
 	var users []schemas.User
-	repo.db.Connection.Where(&schemas.User{Email: email}).Find(&users)
+	err := repo.db.Connection.Where(&schemas.User{Email: email}).Find(&users)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 	return users
 }
 
 func (repo *userRepository) FindByUserName(username string) []schemas.User {
 	var users []schemas.User
-	repo.db.Connection.Where(&schemas.User{Username: username}).Find(&users)
+	err := repo.db.Connection.Where(&schemas.User{Username: username}).Find(&users)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 	return users
 }

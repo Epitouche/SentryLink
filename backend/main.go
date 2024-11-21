@@ -64,17 +64,22 @@ func setupRouter() *gin.Engine {
 		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
 	)
 
-	linkApi := api.NewLinkAPI(userController, linkController, githubTokenController)
+	linkApi := api.NewLinkAPI(linkController)
+
+	userApi := api.NewUserAPI(userController)
+
+	githubApi := api.NewGithubAPI(githubTokenController)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
 		// User Auth
 		auth := apiRoutes.Group("/auth")
 		{
-			auth.POST("/login", linkApi.Login)
-			auth.POST("/register", linkApi.Register)
+			auth.POST("/login", userApi.Login)
+			auth.POST("/register", userApi.Register)
 		}
 
+		// Links
 		links := apiRoutes.Group("/links", middlewares.AuthorizeJWT())
 		{
 			links.GET("", linkApi.GetLink)
@@ -87,11 +92,11 @@ func setupRouter() *gin.Engine {
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
-				linkApi.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+				githubApi.RedirectToGithub(c, github.BasePath()+"/auth/callback")
 			})
 
 			github.GET("/auth/callback", func(c *gin.Context) {
-				linkApi.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+				githubApi.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
 			})
 		}
 	}
