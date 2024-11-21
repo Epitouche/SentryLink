@@ -1,9 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 
+	"golang.org/x/net/html"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +24,49 @@ import (
 	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
 )
+
+// ExtractLinks extracts all the links from an HTML page
+func ExtractLinks(pageURL string) ([]string, error) {
+	resp, err := http.Get(pageURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch the page: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch the page: %s", resp.Status)
+	}
+
+	links := []string{}
+	tokenizer := html.NewTokenizer(resp.Body)
+	for {
+		tokenType := tokenizer.Next()
+		if tokenType == html.ErrorToken {
+			break
+		}
+		if tokenType == html.StartTagToken {
+			token := tokenizer.Token()
+			if token.Data == "a" {
+				for _, attr := range token.Attr {
+					if attr.Key == "href" {
+						// Resolve relative URLs
+						parsedURL, err := url.Parse(attr.Val)
+						if err != nil {
+							continue
+						}
+						base, err := url.Parse(pageURL)
+						if err != nil {
+							continue
+						}
+						links = append(links, base.ResolveReference(parsedURL).String())
+					}
+				}
+			}
+		}
+	}
+
+	return links, nil
+}
 
 func setupRouter() *gin.Engine {
 
@@ -70,6 +118,8 @@ func setupRouter() *gin.Engine {
 
 	githubApi := api.NewGithubAPI(githubTokenController)
 
+	// scrapApi := api
+
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
 		// User Auth
@@ -87,6 +137,12 @@ func setupRouter() *gin.Engine {
 			links.PUT(":id", linkApi.UpdateLink)
 			links.DELETE(":id", linkApi.DeleteLink)
 		}
+
+		// Scrap
+		// scrap := apiRoutes.Group("/scrap", middlewares.AuthorizeJWT())
+		// {
+		// 	scrap.GET("", )
+		// }
 
 		// Github
 		github := apiRoutes.Group("/github")
@@ -110,6 +166,28 @@ func setupRouter() *gin.Engine {
 		method := c.Request.Method
 		print("\n\n" + method + " " + path + "\n\n\n")
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found", "path": path, "method": method})
+	})
+
+	router.GET("/scrap", func(c *gin.Context) {
+		pageURL := c.Query("url")
+		if pageURL == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "url parameter is required"})
+			return
+		}
+
+		// Ensure the URL starts with http:// or https://
+		if !strings.HasPrefix(pageURL, "http://") && !strings.HasPrefix(pageURL, "https://") {
+			pageURL = "http://" + pageURL
+		}
+
+		links, err := ExtractLinks(pageURL)
+		if err != nil {
+			log.Println("Error:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"links": links})
 	})
 
 	return router
