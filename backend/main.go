@@ -16,6 +16,7 @@ import (
 	"github.com/Tom-Mendy/SentryLink/docs"
 	"github.com/Tom-Mendy/SentryLink/middlewares"
 	"github.com/Tom-Mendy/SentryLink/repository"
+	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
 )
 
@@ -36,8 +37,10 @@ func setupRouter() *gin.Engine {
 	router := gin.Default()
 
 	// Ping test
-	router.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
+	router.GET("/ping", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, &schemas.Response{
+			Message: "pong",
+		})
 	})
 
 	var (
