@@ -1,8 +1,6 @@
 package api
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -14,6 +12,7 @@ import (
 
 	"github.com/Tom-Mendy/SentryLink/controller"
 	"github.com/Tom-Mendy/SentryLink/schemas"
+	"github.com/Tom-Mendy/SentryLink/tools"
 )
 
 type GithubApi struct {
@@ -24,16 +23,6 @@ func NewGithubAPI(githubTokenController controller.GithubTokenController) *Githu
 	return &GithubApi{
 		githubTokenController: githubTokenController,
 	}
-}
-
-// Generate a random CSRF token
-func generateCSRFToken() (string, error) {
-	bytes := make([]byte, 16)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(bytes), nil
 }
 
 func (api *GithubApi) RedirectToGithub(c *gin.Context, path string) {
@@ -49,7 +38,7 @@ func (api *GithubApi) RedirectToGithub(c *gin.Context, path string) {
 		return
 	}
 	// Generate the CSRF token
-	state, err := generateCSRFToken()
+	state, err := tools.GenerateCSRFToken()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate CSRF token"})
 		return
@@ -68,7 +57,7 @@ func (api *GithubApi) RedirectToGithub(c *gin.Context, path string) {
 		"&state=" + state
 
 	// Redirect to GitHub's OAuth page
-	c.Redirect(http.StatusFound, authURL)
+	c.JSON(http.StatusOK, gin.H{"github_authentication_url": authURL})
 }
 
 func GetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error) {
