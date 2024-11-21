@@ -1,6 +1,10 @@
 package api
 
 import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
 	"github.com/Tom-Mendy/SentryLink/controller"
 )
 
@@ -14,6 +18,6 @@ func NewScrapApi(scrapController controller.ScrapController) ScrapApi {
 	}
 }
 
-// func (api *ScrapApi) Scrap(ctx *gin.Context) (string, error) {
-
-// }
+func (api *ScrapApi) GetScrappedUrl(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, api.scrapController.Scrap(ctx))
+}

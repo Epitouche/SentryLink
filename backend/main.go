@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
-	"strings"
 
 	"golang.org/x/net/html"
 	"gorm.io/gorm"
@@ -99,17 +97,20 @@ func setupRouter() *gin.Engine {
 		linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
 		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
 		userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
+		scrapRepository	   repository.ScrapRepository       = repository.NewScrapRepository(databaseConnection)
 
 		// Services
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
 		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
 		userService        service.UserService        = service.NewUserService(userRepository)
 		jwtService         service.JWTService         = service.NewJWTService()
+		scrapService	   service.ScrapService       = service.NewScrapService(scrapRepository)
 
 		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
 		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
 		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
+		scrapController       controller.ScrapController       = controller.NewScrapController(scrapService)
 	)
 
 	linkApi := api.NewLinkAPI(linkController)
@@ -117,6 +118,8 @@ func setupRouter() *gin.Engine {
 	userApi := api.NewUserAPI(userController)
 
 	githubApi := api.NewGithubAPI(githubTokenController)
+
+	scrapApi := api.NewScrapApi(scrapController)
 
 	// scrapApi := api
 
@@ -139,10 +142,10 @@ func setupRouter() *gin.Engine {
 		}
 
 		// Scrap
-		// scrap := apiRoutes.Group("/scrap", middlewares.AuthorizeJWT())
-		// {
-		// 	scrap.GET("", )
-		// }
+		scrap := apiRoutes.Group("/scrap")
+		{
+			scrap.GET("", scrapApi.GetScrappedUrl)
+		}
 
 		// Github
 		github := apiRoutes.Group("/github")
@@ -168,27 +171,7 @@ func setupRouter() *gin.Engine {
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found", "path": path, "method": method})
 	})
 
-	router.GET("/scrap", func(c *gin.Context) {
-		pageURL := c.Query("url")
-		if pageURL == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "url parameter is required"})
-			return
-		}
 
-		// Ensure the URL starts with http:// or https://
-		if !strings.HasPrefix(pageURL, "http://") && !strings.HasPrefix(pageURL, "https://") {
-			pageURL = "http://" + pageURL
-		}
-
-		links, err := ExtractLinks(pageURL)
-		if err != nil {
-			log.Println("Error:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"links": links})
-	})
 
 	return router
 }

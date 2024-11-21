@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -14,7 +15,7 @@ import (
 )
 
 type ScrapController interface {
-	Scrap(ctx *gin.Context) (string, error)
+	Scrap(ctx *gin.Context) []string
 }
 
 type scrapController struct {
@@ -23,12 +24,12 @@ type scrapController struct {
 
 var validateScrap *validator.Validate
 
-// func NewScrapController(scrapService service.ScrapService) ScrapController {
-// 	validateScrap = validator.New()
-// 	return &scrapController{
-// 		service: scrapService,
-// 	}
-// }
+func NewScrapController(scrapService service.ScrapService) ScrapController {
+	validateScrap = validator.New()
+	return &scrapController{
+		service: scrapService,
+	}
+}
 
 
 func ExtractLinks(pageURL string) ([]string, error) {
@@ -73,14 +74,15 @@ func ExtractLinks(pageURL string) ([]string, error) {
 	return links, nil
 }
 
-// func (controller *scrapController) Scrap(ctx *gin.Context) ([]string, error) {
-// 	pageURL := ctx.Query("url")
-// 	links, err := ExtractLinks(pageURL)
-// 	if err != nil {
-// 		log.Println("Error:", err)
-// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+func (controller *scrapController) Scrap(ctx *gin.Context) []string {
+	pageURL := ctx.Query("url")
+	links, err := ExtractLinks(pageURL)
+	if err != nil {
+		log.Println("Error:", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 
-// 	}
+	}
 
-// 	ctx.JSON(http.StatusOK, gin.H{"links": links})
-// }
+	return links
+	// ctx.JSON(http.StatusOK, gin.H{"links": links})
+}
