@@ -18,15 +18,17 @@ type GithubTokenController interface {
 }
 
 type githubTokenController struct {
-	service service.GithubTokenService
+	service     service.GithubTokenService
+	serviceUser service.UserService
 }
 
 var validateGithubToken *validator.Validate
 
-func NewGithubTokenController(service service.GithubTokenService) GithubTokenController {
+func NewGithubTokenController(service service.GithubTokenService, serviceUser service.UserService) GithubTokenController {
 	validateGithubToken = validator.New()
 	return &githubTokenController{
-		service: service,
+		service:     service,
+		serviceUser: serviceUser,
 	}
 }
 
@@ -92,7 +94,14 @@ func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Contex
 	if err != nil {
 		return "", errors.New("unable to get user info because " + err.Error())
 	}
-	userInfo.AvatarUrl = ""
-
-	return githubTokenResponse.AccessToken, nil
+	newUser := schemas.User{
+		Username: userInfo.Login,
+		Email:    userInfo.Email,
+		GithubId: userInfo.Id,
+	}
+	token, err := controller.serviceUser.Register(newUser)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

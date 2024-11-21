@@ -33,11 +33,11 @@ func (controller *userController) Login(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	isAuthenticated := controller.userService.Login(credentials.Username, credentials.Password)
-	if isAuthenticated {
-		return controller.jWtService.GenerateToken(credentials.Username, true), nil
+	token, err := controller.userService.Login(credentials.Username, credentials.Password)
+	if err != nil {
+		return "", err
 	}
-	return "", errors.New("bad credentials")
+	return token, nil
 }
 
 func (controller *userController) Register(ctx *gin.Context) (string, error) {
@@ -55,9 +55,15 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	if len(credentials.Email) < 4 {
 		return "", errors.New("email must be at least 4 characters long")
 	}
-	isCreated := controller.userService.Registration(credentials.Username, credentials.Email, credentials.Password)
-	if isCreated {
-		return controller.jWtService.GenerateToken(credentials.Username, true), nil
+
+	newUser := schemas.User{
+		Username: credentials.Username,
+		Email:    credentials.Email,
+		Password: credentials.Password,
 	}
-	return "", errors.New("email already exists")
+	token, err := controller.userService.Register(newUser)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

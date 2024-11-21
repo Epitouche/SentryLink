@@ -1,57 +1,61 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/Tom-Mendy/SentryLink/database"
 	"github.com/Tom-Mendy/SentryLink/repository"
 	"github.com/Tom-Mendy/SentryLink/schemas"
 )
 
 type UserService interface {
-	Login(username string, password string) bool
-	Registration(username string, email string, password string) bool
+	Login(username string, password string) (string, error)
+	Register(newUser schemas.User) (string, error)
 }
 
 type userService struct {
 	authorizedUsername string
 	authorizedPassword string
 	repository         repository.UserRepository
+	serviceJWT         JWTService
 }
 
-func NewUserService(userRepository repository.UserRepository) UserService {
+func NewUserService(userRepository repository.UserRepository, serviceJWT JWTService) UserService {
 	return &userService{
 		authorizedUsername: "root",
 		authorizedPassword: "password",
 		repository:         userRepository,
+		serviceJWT:         serviceJWT,
 	}
 }
 
-func (service *userService) Login(username string, password string) bool {
+func (service *userService) Login(username string, password string) (string, error) {
 	userWiththisUserName := service.repository.FindByUserName(username)
 	if len(userWiththisUserName) == 0 {
-		return false
+		return "", errors.New("invalid credentials")
 	}
 	for _, user := range userWiththisUserName {
 		if database.DoPasswordsMatch(user.Password, password) {
-			return true
+			return service.serviceJWT.GenerateToken(username, true), nil
 		}
 	}
-	return false
+	return "", errors.New("invalid credentials")
 }
 
-func (service *userService) Registration(username string, email string, password string) bool {
-	userWiththisEmail := service.repository.FindByEmail(email)
+func (service *userService) Register(newUser schemas.User) (string, error) {
+	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	if len(userWiththisEmail) != 0 {
-		return false
+		return "", errors.New("email already in use")
 	}
-	hashedPassword, err := database.HashPassword(password)
-	if err != nil {
-		return false
+
+	if newUser.Password != "" {
+		hashedPassword, err := database.HashPassword(newUser.Password)
+		if err != nil {
+			return "", errors.New("error while hashing the password")
+		}
+		newUser.Password = hashedPassword
 	}
-	newUser := schemas.User{
-		Username: username,
-		Email:    email,
-		Password: hashedPassword,
-	}
+
 	service.repository.Save(newUser)
-	return true
+	return service.serviceJWT.GenerateToken(newUser.Username, true), nil
 }

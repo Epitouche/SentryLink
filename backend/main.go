@@ -55,12 +55,12 @@ func setupRouter() *gin.Engine {
 		// Services
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
 		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-		userService        service.UserService        = service.NewUserService(userRepository)
 		jwtService         service.JWTService         = service.NewJWTService()
+		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
 
 		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
-		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
+		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService, userService)
 		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
 	)
 

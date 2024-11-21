@@ -25,4 +25,5 @@ type GithubUserInfo struct {
 	Type      string `json:"type"`
 	HtmlUrl   string `json:"html_url"`
 	Name      string `json:"name"`
+	Email     string `json:"email"`
 }
