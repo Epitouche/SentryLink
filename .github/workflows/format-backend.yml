@@ -13,7 +13,8 @@ defaults:
     working-directory: ./backend
 
 jobs:
-  detect-modules:
+  detect-backend-golang-modules:
+    name: Detect Backend GoLang modules
     runs-on: self-hosted
     outputs:
       modules: ${{ steps.set-modules.outputs.modules }}
@@ -26,12 +27,13 @@ jobs:
       - id: set-modules
         run: echo "modules=$(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')" >> $GITHUB_OUTPUT
 
-  golangci-lint:
-    needs: detect-modules
+  run-backend-linter:
+    name: Run Backend linter
+    needs: detect-backend-golang-modules
     runs-on: self-hosted
     strategy:
       matrix:
-        modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
+        modules: ${{ fromJSON(needs.detect-backend-golang-modules.outputs.modules) }}
     steps:
       - uses: actions/checkout@v4
 

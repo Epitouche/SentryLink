@@ -20,7 +20,8 @@
 				"hollowtree.vue-snippets",
 				"Nuxtr.nuxt-vscode-extentions",
 				"Tyriar.lorem-ipsum",
-				"ZaferAYAN.lorem-picsum"
+				"ZaferAYAN.lorem-picsum",
+				"Cardinal90.multi-cursor-case-preserve"
 			]
 		}
 	},

@@ -1,10 +1,9 @@
 package repository
 
 import (
-	"github.com/Tom-Mendy/SentryLink/schemas"
-
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/Tom-Mendy/SentryLink/schemas"
 )
 
 type LinkRepository interface {
@@ -14,42 +13,48 @@ type LinkRepository interface {
 	FindAll() []schemas.Link
 }
 
-type database struct {
-	connection *gorm.DB
+type linkRepository struct {
+	db *schemas.Database
 }
 
-func NewLinkRepository() LinkRepository {
-	dsn := "host=postgres user=admin password=password dbname=mydatabase port=5432 sslmode=disable TimeZone=Europe/Paris"
-	conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	// err = conn.AutoMigrate(&schemas.Link{}, &schemas.LinkInfo{})
-	err = conn.AutoMigrate(&schemas.LinkUrl{}, &schemas.Link{})
+func NewLinkRepository(conn *gorm.DB) LinkRepository {
+	err := conn.AutoMigrate(&schemas.LinkUrl{}, &schemas.Link{})
 	if err != nil {
 		panic("failed to migrate database")
 	}
-	println("Connection to database established")
-	return &database{
-		connection: conn,
+	return &linkRepository{
+		db: &schemas.Database{
+			Connection: conn,
+		},
 	}
 }
 
-func (db *database) Save(video schemas.Link) {
-	db.connection.Create(&video)
+func (repo *linkRepository) Save(video schemas.Link) {
+	err := repo.db.Connection.Create(&video)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
-func (db *database) Update(video schemas.Link) {
-	db.connection.Save(&video)
+func (repo *linkRepository) Update(video schemas.Link) {
+	err := repo.db.Connection.Save(&video)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
-func (db *database) Delete(video schemas.Link) {
-	db.connection.Delete(&video)
+func (repo *linkRepository) Delete(video schemas.Link) {
+	err := repo.db.Connection.Delete(&video)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 }
 
-func (db *database) FindAll() []schemas.Link {
+func (repo *linkRepository) FindAll() []schemas.Link {
 	var links []schemas.Link
-	db.connection = db.connection.Debug() // Enable debugging
-	db.connection.Preload("UrlId").Find(&links)
+	err := repo.db.Connection.Preload("UrlId").Find(&links)
+	if err.Error != nil {
+		panic(err.Error)
+	}
 	return links
 }

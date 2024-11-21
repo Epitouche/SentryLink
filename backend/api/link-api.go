@@ -10,41 +10,13 @@ import (
 )
 
 type LinkApi struct {
-	loginController controller.LoginController
-	linkController  controller.LinkController
+	linkController controller.LinkController
 }
 
-func NewLinkAPI(loginController controller.LoginController,
+func NewLinkAPI(
 	linkController controller.LinkController) *LinkApi {
 	return &LinkApi{
-		loginController: loginController,
-		linkController:  linkController,
-	}
-}
-
-// Paths Information
-
-// Authenticate godoc
-// @Summary Provides a JSON Web Token
-// @Description Authenticates a user and provides a JWT to Authorize API calls
-// @ID Authentication
-// @Consume application/x-www-form-urlencoded
-// @Produce json
-// @Param username formData string true "Username"
-// @Param password formData string true "Password"
-// @Success 200 {object} schemas.JWT
-// @Failure 401 {object} schemas.Response
-// @Router /auth/token [post]
-func (api *LinkApi) Authenticate(ctx *gin.Context) {
-	token := api.loginController.Login(ctx)
-	if token != "" {
-		ctx.JSON(http.StatusOK, &schemas.JWT{
-			Token: token,
-		})
-	} else {
-		ctx.JSON(http.StatusUnauthorized, &schemas.Response{
-			Message: "Not Authorized",
-		})
+		linkController: linkController,
 	}
 }
 

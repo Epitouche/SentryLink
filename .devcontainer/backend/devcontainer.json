@@ -18,7 +18,8 @@
 				"Dhikilabs.gin-snippets",
 				"766b.go-outliner",
 				"premparihar.gotestexplorer",
-				"saxon-chuang.go-imports-sorter"
+				"saxon-chuang.go-imports-sorter",
+				"Cardinal90.multi-cursor-case-preserve"
 			]
 		}
 	},
