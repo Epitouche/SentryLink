@@ -1,12 +1,11 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
 	"name": "Backend",
 	"dockerComposeFile": "../../compose.dev.yaml",
 	"service": "backend",
-	// "shutdownAction": "none",
+    "image": "debian",
 	"workspaceFolder": "/workspace/backend",
-	"postCreateCommand": "sudo chown vscode -R /home/vscode/.zinit && sudo chown vscode -R /home/vscode/.zsh_history && sudo chown vscode -R /home/vscode/.ssh && go mod download && go install github.com/codegangsta/gin@latest && go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0",
+	"postCreateCommand": "sudo chown vscode -R /home/vscode/.zinit && sudo chown vscode -R /home/vscode/.zsh_history && sudo chown vscode -R /home/vscode/.ssh && go mod download && go install github.com/codegangsta/gin@latest && go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0 && sudo apt-get update && sudo apt-get install -y neovim git && mkdir -p /workspace/backend/devcontainer-nvim && cp-r $HOME/.config/nvim /workspace/backend/.devcontainer/devcontainer-nvim/ && cp -r /workspace/backend/.devcontainer/devcontainer-nvim/* /workspace/backend/devcontainer-nvim && git clone https://github.com/folke/lazy.nvim /workspace/backend/devcontainer-nvim/lazy.nvim &&
+XDG_CONFIG_HOME=/workspace/backend/devcontainer-nvim nvim --headless -c 'Lazy! sync' -c 'quitall'",
 	"postStartCommand": "gin --appPort 8000 --port 8080",
 	"customizations": {
 		"vscode": {
@@ -22,9 +21,9 @@
 			]
 		}
 	},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
 		8080,
 		5000
 	]
 }
+
