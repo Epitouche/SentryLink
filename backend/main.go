@@ -121,8 +121,6 @@ func setupRouter() *gin.Engine {
 
 	scrapApi := api.NewScrapApi(scrapController)
 
-	// scrapApi := api
-
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
 		// User Auth
