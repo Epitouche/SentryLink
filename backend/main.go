@@ -114,7 +114,6 @@ func setupRouter() *gin.Engine {
 		path := c.Request.URL.Path
 		// get the method
 		method := c.Request.Method
-		print("\n\n" + method + " " + path + "\n\n\n")
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found", "path": path, "method": method})
 	})
 

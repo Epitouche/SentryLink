@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"errors"
 	"os"
 
@@ -16,7 +15,7 @@ import (
 type GithubTokenController interface {
 	RedirectToGithub(ctx *gin.Context, path string) (string, error)
 	HandleGithubTokenCallback(c *gin.Context, path string) (string, error)
-	GetUserInfo(c *gin.Context) (userInfo string, err error)
+	GetUserInfo(c *gin.Context) (userInfo schemas.GithubUserInfo, err error)
 }
 
 type githubTokenController struct {
@@ -125,31 +124,23 @@ func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Contex
 	}
 }
 
-func (controller *githubTokenController) GetUserInfo(ctx *gin.Context) (userInfo string, err error) {
+func (controller *githubTokenController) GetUserInfo(ctx *gin.Context) (userInfo schemas.GithubUserInfo, err error) {
 	const BEARER_SCHEMA = "Bearer "
 	authHeader := ctx.GetHeader("Authorization")
 	tokenString := authHeader[len(BEARER_SCHEMA):]
 
 	user, err := controller.serviceUser.GetUserInfo(tokenString)
 	if err != nil {
-		return "", err
+		return schemas.GithubUserInfo{}, err
 	}
 	token, err := controller.service.GetTokenById(user.GithubId)
 	if err != nil {
-		return "", err
+		return schemas.GithubUserInfo{}, err
 	}
 	githubUserInfo, err := controller.service.GetUserInfo(token.AccessToken)
 	if err != nil {
-		return "", err
+		return schemas.GithubUserInfo{}, err
 	}
 
-	// Convert the struct to JSON
-	json, err := json.Marshal(githubUserInfo)
-	if err != nil {
-		return "", err
-	}
-
-	// JSON to []string
-
-	return string(json), nil
+	return githubUserInfo, nil
 }
