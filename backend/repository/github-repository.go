@@ -12,6 +12,7 @@ type GithubTokenRepository interface {
 	Delete(token schemas.GithubToken)
 	FindAll() []schemas.GithubToken
 	FindByAccessToken(accessToken string) []schemas.GithubToken
+	FindById(id uint64) schemas.GithubToken
 }
 
 // Define a struct that embeds `*schemas.Database` and implements `GithubTokenRepository`
@@ -65,6 +66,15 @@ func (repo *githubTokenRepository) FindAll() []schemas.GithubToken {
 func (repo *githubTokenRepository) FindByAccessToken(accessToken string) []schemas.GithubToken {
 	var tokens []schemas.GithubToken
 	err := repo.db.Connection.Where(&schemas.GithubToken{AccessToken: accessToken}).Find(&tokens)
+	if err.Error != nil {
+		panic(err.Error)
+	}
+	return tokens
+}
+
+func (repo *githubTokenRepository) FindById(id uint64) schemas.GithubToken {
+	var tokens schemas.GithubToken
+	err := repo.db.Connection.Where(&schemas.GithubToken{Id: id}).First(&tokens)
 	if err.Error != nil {
 		panic(err.Error)
 	}

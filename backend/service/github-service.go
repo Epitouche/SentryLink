@@ -13,12 +13,14 @@ import (
 )
 
 type GithubTokenService interface {
-	GetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error)
+	AuthGetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error)
 	GetUserInfo(accessToken string) (schemas.GithubUserInfo, error)
+	// Token operations
 	SaveToken(schemas.GithubToken) (tokenId uint64, err error)
 	Update(schemas.GithubToken) error
 	Delete(schemas.GithubToken) error
 	FindAll() []schemas.GithubToken
+	GetTokenById(id uint64) (schemas.GithubToken, error)
 }
 
 type githubTokenService struct {
@@ -31,7 +33,7 @@ func NewGithubTokenService(githubTokenRepository repository.GithubTokenRepositor
 	}
 }
 
-func (service *githubTokenService) GetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error) {
+func (service *githubTokenService) AuthGetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error) {
 	clientID := os.Getenv("GITHUB_CLIENT_ID")
 	if clientID == "" {
 		return schemas.GitHubTokenResponse{}, errors.New("GITHUB_CLIENT_ID is not set")
@@ -123,6 +125,10 @@ func (service *githubTokenService) GetUserInfo(accessToken string) (schemas.Gith
 		return schemas.GithubUserInfo{}, err
 	}
 	return result, nil
+}
+
+func (service *githubTokenService) GetTokenById(id uint64) (schemas.GithubToken, error) {
+	return service.repository.FindById(id), nil
 }
 
 func (service *githubTokenService) Update(token schemas.GithubToken) error {
