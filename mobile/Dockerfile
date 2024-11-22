@@ -26,4 +26,10 @@ COPY . /app
 
 WORKDIR /app/android
 
-CMD ["./gradlew", ":app:assembleRelease"]
+RUN ./gradlew :app:assembleRelease
+
+FROM baseImage AS final
+
+WORKDIR /app/apk
+
+COPY --from=build /app/android/app/build/outputs/apk/release/app-release.apk /app/apk/client.apk
