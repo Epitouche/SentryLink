@@ -14,8 +14,8 @@ import (
 
 type GithubTokenService interface {
 	GetGithubAccessToken(code string, path string) (schemas.GitHubTokenResponse, error)
-	GetUserInfo(schemas.GithubToken) (schemas.GithubUserInfo, error)
-	SaveToken(schemas.GithubToken) error
+	GetUserInfo(accessToken string) (schemas.GithubUserInfo, error)
+	SaveToken(schemas.GithubToken) (tokenId uint64, err error)
 	Update(schemas.GithubToken) error
 	Delete(schemas.GithubToken) error
 	FindAll() []schemas.GithubToken
@@ -79,15 +79,26 @@ func (service *githubTokenService) GetGithubAccessToken(code string, path string
 	return result, nil
 }
 
-func (service *githubTokenService) SaveToken(token schemas.GithubToken) error {
+func (service *githubTokenService) SaveToken(token schemas.GithubToken) (tokenId uint64, err error) {
 	tokens := service.repository.FindByAccessToken(token.AccessToken)
-	if len(tokens) == 0 {
-		service.repository.Save(token)
+
+	for _, t := range tokens {
+		if t.AccessToken == token.AccessToken {
+			return t.Id, errors.New("token already exists")
+		}
 	}
-	return nil
+	service.repository.Save(token)
+	tokens = service.repository.FindByAccessToken(token.AccessToken)
+
+	for _, t := range tokens {
+		if t.AccessToken == token.AccessToken {
+			return t.Id, nil
+		}
+	}
+	return 0, errors.New("unable to save token")
 }
 
-func (service *githubTokenService) GetUserInfo(token schemas.GithubToken) (schemas.GithubUserInfo, error) {
+func (service *githubTokenService) GetUserInfo(accessToken string) (schemas.GithubUserInfo, error) {
 
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
@@ -96,7 +107,7 @@ func (service *githubTokenService) GetUserInfo(token schemas.GithubToken) (schem
 	}
 
 	// Add the Authorization header
-	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
 
 	// Make the request using the default HTTP client
 	client := &http.Client{}

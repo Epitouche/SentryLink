@@ -15,6 +15,7 @@ import (
 type GithubTokenController interface {
 	RedirectToGithub(ctx *gin.Context, path string) (string, error)
 	HandleGithubTokenCallback(c *gin.Context, path string) (string, error)
+	GetUserInfo(c *gin.Context) (string, error)
 }
 
 type githubTokenController struct {
@@ -89,19 +90,41 @@ func (controller *githubTokenController) HandleGithubTokenCallback(c *gin.Contex
 	}
 
 	// Save the access token in the database
-	controller.service.SaveToken(newGithubToken)
-	userInfo, err := controller.service.GetUserInfo(newGithubToken)
+	tokenId, err := controller.service.SaveToken(newGithubToken)
+	userAlreadExists := false
+	if err != nil {
+		if err.Error() == "token already exists" {
+			userAlreadExists = true
+		} else {
+			return "", errors.New("unable to save token because " + err.Error())
+		}
+	}
+	userInfo, err := controller.service.GetUserInfo(newGithubToken.AccessToken)
 	if err != nil {
 		return "", errors.New("unable to get user info because " + err.Error())
 	}
 	newUser := schemas.User{
 		Username: userInfo.Login,
 		Email:    userInfo.Email,
-		GithubId: userInfo.Id,
+		GithubId: tokenId,
 	}
-	token, err := controller.serviceUser.Register(newUser)
-	if err != nil {
-		return "", err
+
+	if userAlreadExists {
+		token, err := controller.serviceUser.Login(newUser)
+		if err != nil {
+			return "", err
+		}
+		return token, nil
+	} else {
+		token, err := controller.serviceUser.Register(newUser)
+		if err != nil {
+			return "", err
+		}
+		return token, nil
 	}
-	return token, nil
+}
+
+func (controller *githubTokenController) GetUserInfo(c *gin.Context) (string, error) {
+	controller.service.GetUserInfo("token")
+	return "info", nil
 }

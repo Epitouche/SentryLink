@@ -19,7 +19,6 @@ func NewGithubAPI(githubTokenController controller.GithubTokenController) *Githu
 }
 
 func (api *GithubApi) RedirectToGithub(ctx *gin.Context, path string) {
-
 	authURL, err := api.githubTokenController.RedirectToGithub(ctx, path)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -32,8 +31,16 @@ func (api *GithubApi) HandleGithubTokenCallback(ctx *gin.Context, path string) {
 	github_token, err := api.githubTokenController.HandleGithubTokenCallback(ctx, path)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-
 	} else {
 		ctx.JSON(http.StatusOK, gin.H{"access_token": github_token})
+	}
+}
+
+func (api *GithubApi) GetUserInfo(ctx *gin.Context) {
+	usetInfo, err := api.githubTokenController.GetUserInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"user_info": usetInfo})
 	}
 }

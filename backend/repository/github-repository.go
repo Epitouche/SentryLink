@@ -36,6 +36,7 @@ func (repo *githubTokenRepository) Save(token schemas.GithubToken) {
 	if err.Error != nil {
 		panic(err.Error)
 	}
+
 }
 
 func (repo *githubTokenRepository) Update(token schemas.GithubToken) {

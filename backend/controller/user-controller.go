@@ -33,7 +33,13 @@ func (controller *userController) Login(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	token, err := controller.userService.Login(credentials.Username, credentials.Password)
+
+	newUser := schemas.User{
+		Username: credentials.Username,
+		Password: credentials.Password,
+	}
+
+	token, err := controller.userService.Login(newUser)
 	if err != nil {
 		return "", err
 	}

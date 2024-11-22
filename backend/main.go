@@ -98,6 +98,12 @@ func setupRouter() *gin.Engine {
 			github.GET("/auth/callback", func(c *gin.Context) {
 				githubApi.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
 			})
+
+			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
+			{
+				githubInfo.GET("/user", githubApi.GetUserInfo)
+			}
+
 		}
 	}
 

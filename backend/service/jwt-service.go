@@ -9,7 +9,7 @@ import (
 )
 
 type JWTService interface {
-	GenerateToken(name string, admin bool) string
+	GenerateToken(userId string, name string, admin bool) string
 	ValidateToken(tokenString string) (*jwt.Token, error)
 }
 
@@ -40,7 +40,7 @@ func getSecretKey() string {
 	return secret
 }
 
-func (jwtSrv *jwtService) GenerateToken(username string, admin bool) string {
+func (jwtSrv *jwtService) GenerateToken(userId string, username string, admin bool) string {
 
 	// Set custom and standard claims
 	claims := &jwtCustomClaims{
@@ -50,6 +50,7 @@ func (jwtSrv *jwtService) GenerateToken(username string, admin bool) string {
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 			Issuer:    jwtSrv.issuer,
 			IssuedAt:  time.Now().Unix(),
+			Id:        userId,
 		},
 	}
 

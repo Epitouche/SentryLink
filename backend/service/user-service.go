@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/Tom-Mendy/SentryLink/database"
 	"github.com/Tom-Mendy/SentryLink/repository"
@@ -9,8 +10,8 @@ import (
 )
 
 type UserService interface {
-	Login(username string, password string) (string, error)
-	Register(newUser schemas.User) (string, error)
+	Login(user schemas.User) (JWTtoken string, err error)
+	Register(newUser schemas.User) (JWTtoken string, err error)
 }
 
 type userService struct {
@@ -29,20 +30,31 @@ func NewUserService(userRepository repository.UserRepository, serviceJWT JWTServ
 	}
 }
 
-func (service *userService) Login(username string, password string) (string, error) {
-	userWiththisUserName := service.repository.FindByUserName(username)
+func (service *userService) Login(newUser schemas.User) (JWTtoken string, err error) {
+	userWiththisUserName := service.repository.FindByUserName(newUser.Username)
 	if len(userWiththisUserName) == 0 {
 		return "", errors.New("invalid credentials")
 	}
+	// regular user
 	for _, user := range userWiththisUserName {
-		if database.DoPasswordsMatch(user.Password, password) {
-			return service.serviceJWT.GenerateToken(username, true), nil
+		if database.DoPasswordsMatch(user.Password, newUser.Password) {
+			return service.serviceJWT.GenerateToken(fmt.Sprint(user.Id), user.Username, false), nil
 		}
 	}
+
+	// Oauth2.0 user
+	for _, user := range userWiththisUserName {
+		if user.Email == newUser.Email {
+			if newUser.GithubId != 0 {
+				return service.serviceJWT.GenerateToken(fmt.Sprint(user.Id), user.Username, false), nil
+			}
+		}
+	}
+
 	return "", errors.New("invalid credentials")
 }
 
-func (service *userService) Register(newUser schemas.User) (string, error) {
+func (service *userService) Register(newUser schemas.User) (JWTtoken string, err error) {
 	userWiththisEmail := service.repository.FindByEmail(newUser.Email)
 	if len(userWiththisEmail) != 0 {
 		return "", errors.New("email already in use")
@@ -57,5 +69,5 @@ func (service *userService) Register(newUser schemas.User) (string, error) {
 	}
 
 	service.repository.Save(newUser)
-	return service.serviceJWT.GenerateToken(newUser.Username, true), nil
+	return service.serviceJWT.GenerateToken(fmt.Sprint(newUser.Id), newUser.Username, false), nil
 }
