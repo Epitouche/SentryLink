@@ -105,8 +105,8 @@ RUN ./gradlew :app:assembleRelease
 
 FROM alpine:latest AS final-mobile
 
-WORKDIR /app/apk
+WORKDIR /app/public/apk
 
-COPY --from=build /app/android/app/build/outputs/apk/release/app-release.apk /app/apk/client.apk
+COPY --from=build /app/android/app/build/outputs/apk/release/app-release.apk /app/public/apk/client.apk
 
 CMD ["echo", "Mobile build complete"]
