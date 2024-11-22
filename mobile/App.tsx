@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function App() {
   const [responseData, setResponseData] = useState<string | null>(null);
-  const [ipAddress, setIpAddress] = useState<string>(''); // State to hold the IP address
+  const [ipAddress, setIpAddress] = useState<string>('');
 
   const handleButtonClick = async () => {
     try {
@@ -16,7 +16,7 @@ export default function App() {
       const response = await fetch(`http://${ipAddress}:8080/ping`);
       const data = await response.json();
       console.log('Response:', data);
-      setResponseData(JSON.stringify(data, null, 2)); // Set the response data to state
+      setResponseData(JSON.stringify(data, null, 2));
     } catch (error) {
       console.error('Error making GET request:', error);
       setResponseData('Error fetching data');
@@ -30,8 +30,8 @@ export default function App() {
         style={styles.input}
         placeholder="Enter IP address"
         value={ipAddress}
-        onChangeText={setIpAddress} // Update the IP address state
-        keyboardType="numeric" // Restrict keyboard to numeric inputs
+        onChangeText={setIpAddress}
+        keyboardType="numeric"
       />
       <Button title="Ping IP" onPress={handleButtonClick} />
       {responseData && (
