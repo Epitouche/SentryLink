@@ -8,10 +8,24 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
+  mobile:
+    container_name: mobile
+    build:
+      target: final-mobile
+      dockerfile: Dockerfile
+    volumes:
+      - shared_apk:/app/apk
+    # ports:
+    #   - 8081:8081
+    # networks:
+    #   - app-networks
+    # env_file:
+      # - ./mobile/.env
+
   backend:
     container_name: backend
     build:
-      target: finalBackend
+      target: final-backend
       dockerfile: Dockerfile
     ports:
       - 8080:8000
@@ -26,15 +40,20 @@ services:
   frontend:
     container_name: frontend
     build:
-      target: baseFrontend
+      target: final-frontend
       dockerfile: Dockerfile
     environment:
       NODE_ENV: production
     ports:
       - 3000:3000
       - 3001:3001
+    volumes:
+      - shared_apk:/app/apk
     networks:
       - app-networks
+    depends_on:
+      - backend
+      - mobile
 
   postgres:
     image: postgres:13
@@ -44,8 +63,6 @@ services:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: admin
       DB_HOST: postgres
-    ports:
-      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
@@ -77,6 +94,7 @@ services:
 
 volumes:
   db-data:
+  shared_apk:
 # secrets:
 #   db-password:
 #     file: db/password.txt
