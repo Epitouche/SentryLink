@@ -17,3 +17,13 @@ type GithubToken struct {
 	TokenType   string    `json:"token_type"`
 	CreatedAt   time.Time `json:"created_at" gorm:"default:CURRENT_TIMESTAMP"`
 }
+
+type GithubUserInfo struct {
+	Login     string `json:"login"`
+	Id        uint64 `json:"id" gorm:"primary_key"`
+	AvatarUrl string `json:"avatar_url"`
+	Type      string `json:"type"`
+	HtmlUrl   string `json:"html_url"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+}

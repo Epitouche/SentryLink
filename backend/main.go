@@ -55,12 +55,12 @@ func setupRouter() *gin.Engine {
 		// Services
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
 		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-		userService        service.UserService        = service.NewUserService(userRepository)
 		jwtService         service.JWTService         = service.NewJWTService()
+		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
 
 		// Controllers
 		linkController        controller.LinkController        = controller.NewLinkController(linkService)
-		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
+		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService, userService)
 		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
 	)
 
@@ -98,6 +98,12 @@ func setupRouter() *gin.Engine {
 			github.GET("/auth/callback", func(c *gin.Context) {
 				githubApi.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
 			})
+
+			githubInfo := github.Group("/info", middlewares.AuthorizeJWT())
+			{
+				githubInfo.GET("/user", githubApi.GetUserInfo)
+			}
+
 		}
 	}
 
@@ -108,7 +114,6 @@ func setupRouter() *gin.Engine {
 		path := c.Request.URL.Path
 		// get the method
 		method := c.Request.Method
-		print("\n\n" + method + " " + path + "\n\n\n")
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found", "path": path, "method": method})
 	})
 
