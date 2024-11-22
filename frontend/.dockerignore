@@ -1,5 +1,5 @@
-node_modules/
 .dockerignore
 Dockerfile
 .env
 .env.example
+node_modules

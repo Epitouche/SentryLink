@@ -12,21 +12,15 @@ services:
     container_name: mobile
     build:
       target: final-mobile
-      dockerfile: Dockerfile
+      dockerfile: mobile/Dockerfile
     volumes:
       - shared_apk:/app/public/apk
-    # ports:
-    #   - 8081:8081
-    # networks:
-    #   - app-networks
-    # env_file:
-      # - ./mobile/.env
 
   backend:
     container_name: backend
     build:
       target: final-backend
-      dockerfile: Dockerfile
+      dockerfile: backend/Dockerfile
     ports:
       - 8080:8000
     depends_on:
@@ -41,7 +35,7 @@ services:
     container_name: frontend
     build:
       target: final-frontend
-      dockerfile: Dockerfile
+      dockerfile: frontend/Dockerfile
     environment:
       NODE_ENV: production
     ports:
@@ -77,7 +71,7 @@ services:
   #   build:
   #     context: .
   #     target: pgadmin
-  #     dockerfile: Dockerfile
+  #     dockerfile: pgadmin/Dockerfile
   #   container_name: pgadmin
   #   ports:
   #     - "8081:80"
