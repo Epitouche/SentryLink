@@ -7,17 +7,12 @@
   <script>
   export default {
     mounted() {
-      // Path to the APK file in the static folder
-      const apkUrl = '/apk/client.apk'; // Updated to include the subfolder
+      const apkUrl = '/apk/client.apk';
   
-      // Create an invisible link and trigger the download
       const link = document.createElement('a');
       link.href = apkUrl;
-      link.download = 'client.apk'; // Optional: suggest a file name
+      link.download = 'client.apk';
       link.click();
-  
-      // Optionally redirect after download
-      // this.$router.push('/');
     }
   };
   </script>
