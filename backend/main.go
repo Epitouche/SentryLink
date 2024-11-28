@@ -30,7 +30,7 @@ func hello(c chan ActionService) {
 	var dt time.Time
 	for {
 		dt = time.Now().Local()
-		if dt.Hour() == 12 && dt.Minute() == 21 {
+		if dt.Hour() == 12 && dt.Minute() == 56 {
 			println("current time is ", dt.String())
 			c <- ActionService{
 				Service: "Timer",
@@ -45,7 +45,7 @@ func world(c chan ActionService) {
 	var dt time.Time
 	for {
 		dt = time.Now().Local()
-		if dt.Hour() == 12 && dt.Minute() == 21 {
+		if dt.Hour() == 12 && dt.Minute() == 56 {
 			println("current time is ", dt.String())
 			c <- ActionService{
 				Service: "Timer",
@@ -168,21 +168,27 @@ func init() {
 // @name Authorization
 func main() {
 
-	mychannel1 := make(chan ActionService)
+	// Create a channel list
+	var mychannel1 = make([]chan ActionService, 2)
+	mychannel1[0] = make(chan ActionService)
+	mychannel1[1] = make(chan ActionService)
+	mychannel2 := make(chan ActionService)
+	mychannel1 = append(mychannel1, mychannel2)
 
-	go hello(mychannel1)
-	go world(mychannel1)
+	go hello(mychannel1[0])
+	go world(mychannel1[0])
+	go world(mychannel1[2])
 
-	go func() {
+	go func(mychannel1 []chan ActionService) {
 		for {
-			x := <-mychannel1
+			x := <-mychannel1[0]
 			if x.Service == "Timer" {
 				println(x.Action)
 			} else {
 				println("Unknown service")
 			}
 		}
-	}()
+	}(mychannel1)
 
 	router := setupRouter()
 
