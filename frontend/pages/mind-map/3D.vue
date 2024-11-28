@@ -4,7 +4,7 @@
       <PillButton link1="/mind-map/2D" link2="/mind-map/3D" name1="2D" name2="3D" color1="bg-red-500" color2="bg-blue-500"/>
     </div>
     <div>
-      <Graph3D :graphData="graphData" />
+      <Graph3D :graph-data="graphData" />
     </div>
   </div>
 </template>
