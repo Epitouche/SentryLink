@@ -23,6 +23,12 @@ module.exports = {
         accent: {
           DEFAULT: "#f97316", // Orange
         },
+        custom: {
+          DEFAULT: "#F4F4F4", // Gris clair
+          section: "#FFFFFF", // Blanc
+          line: "#000000", // Noir
+          link: "#4187FF", // Bleu
+        },
       },
     },
   },
