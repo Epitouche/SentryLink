@@ -17,19 +17,23 @@
     "d3": "^7.9.0",
     "force-graph": "^1.44.2",
     "nuxt": "^3.13.0",
-    "prettier": "^3.3.3",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@eslint/js": "^9.14.0",
+    "@eslint/js": "^9.15.0",
     "@types/aos": "^3.0.7",
     "@types/eslint__js": "^8.42.3",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-vue": "^9.31.0",
+    "globals": "^15.12.0",
     "postcss": "^8.4.47",
+    "prettier": "^3.4.1",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.6.3",
-    "typescript-eslint": "^8.13.0"
+    "typescript-eslint": "^8.16.0"
   }
 }
