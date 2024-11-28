@@ -4,15 +4,38 @@ import (
 	"time"
 )
 
-func hello(c chan int) {
+type ActionService struct {
+	Service string
+	Action  string
+}
+
+func hello(c chan ActionService) {
 	var dt time.Time
 	for {
 		dt = time.Now().Local()
-		if dt.Hour() == 11 && dt.Minute() == 41 {
+		if dt.Hour() == 12 && dt.Minute() == 06 {
 			println("current time is ", dt.String())
-			c <- 1 // send sum to c
+			c <- ActionService{
+				Service: "Timer",
+				Action:  "say Hello",
+			} // send sum to c
 		}
 		time.Sleep(30 * time.Second)
+	}
+}
+
+func world(c chan ActionService) {
+	var dt time.Time
+	for {
+		dt = time.Now().Local()
+		if dt.Hour() == 12 && dt.Minute() == 06 {
+			println("current time is ", dt.String())
+			c <- ActionService{
+				Service: "Timer",
+				Action:  "say World",
+			} // send sum to c
+		}
+		time.Sleep(20 * time.Second)
 	}
 }
 
@@ -128,16 +151,18 @@ func init() {
 // @name Authorization
 func main() {
 
-	mychannel1 := make(chan int)
+	mychannel1 := make(chan ActionService)
 
 	go hello(mychannel1)
+	go world(mychannel1)
+
 	for {
 		x := <-mychannel1
 
-		if x == 1 {
-			println("Hello")
+		if x.Service == "Timer" {
+			println(x.Action)
 		} else {
-			println("World")
+			println("Unknown service")
 		}
 	}
 	// router := setupRouter()
