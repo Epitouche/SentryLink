@@ -14,7 +14,7 @@ RUN chown -R 5050:5050 /var/lib/pgadmin
 USER pgadmin
 
 # Backend
-FROM --platform=$BUILDPLATFORM golang:1.22 AS buildBackend
+FROM --platform=$BUILDPLATFORM golang:1.23 AS buildBackend
 WORKDIR /src
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
