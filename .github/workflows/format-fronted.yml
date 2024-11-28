@@ -28,13 +28,9 @@ jobs:
           node-version: 20
 
       - name: Install Node.js dependencies
+        env:
+          NODE_ENV: development
         run: npm ci --include=dev
-
-      - name: Verify ESLint installation
-        run: npx eslint --version
-
-      - name: Run ESLint
-        run: npx eslint . --ext js,ts
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
