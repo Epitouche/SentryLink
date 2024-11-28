@@ -26,9 +26,9 @@ type ActionService struct {
 	Action  string
 }
 
-func timerAction(hour int, minute int, c chan ActionService, response ActionService) {
+func timerAction(c chan ActionService, active *bool, hour int, minute int, response ActionService) {
 	var dt time.Time
-	for {
+	for *active {
 		dt = time.Now().Local()
 		if dt.Hour() == hour && dt.Minute() == minute {
 			println("current time is ", dt.String())
@@ -145,11 +145,12 @@ func init() {
 	// }
 }
 
-func handleAction(mychannel chan ActionService) {
+func handleAction(mychannel chan ActionService, active *bool) {
 	for {
 		x := <-mychannel
 		if x.Service == "Timer" {
 			println(x.Action)
+			*active = true
 		} else {
 			println("Unknown service")
 		}
@@ -162,11 +163,11 @@ func handleAction(mychannel chan ActionService) {
 func main() {
 
 	// Create a channel list
-	var mychannel = make([]chan ActionService, 2)
-	mychannel[0] = make(chan ActionService)
-	mychannel[1] = make(chan ActionService)
-	mychannel2 := make(chan ActionService)
-	mychannel = append(mychannel, mychannel2)
+	var allChannel = make([]chan ActionService, 2)
+	allChannel[0] = make(chan ActionService)
+	allChannel[1] = make(chan ActionService)
+	newChannel := make(chan ActionService)
+	allChannel = append(allChannel, newChannel)
 
 	dt := time.Now().Local()
 	hour := dt.Hour()
@@ -176,21 +177,24 @@ func main() {
 		minute = 0
 	}
 
-	go timerAction(hour, minute, mychannel[0], ActionService{
+	active := true
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
 		Service: "Timer",
 		Action:  "say Hello",
 	})
-	go timerAction(hour, minute, mychannel[2], ActionService{
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
 		Service: "Timer",
 		Action:  "say Bolo",
 	})
-	go timerAction(hour, minute, mychannel[0], ActionService{
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
 		Service: "Timer",
 		Action:  "say Toto",
 	})
 
-	go handleAction(mychannel[0])
-	go handleAction(mychannel[2])
+	go handleAction(allChannel[0], &active)
 
 	router := setupRouter()
 
