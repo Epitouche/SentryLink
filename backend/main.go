@@ -5,12 +5,6 @@ import (
 	"os"
 	"time"
 
-	"gorm.io/gorm"
-
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-
 	"github.com/Tom-Mendy/SentryLink/api"
 	"github.com/Tom-Mendy/SentryLink/controller"
 	"github.com/Tom-Mendy/SentryLink/database"
@@ -19,6 +13,10 @@ import (
 	"github.com/Tom-Mendy/SentryLink/repository"
 	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 )
 
 type ActionService struct {
@@ -39,7 +37,6 @@ func timerAction(c chan ActionService, active *bool, hour int, minute int, respo
 }
 
 func setupRouter() *gin.Engine {
-
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
 		panic("APP_PORT is not set")
@@ -121,7 +118,6 @@ func setupRouter() *gin.Engine {
 			{
 				githubInfo.GET("/user", githubApi.GetUserInfo)
 			}
-
 		}
 	}
 
@@ -159,11 +155,10 @@ func handleAction(mychannel chan ActionService, active *bool) {
 
 // @securityDefinitions.apiKey bearerAuth
 // @in header
-// @name Authorization
+// @name Authorization.
 func main() {
-
 	// Create a channel list
-	var allChannel = make([]chan ActionService, 2)
+	allChannel := make([]chan ActionService, 2)
 	allChannel[0] = make(chan ActionService)
 	allChannel[1] = make(chan ActionService)
 	newChannel := make(chan ActionService)

@@ -1,9 +1,8 @@
 package repository
 
 import (
-	"gorm.io/gorm"
-
 	"github.com/Tom-Mendy/SentryLink/schemas"
+	"gorm.io/gorm"
 )
 
 type LinkRepository interface {

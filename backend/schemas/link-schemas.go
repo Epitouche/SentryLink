@@ -2,19 +2,19 @@ package schemas
 
 import "time"
 
-// LinkUrl represents the URL entity in the database
+// LinkUrl represents the URL entity in the database.
 type LinkUrl struct {
-	Id  uint64 `json:"id,omitempty" gorm:"primary_key;auto_increment"`
-	Url string `json:"url" binding:"required" gorm:"type:varchar(256);unique"`
+	Id  uint64 `gorm:"primary_key;auto_increment" json:"id,omitempty"`
+	Url string `binding:"required"                gorm:"type:varchar(256);unique" json:"url"`
 }
 
-// Link represents the Link entity and is associated with LinkUrl
+// Link represents the Link entity and is associated with LinkUrl.
 type Link struct {
-	Id         uint64    `json:"id,omitempty" gorm:"primary_key;auto_increment"`
+	Id         uint64    `gorm:"primary_key;auto_increment"      json:"id,omitempty"`
 	LinkId     uint64    `json:"-"` // Foreign key for LinkUrl
-	UrlId      LinkUrl   `json:"url_id,omitempty" gorm:"foreignKey:LinkId;references:Id"`
-	StatusCode uint64    `json:"status_code" binding:"required"`
-	Response   string    `json:"response" binding:"required" gorm:"type:varchar(100)"`
-	Ping       uint64    `json:"ping" binding:"required"`
-	CreatedAt  time.Time `json:"created_at" gorm:"default:CURRENT_TIMESTAMP"`
+	UrlId      LinkUrl   `gorm:"foreignKey:LinkId;references:Id" json:"url_id,omitempty"`
+	StatusCode uint64    `binding:"required"                     json:"status_code"`
+	Response   string    `binding:"required"                     gorm:"type:varchar(100)" json:"response"`
+	Ping       uint64    `binding:"required"                     json:"ping"`
+	CreatedAt  time.Time `gorm:"default:CURRENT_TIMESTAMP"       json:"created_at"`
 }

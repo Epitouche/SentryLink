@@ -43,7 +43,6 @@ func getSecretKey() string {
 }
 
 func (jwtSrv *jwtService) GenerateToken(userId string, username string, admin bool) string {
-
 	// Set custom and standard claims
 	claims := &jwtCustomClaims{
 		username,
@@ -79,7 +78,6 @@ func (jwtSrv *jwtService) ValidateToken(tokenString string) (*jwt.Token, error) 
 }
 
 func (jwtSrv *jwtService) GetUserIdfromJWTToken(tokenString string) (userId uint64, err error) {
-
 	token, err := jwtSrv.ValidateToken(tokenString)
 	if err != nil {
 		return 0, err

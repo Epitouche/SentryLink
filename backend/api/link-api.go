@@ -3,10 +3,9 @@ package api
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/Tom-Mendy/SentryLink/controller"
 	"github.com/Tom-Mendy/SentryLink/schemas"
+	"github.com/gin-gonic/gin"
 )
 
 type LinkApi struct {
@@ -14,7 +13,8 @@ type LinkApi struct {
 }
 
 func NewLinkAPI(
-	linkController controller.LinkController) *LinkApi {
+	linkController controller.LinkController,
+) *LinkApi {
 	return &LinkApi{
 		linkController: linkController,
 	}
@@ -29,7 +29,7 @@ func NewLinkAPI(
 // @Produce  json
 // @Success 200 {array} api.LinkApi
 // @Failure 401 {object} schemas.Response
-// @Router /videos [get]
+// @Router /videos [get].
 func (api *LinkApi) GetLink(ctx *gin.Context) {
 	ctx.JSON(200, api.linkController.FindAll())
 }
@@ -45,7 +45,7 @@ func (api *LinkApi) GetLink(ctx *gin.Context) {
 // @Success 200 {object} schemas.Response
 // @Failure 400 {object} schemas.Response
 // @Failure 401 {object} schemas.Response
-// @Router /videos [post]
+// @Router /videos [post].
 func (api *LinkApi) CreateLink(ctx *gin.Context) {
 	err := api.linkController.Save(ctx)
 	if err != nil {
@@ -72,7 +72,7 @@ func (api *LinkApi) CreateLink(ctx *gin.Context) {
 // @Success 200 {object} schemas.Response
 // @Failure 400 {object} schemas.Response
 // @Failure 401 {object} schemas.Response
-// @Router /videos/{id} [put]
+// @Router /videos/{id} [put].
 func (api *LinkApi) UpdateLink(ctx *gin.Context) {
 	err := api.linkController.Update(ctx)
 	if err != nil {
@@ -98,7 +98,7 @@ func (api *LinkApi) UpdateLink(ctx *gin.Context) {
 // @Success 200 {object} schemas.Response
 // @Failure 400 {object} schemas.Response
 // @Failure 401 {object} schemas.Response
-// @Router /videos/{id} [delete]
+// @Router /videos/{id} [delete].
 func (api *LinkApi) DeleteLink(ctx *gin.Context) {
 	err := api.linkController.Delete(ctx)
 	if err != nil {
