@@ -15,9 +15,11 @@
     "@nuxt/ui": "^2.18.7",
     "@nuxt/ui-pro": "^1.4.3",
     "3d-force-graph": "^1.73.4",
+    "aos": "^2.3.4",
     "d3": "^7.9.0",
     "force-graph": "^1.44.2",
     "nuxt": "^3.13.0",
+    "prettier": "^3.3.3",
     "vee-validate": "^4.13.2",
     "vue": "latest",
     "vue-infinite-scroll": "^2.0.2",
@@ -25,10 +27,15 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.14.0",
     "@iconify-json/bytesize": "^1.2.0",
     "@types/aos": "^3.0.7",
+    "@types/eslint__js": "^8.42.3",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.15.0",
     "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13"
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.13.0"
   }
 }

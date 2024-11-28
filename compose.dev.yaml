@@ -3,6 +3,15 @@ services:
     image: mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
     volumes:
       - .:/workspace:cached
+        #  SSH keys
+      - "${HOME}/.ssh:/home/vscode/.ssh:cached"
+      #  ZSH with Zinit and Powerlevel10k
+      - "${HOME}/.zshrc:/home/vscode/.zshrc:cached"
+      - "${HOME}/.zsh_history:/home/vscode/.zsh_history:cached"
+      - "zinit:/home/vscode/.zinit"
+      - "${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached"
+    env_file:
+      - ./backend/.env
     command: sleep infinity
     # links:
     #   - frontend
@@ -18,12 +27,18 @@ services:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
     volumes:
       - .:/workspace:cached
+      #  SSH keys
+      - "${HOME}/.ssh:/home/node/.ssh:cached"
+      #  ZSH with Zinit and Powerlevel10k
+      - "${HOME}/.zshrc:/home/node/.zshrc:cached"
+      - "${HOME}/.zsh_history:/home/node/.zsh_history:cached"
+      - "zinit:/home/node/.zinit"
+      - "${HOME}/.p10k.zsh:/home/node/.p10k.zsh:cached"
     command: sleep infinity
     ports:
       - 3000:3000
     networks:
       - app-networks
-
 
   postgres:
     image: postgres:13
@@ -56,8 +71,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "user@domain.com"
       PGADMIN_DEFAULT_PASSWORD: "password"
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-      PGADMIN_CONFIG_ENHANCED_CSFR: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_ENHANCED_CSFR: "False"
     networks:
       - app-networks
     depends_on:
@@ -66,6 +81,7 @@ services:
 
 volumes:
   db-data:
+  zinit:
 # secrets:
 #   db-password:
 #     file: db/password.txt

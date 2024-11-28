@@ -1,4 +1,4 @@
-FROM dpage/pgadmin4:latest as pgadmin
+FROM dpage/pgadmin4:latest AS pgadmin
 
 USER root
 
