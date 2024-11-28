@@ -26,33 +26,15 @@ type ActionService struct {
 	Action  string
 }
 
-func hello(c chan ActionService) {
+func timerAction(hour int, minute int, c chan ActionService, response ActionService) {
 	var dt time.Time
 	for {
 		dt = time.Now().Local()
-		if dt.Hour() == 12 && dt.Minute() == 56 {
+		if dt.Hour() == hour && dt.Minute() == minute {
 			println("current time is ", dt.String())
-			c <- ActionService{
-				Service: "Timer",
-				Action:  "say Hello",
-			} // send sum to c
+			c <- response // send sum to c
 		}
 		time.Sleep(30 * time.Second)
-	}
-}
-
-func world(c chan ActionService) {
-	var dt time.Time
-	for {
-		dt = time.Now().Local()
-		if dt.Hour() == 12 && dt.Minute() == 56 {
-			println("current time is ", dt.String())
-			c <- ActionService{
-				Service: "Timer",
-				Action:  "say World",
-			} // send sum to c
-		}
-		time.Sleep(20 * time.Second)
 	}
 }
 
@@ -163,32 +145,52 @@ func init() {
 	// }
 }
 
+func handleAction(mychannel chan ActionService) {
+	for {
+		x := <-mychannel
+		if x.Service == "Timer" {
+			println(x.Action)
+		} else {
+			println("Unknown service")
+		}
+	}
+}
+
 // @securityDefinitions.apiKey bearerAuth
 // @in header
 // @name Authorization
 func main() {
 
 	// Create a channel list
-	var mychannel1 = make([]chan ActionService, 2)
-	mychannel1[0] = make(chan ActionService)
-	mychannel1[1] = make(chan ActionService)
+	var mychannel = make([]chan ActionService, 2)
+	mychannel[0] = make(chan ActionService)
+	mychannel[1] = make(chan ActionService)
 	mychannel2 := make(chan ActionService)
-	mychannel1 = append(mychannel1, mychannel2)
+	mychannel = append(mychannel, mychannel2)
 
-	go hello(mychannel1[0])
-	go world(mychannel1[0])
-	go world(mychannel1[2])
+	dt := time.Now().Local()
+	hour := dt.Hour()
+	minute := dt.Minute() + 1
+	if minute > 59 {
+		hour = hour + 1
+		minute = 0
+	}
 
-	go func(mychannel1 []chan ActionService) {
-		for {
-			x := <-mychannel1[0]
-			if x.Service == "Timer" {
-				println(x.Action)
-			} else {
-				println("Unknown service")
-			}
-		}
-	}(mychannel1)
+	go timerAction(hour, minute, mychannel[0], ActionService{
+		Service: "Timer",
+		Action:  "say Hello",
+	})
+	go timerAction(hour, minute, mychannel[2], ActionService{
+		Service: "Timer",
+		Action:  "say Bolo",
+	})
+	go timerAction(hour, minute, mychannel[0], ActionService{
+		Service: "Timer",
+		Action:  "say Toto",
+	})
+
+	go handleAction(mychannel[0])
+	go handleAction(mychannel[2])
 
 	router := setupRouter()
 
