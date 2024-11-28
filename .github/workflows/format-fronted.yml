@@ -25,11 +25,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
 
-      # ESLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
-        run: npm install --include=dev
+        run: npm ci --include=dev
+
+      - name: Verify ESLint installation
+        run: npx eslint --version
+
+      - name: Run ESLint
+        run: npx eslint . --ext js,ts
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
