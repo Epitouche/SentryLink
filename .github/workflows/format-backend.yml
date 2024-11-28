@@ -12,6 +12,7 @@ defaults:
   run:
     working-directory: ./backend
 
+
 jobs:
   detect-backend-golang-modules:
     name: Detect Backend GoLang modules
@@ -34,6 +35,8 @@ jobs:
     strategy:
       matrix:
         modules: ${{ fromJSON(needs.detect-backend-golang-modules.outputs.modules) }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
