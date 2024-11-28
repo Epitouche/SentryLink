@@ -1,275 +1,370 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "contact": {}
+  "definitions": {
+    "api.LinkApi": {
+      "type": "object"
     },
-    "paths": {
-        "/auth/token": {
-            "post": {
-                "description": "Authenticates a user and provides a JWT to Authorize API calls",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Provides a JSON Web Token",
-                "operationId": "Authentication",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "username",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Password",
-                        "name": "password",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.JWT"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/videos": {
-            "get": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Get all the existing videos",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "videos",
-                    "list"
-                ],
-                "summary": "List existing videos",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/api.LinkApi"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Create a new video",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "videos",
-                    "create"
-                ],
-                "summary": "Create new videos",
-                "parameters": [
-                    {
-                        "description": "Create video",
-                        "name": "video",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.LinkApi"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/videos/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Update a single video",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "videos"
-                ],
-                "summary": "Update videos",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Video ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Update video",
-                        "name": "video",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.LinkApi"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Delete a single video",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "videos"
-                ],
-                "summary": "Remove videos",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Video ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    }
-                }
-            }
+    "schemas.JWT": {
+      "properties": {
+        "token": {
+          "type": "string"
         }
+      },
+      "type": "object"
     },
-    "definitions": {
-        "api.LinkApi": {
-            "type": "object"
-        },
-        "schemas.JWT": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "schemas.Response": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
+    "schemas.Response": {
+      "properties": {
+        "message": {
+          "type": "string"
         }
-    },
-    "securityDefinitions": {
-        "bearerAuth": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
+      },
+      "type": "object"
     }
+  },
+  "info": {
+    "contact": {}
+  },
+  "paths": {
+    "/auth/login": {
+      "POST": {
+        "description": "Authenticate a user and provide a JWT to authorize API calls",
+        "parameters": [
+          {
+            "description": "string",
+            "in": "formData",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "string",
+            "in": "formData",
+            "name": "username",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "JWT",
+            "schema": {
+              "$ref": "#/definitions/schemas.JWT"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/register": {
+      "POST": {
+        "description": "Register a new user",
+        "parameters": [
+          {
+            "description": "string",
+            "in": "formData",
+            "name": "username",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "string",
+            "in": "formData",
+            "name": "email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "string",
+            "in": "formData",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User registered successfully",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "409": {
+            "description": "User already exists",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "description": "Authenticates a user and provides a JWT to Authorize API calls",
+        "operationId": "Authentication",
+        "parameters": [
+          {
+            "description": "Username",
+            "in": "formData",
+            "name": "username",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Password",
+            "in": "formData",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/schemas.JWT"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "summary": "Provides a JSON Web Token"
+      }
+    },
+    "/videos": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Get all the existing videos",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/api.LinkApi"
+              },
+              "type": "array"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List existing videos",
+        "tags": [
+          "videos",
+          "list"
+        ]
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Create a new video",
+        "parameters": [
+          {
+            "description": "Create video",
+            "in": "body",
+            "name": "video",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.LinkApi"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create new videos",
+        "tags": [
+          "videos",
+          "create"
+        ]
+      }
+    },
+    "/videos/{id}": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Delete a single video",
+        "parameters": [
+          {
+            "description": "Video ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Remove videos",
+        "tags": [
+          "videos"
+        ]
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Update a single video",
+        "parameters": [
+          {
+            "description": "Video ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Update video",
+            "in": "body",
+            "name": "video",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/api.LinkApi"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update videos",
+        "tags": [
+          "videos"
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "in": "header",
+      "name": "Authorization",
+      "type": "apiKey"
+    }
+  },
+  "swagger": "2.0"
 }

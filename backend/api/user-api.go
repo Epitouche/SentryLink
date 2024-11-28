@@ -45,6 +45,14 @@ func (api *UserApi) Login(ctx *gin.Context) {
 	})
 }
 
+// Register a new user
+// @Tags auth
+// @Param email query string true "string"
+// @Param password query string true "string"
+// @Success 200 {object} map[string]interface{} "User registered successfully"
+// @Success 409 {object} map[string]interface{} "User already exists"
+// @Success 400 {object} schemas.Response "Invalid request"
+// @Router /api/v1/auth/register [post]
 func (api *UserApi) Register(ctx *gin.Context) {
 	token, err := api.userController.Register(ctx)
 	if err != nil {
@@ -53,7 +61,7 @@ func (api *UserApi) Register(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.JSON(http.StatusCreated, &schemas.JWT{
+	ctx.JSON(http.StatusOK, &schemas.JWT{
 		Token: token,
 	})
 }

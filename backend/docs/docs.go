@@ -15,41 +15,92 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/token": {
+        "/auth/register": {
             "post": {
-                "description": "Authenticates a user and provides a JWT to Authorize API calls",
+                "description": "Register a new user",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Provides a JSON Web Token",
-                "operationId": "Authentication",
+                "tags": [
+                    "auth"
+                ],
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "username",
+                        "description": "string",
                         "in": "formData",
-                        "required": true
+                        "name": "username",
+                        "required": true,
+                        "type": "string"
                     },
                     {
-                        "type": "string",
-                        "description": "Password",
-                        "name": "password",
+                        "description": "string",
                         "in": "formData",
-                        "required": true
+                        "name": "email",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "string",
+                        "in": "formData",
+                        "name": "password",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "User registered successfully",
                         "schema": {
-                            "$ref": "#/definitions/schemas.JWT"
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "User already exists",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "Authenticates a user and provides a JWT to Authorize API calls",
+                "produces": ["application/json"],
+                "tags": ["auth"],
+                "parameters": [
+                    {
+                        "description": "string",
+                        "in": "formData",
+                        "name": "username",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "string",
+                        "in": "formData",
+                        "name": "password",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JWT",
+                        "schema": {
+                        "$ref": "#/definitions/schemas.JWT"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                        "$ref": "#/definitions/schemas.Response"
                         }
                     }
                 }
