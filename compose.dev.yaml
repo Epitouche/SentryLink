@@ -63,7 +63,7 @@ services:
       dockerfile: pgadmin/Dockerfile
     container_name: pgadmin
     ports:
-      - "8081:80"
+      - "8079:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: "user@domain.com"
       PGADMIN_DEFAULT_PASSWORD: "password"
