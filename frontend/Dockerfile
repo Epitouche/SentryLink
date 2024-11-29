@@ -1,11 +1,16 @@
-FROM node:20.12.2-alpine AS final-frontend
+FROM node:20.12.2-alpine AS build
 
 WORKDIR /app
 
-COPY frontend/ .
+COPY frontend/package.json ./
+COPY frontend/package-lock.json ./
 
 RUN npm install
 
-EXPOSE 3000
+FROM build AS run
 
-CMD ["npx",  "nuxt",  "dev"]
+COPY frontend/ ./
+
+EXPOSE 8081
+
+CMD ["npx", "nuxt", "dev"]
