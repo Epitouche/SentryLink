@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-const DetailsScreen: React.FC = () => {
+const LoginScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Log in</Text>
@@ -137,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DetailsScreen;
+export default LoginScreen;
