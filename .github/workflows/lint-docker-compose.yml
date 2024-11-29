@@ -1,4 +1,4 @@
-name: lint frontend
+name: lint docker-compose
 
 on:
   pull_request:
@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  run-frontend-linter:
-    name: Run Frontend linter
+  run-docker-compose-linter:
+    name: Run docker-compose linter
     runs-on: self-hosted
 
     steps:
