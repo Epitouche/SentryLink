@@ -1,4 +1,4 @@
-name: sentry-link
+name: sentry-link-dev
 services:
   backend:
     image: mcr.microsoft.com/devcontainers/go:1-1.23-bookworm
@@ -13,7 +13,8 @@ services:
       - ${HOME}/.zsh_history:/home/vscode/.zsh_history:cached
       - zinit:/home/vscode/.zinit
       - ${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached
-      - dev-go-pkg-mod:/go/pkg/mod/:rw
+    env_file:
+      - .env
     ports:
       - '0.0.0.0:8080:8080'
     networks:
@@ -80,4 +81,3 @@ networks:
 volumes:
   database-data:
   zinit:
-  dev-go-pkg-mod:
