@@ -15,7 +15,7 @@ services:
       - ${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached
       - dev-go-pkg-mod:/go/pkg/mod/:rw
     ports:
-      - '8080:8080'
+      - '0.0.0.0:8080:8080'
     networks:
       - app-networks
     command: sleep infinity
@@ -50,7 +50,7 @@ services:
       - zinit:/home/node/.zinit
       - ${HOME}/.p10k.zsh:/home/node/.p10k.zsh:cached
     ports:
-      - '8081:8081'
+      - '0.0.0.0:8081:8081'
     networks:
       - app-networks
     command: sleep infinity
@@ -70,7 +70,7 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: "False"
       PGADMIN_CONFIG_ENHANCED_CSFR: "False"
     ports:
-      - '8079:80'
+      - '0.0.0.0:8079:80'
     networks:
       - app-networks
 networks:
