@@ -1,74 +1,80 @@
+name: sentry-link
 services:
   backend:
-    container_name: backend
     build:
       target: run
       dockerfile: backend/Dockerfile
-    env_file:
-      - .env
-    networks:
-      - app-networks
-    ports:
-      - "8080:8080"
+    container_name: backend
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
+    networks:
+      - app-networks
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/ping || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8080/ping ||
+            exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  mobile:
-    container_name: mobile
-    build:
-      target: build-apk
-      dockerfile: mobile/Dockerfile
-    volumes:
-      - shared_apk:/app/public/apk
-    networks:
-      - app-networks
-
-  frontend:
-    container_name: frontend
-    build:
-      target: run
-      dockerfile: frontend/Dockerfile
-    environment:
-      - PORT=8081
-    ports:
-      - "8081:8081"
-    volumes:
-      - shared_apk:/app/public/apk
-    networks:
-      - app-networks
-    depends_on:
-      mobile:
-        condition: service_started
-      backend:
-        condition: service_healthy
-
   db:
     image: postgres:13
     container_name: sentry-db
+    volumes:
+      - database-data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: sentry-link-db
       POSTGRES_USER: admin
       DB_HOST: postgres
-    volumes:
-      - database-data:/var/lib/postgresql/data
     networks:
       - app-networks
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d sentry-link-db"]
+      test: [ "CMD-SHELL", "pg_isready -U admin -d sentry-link-db" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
+  frontend:
+    build:
+      target: run
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+      mobile:
+        condition: service_started
+    volumes:
+      - shared_apk:/app/public/apk
+    environment:
+      - PORT=8081
+    ports:
+      - '8081:8081'
+    networks:
+      - app-networks
+
+  mobile:
+    build:
+      target: build-apk
+      dockerfile: mobile/Dockerfile
+    container_name: mobile
+    volumes:
+      - shared_apk:/app/public/apk
+    networks:
+      - app-networks
+networks:
+  app-networks:
+
+
 volumes:
   database-data:
   shared_apk:
-
-networks:
-  app-networks:

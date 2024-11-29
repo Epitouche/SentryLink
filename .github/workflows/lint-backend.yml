@@ -1,4 +1,4 @@
-name: format backend
+name: lint backend
 
 on:
   pull_request:
