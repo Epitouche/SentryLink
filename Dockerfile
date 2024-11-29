@@ -14,7 +14,7 @@ RUN chown -R 5050:5050 /var/lib/pgadmin
 USER pgadmin
 
 # Backend
-FROM --platform=$BUILDPLATFORM golang:1.22 AS build-backend
+FROM --platform=$BUILDPLATFORM golang:1.23 AS build-backend
 WORKDIR /src
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
@@ -79,7 +79,7 @@ WORKDIR /app
 
 COPY mobile/package.json /app
 
-RUN apt-get update 
+RUN apt-get update
 
 RUN apt-get install -y nodejs npm
 

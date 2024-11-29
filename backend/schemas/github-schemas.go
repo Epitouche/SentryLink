@@ -2,25 +2,25 @@ package schemas
 
 import "time"
 
-// GitHubTokenResponse represents the response from Github when a token is requested
+// GitHubTokenResponse represents the response from Github when a token is requested.
 type GitHubTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	Scope       string `json:"scope"`
 	TokenType   string `json:"token_type"`
 }
 
-// GithubToken represents the GithubToken entity in the database
+// GithubToken represents the GithubToken entity in the database.
 type GithubToken struct {
-	Id          uint64    `json:"id,omitempty" gorm:"primary_key;auto_increment"`
+	Id          uint64    `gorm:"primary_key;auto_increment" json:"id,omitempty"`
 	AccessToken string    `json:"access_token"`
 	Scope       string    `json:"scope"`
 	TokenType   string    `json:"token_type"`
-	CreatedAt   time.Time `json:"created_at" gorm:"default:CURRENT_TIMESTAMP"`
+	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP"  json:"created_at"`
 }
 
 type GithubUserInfo struct {
 	Login     string `json:"login"`
-	Id        uint64 `json:"id" gorm:"primary_key"`
+	Id        uint64 `gorm:"primary_key" json:"id"`
 	AvatarUrl string `json:"avatar_url"`
 	Type      string `json:"type"`
 	HtmlUrl   string `json:"html_url"`

@@ -1,5 +1,5 @@
 <template>
-  <div ref="graph" class="graph-container"></div>
+  <div ref="graph" class="graph-container"/>
 </template>
 
 <script>
@@ -17,7 +17,7 @@ export default {
   methods: {
     async create2DGraph() {
       // Ensure we're running in a client-side environment
-      if (process.client) {
+      if (import.meta.client) {
         try {
           // Dynamically import ForceGraph2D
           const ForceGraph2D = (await import('force-graph')).default;
