@@ -4,13 +4,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Tom-Mendy/SentryLink/service"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-
-	"github.com/Tom-Mendy/SentryLink/service"
 )
 
-// AuthorizeJWT validates the token from the http request, returning a 401 if it's not valid
+// AuthorizeJWT validates the token from the http request, returning a 401 if it's not valid.
 func AuthorizeJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const BEARER_SCHEMA = "Bearer "

@@ -101,7 +101,6 @@ func (service *githubTokenService) SaveToken(token schemas.GithubToken) (tokenId
 }
 
 func (service *githubTokenService) GetUserInfo(accessToken string) (schemas.GithubUserInfo, error) {
-
 	// Create a new HTTP request
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {

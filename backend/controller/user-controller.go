@@ -3,10 +3,9 @@ package controller
 import (
 	"errors"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
+	"github.com/gin-gonic/gin"
 )
 
 type UserController interface {
@@ -20,7 +19,8 @@ type userController struct {
 }
 
 func NewUserController(userService service.UserService,
-	jWtService service.JWTService) UserController {
+	jWtService service.JWTService,
+) UserController {
 	return &userController{
 		userService: userService,
 		jWtService:  jWtService,
