@@ -18,6 +18,7 @@
     "d3": "^7.9.0",
     "force-graph": "^1.44.2",
     "nuxt": "^3.13.0",
+    "vee-validate": "^4.14.7",
     "vue": "latest",
     "vue-infinite-scroll": "^2.0.2",
     "vue-router": "latest",

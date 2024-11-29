@@ -1,43 +1,33 @@
-FROM --platform=$BUILDPLATFORM golang:1.22 AS build-backend
-WORKDIR /src
+FROM golang:1.23-alpine AS dependencies
 
-RUN --mount=type=cache,target=/go/pkg/mod/ \
-    --mount=type=bind,source=backend/go.sum,target=go.sum \
-    --mount=type=bind,source=backend/go.mod,target=go.mod \
-    go mod download -x
+WORKDIR /app
 
-ARG TARGETARCH
+COPY backend/go.mod .
 
-RUN --mount=type=cache,target=/go/pkg/mod/ \
-    --mount=type=bind,source=backend/,target=. \
-    CGO_ENABLED=0 GOARCH=$TARGETARCH go build -o /bin/server .
+COPY backend/go.sum .
 
-FROM alpine:latest AS final-backend
+RUN go mod download
 
-WORKDIR /bin
 
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk --update add \
-        ca-certificates \
-        tzdata \
-        && \
-        update-ca-certificates
+FROM dependencies AS build
 
-ARG UID=10001
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
-USER appuser
+COPY backend/ .
 
-COPY --from=build-backend /bin/server /bin/
+RUN go build -o /app
 
-ENV GIN_MODE=release
+
+FROM dependencies AS test
+
+COPY backend/ .
+
+CMD ["go", "test", "-v"]
+
+FROM alpine:3.15 AS run
+
+WORKDIR /app
+
+COPY --from=build /app/SentryLink .
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/bin/server" ]
+CMD ["/app/SentryLink"]

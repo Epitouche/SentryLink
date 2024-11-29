@@ -10,15 +10,13 @@ services:
       - "${HOME}/.zsh_history:/home/vscode/.zsh_history:cached"
       - "zinit:/home/vscode/.zinit"
       - "${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached"
-    env_file:
-      - ./backend/.env
     command: sleep infinity
     # links:
     #   - frontend
     ports:
       - 8080:8080
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
     networks:
       - app-networks
@@ -36,24 +34,24 @@ services:
       - "${HOME}/.p10k.zsh:/home/node/.p10k.zsh:cached"
     command: sleep infinity
     ports:
-      - 3000:3000
+      - 8081:8081
     networks:
       - app-networks
 
-  postgres:
+  db:
     image: postgres:13
-    container_name: postgres
+    container_name: sentry-db
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: sentry-link-db
       POSTGRES_USER: admin
       DB_HOST: postgres
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - database-data:/var/lib/postgresql/data
     networks:
       - app-networks
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d mydatabase"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d sentry-link-db"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -62,7 +60,7 @@ services:
     build:
       context: .
       target: pgadmin
-      dockerfile: Dockerfile
+      dockerfile: pgadmin/Dockerfile
     container_name: pgadmin
     ports:
       - "8081:80"
@@ -74,11 +72,11 @@ services:
     networks:
       - app-networks
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
 
 volumes:
-  db-data:
+  database-data:
   zinit:
 # secrets:
 #   db-password:
