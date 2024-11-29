@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up environment
-        run: cp backend/.env.example backend/.env
+        run: cp .env.example .env
 
       - name: Stop any running containers & remove volumes
         run: docker compose down --volumes
