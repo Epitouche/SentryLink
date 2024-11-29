@@ -11,8 +11,8 @@ services:
   mobile:
     container_name: mobile
     build:
-      target: final-mobile
-      dockerfile: Dockerfile
+      target: build-apk
+      dockerfile: mobile/Dockerfile
     volumes:
       - shared_apk:/app/apk
     # ports:
