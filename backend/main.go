@@ -3,12 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
-
-	"gorm.io/gorm"
-
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"time"
 
 	"github.com/Tom-Mendy/SentryLink/api"
 	"github.com/Tom-Mendy/SentryLink/controller"
@@ -18,10 +13,30 @@ import (
 	"github.com/Tom-Mendy/SentryLink/repository"
 	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 )
 
-func setupRouter() *gin.Engine {
+type ActionService struct {
+	Service string
+	Action  string
+}
 
+func timerAction(c chan ActionService, active *bool, hour int, minute int, response ActionService) {
+	var dt time.Time
+	for *active {
+		dt = time.Now().Local()
+		if dt.Hour() == hour && dt.Minute() == minute {
+			println("current time is ", dt.String())
+			c <- response // send sum to c
+		}
+		time.Sleep(30 * time.Second)
+	}
+}
+
+func setupRouter() *gin.Engine {
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
 		panic("APP_PORT is not set")
@@ -53,9 +68,9 @@ func setupRouter() *gin.Engine {
 		userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
 
 		// Services
+		jwtService         service.JWTService         = service.NewJWTService()
 		linkService        service.LinkService        = service.NewLinkService(linkRepository)
 		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-		jwtService         service.JWTService         = service.NewJWTService()
 		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
 
 		// Controllers
@@ -103,7 +118,6 @@ func setupRouter() *gin.Engine {
 			{
 				githubInfo.GET("/user", githubApi.GetUserInfo)
 			}
-
 		}
 	}
 
@@ -127,14 +141,60 @@ func init() {
 	// }
 }
 
+func handleAction(mychannel chan ActionService, active *bool) {
+	for {
+		x := <-mychannel
+		if x.Service == "Timer" {
+			println(x.Action)
+			*active = true
+		} else {
+			println("Unknown service")
+		}
+	}
+}
+
 // @securityDefinitions.apiKey bearerAuth
 // @in header
-// @name Authorization
+// @name Authorization.
 func main() {
+	// Create a channel list
+	allChannel := make([]chan ActionService, 2)
+	allChannel[0] = make(chan ActionService)
+	allChannel[1] = make(chan ActionService)
+	newChannel := make(chan ActionService)
+	allChannel = append(allChannel, newChannel)
+
+	dt := time.Now().Local()
+	hour := dt.Hour()
+	minute := dt.Minute() + 1
+	if minute > 59 {
+		hour = hour + 1
+		minute = 0
+	}
+
+	active := true
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
+		Service: "Timer",
+		Action:  "say Hello",
+	})
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
+		Service: "Timer",
+		Action:  "say Bolo",
+	})
+
+	go timerAction(allChannel[0], &active, hour, minute, ActionService{
+		Service: "Timer",
+		Action:  "say Toto",
+	})
+
+	go handleAction(allChannel[0], &active)
+
 	router := setupRouter()
 
 	// Listen and Server in 0.0.0.0:8000
-	err := router.Run(":8000")
+	err := router.Run(":8080")
 	if err != nil {
 		panic("Error when running the server")
 	}

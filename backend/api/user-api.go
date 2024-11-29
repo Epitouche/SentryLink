@@ -3,10 +3,9 @@ package api
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/Tom-Mendy/SentryLink/controller"
 	"github.com/Tom-Mendy/SentryLink/schemas"
+	"github.com/gin-gonic/gin"
 )
 
 type UserApi struct {
@@ -31,7 +30,7 @@ func NewUserAPI(userController controller.UserController) *UserApi {
 // @Param password formData string true "Password"
 // @Success 200 {object} schemas.JWT
 // @Failure 401 {object} schemas.Response
-// @Router /auth/token [post]
+// @Router /auth/token [post].
 func (api *UserApi) Login(ctx *gin.Context) {
 	token, err := api.userController.Login(ctx)
 	if err != nil {
