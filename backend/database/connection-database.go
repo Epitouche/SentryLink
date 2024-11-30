@@ -1,3 +1,4 @@
+
 package database
 
 import (
@@ -12,21 +13,21 @@ func Connection() *gorm.DB {
 	if host == "" {
 		panic("DB_HOST is not set")
 	}
-	user := os.Getenv("DB_USER")
-	if user == "" {
-		panic("DB_USER is not set")
-	}
-	password := os.Getenv("DB_PASSWORD")
-	if password == "" {
-		panic("DB_PASSWORD is not set")
-	}
-	dbname := os.Getenv("DB_NAME")
-	if dbname == "" {
-		panic("DB_NAME is not set")
-	}
 	port := os.Getenv("DB_PORT")
 	if port == "" {
 		panic("DB_PORT is not set")
+	}
+	user := os.Getenv("POSTGRES_USER")
+	if user == "" {
+		panic("POSTGRES_USER is not set")
+	}
+	password := os.Getenv("POSTGRES_PASSWORD")
+	if password == "" {
+		panic("POSTGRES_PASSWORD is not set")
+	}
+	dbname := os.Getenv("POSTGRES_DB")
+	if dbname == "" {
+		panic("POSTGRES_DB is not set")
 	}
 
 	dsn := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbname + " port=" + port + " sslmode=disable TimeZone=Europe/Paris"

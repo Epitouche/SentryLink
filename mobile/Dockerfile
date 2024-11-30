@@ -2,13 +2,13 @@ FROM reactnativecommunity/react-native-android AS node-install
 
 WORKDIR /app
 
-COPY package.json /app
+COPY mobile/package.json /app
 
-RUN apt-get update 
+RUN apt-get update
 
 RUN apt-get install -y nodejs npm
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 
 FROM node-install AS java-install
@@ -22,8 +22,26 @@ FROM java-install AS build
 
 WORKDIR /app
 
-COPY . /app
+COPY mobile/ /app
 
 WORKDIR /app/android
 
-CMD ["./gradlew", ":app:assembleRelease"]
+RUN ./gradlew :app:assembleRelease
+
+
+FROM alpine:latest AS build-apk
+
+WORKDIR /app/public/apk
+
+COPY --from=build /app/android/app/build/outputs/apk/release/app-release.apk /app/public/apk/client.apk
+
+CMD ["echo", "Mobile build complete"]
+
+
+FROM java-install AS run
+
+WORKDIR /app
+
+COPY mobile/ /app
+
+CMD ["npm", "start"]

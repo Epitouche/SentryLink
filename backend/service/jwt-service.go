@@ -3,14 +3,16 @@ package service
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
 
 type JWTService interface {
-	GenerateToken(name string, admin bool) string
+	GenerateToken(userId string, name string, admin bool) string
 	ValidateToken(tokenString string) (*jwt.Token, error)
+	GetUserIdfromJWTToken(tokenString string) (userId uint64, err error)
 }
 
 // jwtCustomClaims are custom claims extending default ones.
@@ -40,8 +42,7 @@ func getSecretKey() string {
 	return secret
 }
 
-func (jwtSrv *jwtService) GenerateToken(username string, admin bool) string {
-
+func (jwtSrv *jwtService) GenerateToken(userId string, username string, admin bool) string {
 	// Set custom and standard claims
 	claims := &jwtCustomClaims{
 		username,
@@ -50,6 +51,7 @@ func (jwtSrv *jwtService) GenerateToken(username string, admin bool) string {
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 			Issuer:    jwtSrv.issuer,
 			IssuedAt:  time.Now().Unix(),
+			Id:        userId,
 		},
 	}
 
@@ -73,4 +75,25 @@ func (jwtSrv *jwtService) ValidateToken(tokenString string) (*jwt.Token, error) 
 		// Return the secret signing key
 		return []byte(jwtSrv.secretKey), nil
 	})
+}
+
+func (jwtSrv *jwtService) GetUserIdfromJWTToken(tokenString string) (userId uint64, err error) {
+	token, err := jwtSrv.ValidateToken(tokenString)
+	if err != nil {
+		return 0, err
+	}
+
+	if token.Valid {
+		claims := token.Claims.(jwt.MapClaims)
+		if jti, ok := claims["jti"].(string); ok {
+			id, err := strconv.ParseUint(jti, 10, 64)
+			if err != nil {
+				return 0, err
+			}
+			return id, nil
+		}
+		return 0, fmt.Errorf("jti claim is not a float64")
+	} else {
+		return 0, err
+	}
 }

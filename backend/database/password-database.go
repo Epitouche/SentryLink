@@ -9,10 +9,10 @@ type Password interface {
 	DoPasswordsMatch(hashedPassword, currPassword string) bool
 }
 
-// Hash password
+// Hash password.
 func HashPassword(password string) (string, error) {
 	// Convert password string to byte slice
-	var passwordBytes = []byte(password)
+	passwordBytes := []byte(password)
 
 	// Hash password with Bcrypt's min cost
 	hashedPasswordBytes, err := bcrypt.
@@ -27,5 +27,4 @@ func DoPasswordsMatch(hashedPassword, currPassword string) bool {
 	err := bcrypt.CompareHashAndPassword(
 		[]byte(hashedPassword), []byte(currPassword))
 	return err == nil
-
 }

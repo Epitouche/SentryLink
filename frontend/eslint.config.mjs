@@ -1,9 +1,6 @@
 // @ts-check
+import withNuxt from './.nuxt/eslint.config.mjs'
 
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-);
+export default withNuxt(
+  // Your custom configs here
+)

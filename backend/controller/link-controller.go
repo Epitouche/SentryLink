@@ -4,11 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
-
 	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type LinkController interface {

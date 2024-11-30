@@ -3,10 +3,9 @@ package controller
 import (
 	"errors"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
+	"github.com/gin-gonic/gin"
 )
 
 type UserController interface {
@@ -20,7 +19,8 @@ type userController struct {
 }
 
 func NewUserController(userService service.UserService,
-	jWtService service.JWTService) UserController {
+	jWtService service.JWTService,
+) UserController {
 	return &userController{
 		userService: userService,
 		jWtService:  jWtService,
@@ -33,11 +33,17 @@ func (controller *userController) Login(ctx *gin.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	isAuthenticated := controller.userService.Login(credentials.Username, credentials.Password)
-	if isAuthenticated {
-		return controller.jWtService.GenerateToken(credentials.Username, true), nil
+
+	newUser := schemas.User{
+		Username: credentials.Username,
+		Password: credentials.Password,
 	}
-	return "", errors.New("bad credentials")
+
+	token, err := controller.userService.Login(newUser)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
 
 func (controller *userController) Register(ctx *gin.Context) (string, error) {
@@ -55,9 +61,15 @@ func (controller *userController) Register(ctx *gin.Context) (string, error) {
 	if len(credentials.Email) < 4 {
 		return "", errors.New("email must be at least 4 characters long")
 	}
-	isCreated := controller.userService.Registration(credentials.Username, credentials.Email, credentials.Password)
-	if isCreated {
-		return controller.jWtService.GenerateToken(credentials.Username, true), nil
+
+	newUser := schemas.User{
+		Username: credentials.Username,
+		Email:    credentials.Email,
+		Password: credentials.Password,
 	}
-	return "", errors.New("email already exists")
+	token, err := controller.userService.Register(newUser)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

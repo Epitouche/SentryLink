@@ -29,3 +29,5 @@ gin-bin
 
 # Unwanted tmp files
 tmp.json
+# air
+tmp

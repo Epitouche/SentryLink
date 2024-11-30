@@ -14,17 +14,16 @@ type LinkApi struct {
 }
 
 func NewLinkAPI(
-	linkController controller.LinkController) *LinkApi {
+	linkController controller.LinkController,
+) *LinkApi {
 	return &LinkApi{
 		linkController: linkController,
 	}
 }
 
-
 func (api *LinkApi) GetLink(ctx *gin.Context) {
 	ctx.JSON(200, api.linkController.FindAll())
 }
-
 
 func (api *LinkApi) CreateLink(ctx *gin.Context) {
 	err := api.linkController.Save(ctx)
@@ -39,7 +38,6 @@ func (api *LinkApi) CreateLink(ctx *gin.Context) {
 	}
 }
 
-
 func (api *LinkApi) UpdateLink(ctx *gin.Context) {
 	err := api.linkController.Update(ctx)
 	if err != nil {
@@ -52,7 +50,6 @@ func (api *LinkApi) UpdateLink(ctx *gin.Context) {
 		})
 	}
 }
-
 
 func (api *LinkApi) DeleteLink(ctx *gin.Context) {
 	err := api.linkController.Delete(ctx)
