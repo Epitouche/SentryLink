@@ -1,7 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const LoginScreen: React.FC = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({ username: '', password: '' });
+
+  const handleLogin = () => {
+    let hasError = false;
+    const newErrors = { username: '', password: '' };
+
+    if (!username) {
+      newErrors.username = 'Username is required';
+      hasError = true;
+    }
+    if (!password) {
+      newErrors.password = 'Password is required';
+      hasError = true;
+    }
+
+    setErrors(newErrors);
+
+    if (!hasError) {
+      console.log('Username:', username);
+      console.log('Password:', password);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Log in</Text>
@@ -10,20 +35,26 @@ const LoginScreen: React.FC = () => {
         style={styles.input}
         placeholder="Enter username"
         placeholderTextColor="#aaa"
+        value={username}
+        onChangeText={(text) => setUsername(text)}
       />
+      {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
 
       <TextInput
         style={styles.input}
         placeholder="Enter password"
         placeholderTextColor="#aaa"
         secureTextEntry
+        value={password}
+        onChangeText={(text) => setPassword(text)}
       />
+      {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Log in</Text>
       </TouchableOpacity>
 
@@ -134,6 +165,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     marginHorizontal: 10,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
   },
 });
 
