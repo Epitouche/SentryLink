@@ -11,7 +11,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <Text style={styles.title}>Home Screen</Text>
       <Button
         title="Go to Login"
-        onPress={() => navigation.navigate('Login', { itemId: 42 })}
+        onPress={() => navigation.navigate('Login')}
       />
     </View>
   );

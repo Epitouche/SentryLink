@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
-
-const LoginScreen: React.FC<Props> = ({ navigation }) => {
+const SignupScreen: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '' });
 
-  const handleLogin = () => {
+  const handleSignup = () => {
     let hasError = false;
     const newErrors = { username: '', password: '' };
 
@@ -31,14 +27,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  const switchToSignup = () => {
-    console.log('Switch to signup');
-    navigation.navigate('SignUp');
-  }
-
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Log in</Text>
+      <Text style={styles.header}>Sign up</Text>
 
       <TextInput
         style={styles.input}
@@ -63,20 +54,20 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log in</Text>
+      <TouchableOpacity style={styles.registerButton} onPress={handleSignup}>
+        <Text style={styles.signupButtonText}>Sign up</Text>
       </TouchableOpacity>
 
       <View style={styles.signUpContainer}>
         <Text style={styles.newText}>New?</Text>
-        <TouchableOpacity onPress={switchToSignup}>
+        <TouchableOpacity>
           <Text style={styles.signUpText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.dividerContainer}>
         <View style={styles.divider} />
-        <Text style={styles.orText}>or log in with</Text>
+        <Text style={styles.orText}>or sign up with</Text>
         <View style={styles.divider} />
       </View>
 
@@ -125,7 +116,7 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     marginBottom: 20,
   },
-  loginButton: {
+  registerButton: {
     width: '100%',
     backgroundColor: '#000',
     padding: 12,
@@ -133,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  loginButtonText: {
+  signupButtonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
@@ -183,4 +174,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;
