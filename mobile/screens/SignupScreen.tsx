@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../App';
 
-const SignupScreen: React.FC = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+
+const SignupScreen: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({ username: '', password: '' });
+  const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({ username: '', password: '', email: '' });
 
   const handleSignup = () => {
     let hasError = false;
-    const newErrors = { username: '', password: '' };
+    const newErrors = { username: '', password: '', email: '' };
 
     if (!username) {
       newErrors.username = 'Username is required';
@@ -19,13 +24,24 @@ const SignupScreen: React.FC = () => {
       hasError = true;
     }
 
+    if (!email) {
+      newErrors.email = 'Email is required';
+      hasError = true;
+    }
+
     setErrors(newErrors);
 
     if (!hasError) {
       console.log('Username:', username);
       console.log('Password:', password);
+      console.log('Email:', email);
     }
   };
+
+  const switchToLogin = () => {
+    console.log('Switch to login');
+    navigation.navigate('Login');
+  }
 
   return (
     <View style={styles.container}>
@@ -42,6 +58,15 @@ const SignupScreen: React.FC = () => {
 
       <TextInput
         style={styles.input}
+        placeholder="Enter email"
+        placeholderTextColor="#aaa"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
+      {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+      
+      <TextInput
+        style={styles.input}
         placeholder="Enter password"
         placeholderTextColor="#aaa"
         secureTextEntry
@@ -50,18 +75,14 @@ const SignupScreen: React.FC = () => {
       />
       {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
-      <TouchableOpacity>
-        <Text style={styles.forgotPassword}>Forgot password?</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity style={styles.registerButton} onPress={handleSignup}>
         <Text style={styles.signupButtonText}>Sign up</Text>
       </TouchableOpacity>
 
       <View style={styles.signUpContainer}>
-        <Text style={styles.newText}>New?</Text>
-        <TouchableOpacity>
-          <Text style={styles.signUpText}>Sign Up</Text>
+        <Text style={styles.alreadySignUpText}>Already sign up ?</Text>
+        <TouchableOpacity onPress={switchToLogin}>
+          <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
       </View>
 
@@ -133,11 +154,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  newText: {
+  alreadySignUpText: {
     marginRight: 5,
     color: '#555',
   },
-  signUpText: {
+  loginText: {
     color: '#007BFF',
     fontWeight: 'bold',
   },
