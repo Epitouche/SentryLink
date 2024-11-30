@@ -1,112 +1,28 @@
-definitions:
-    api.LinkApi:
-        type: object
-    schemas.JWT:
-        properties:
-            token:
-                type: string
-        type: object
-    schemas.Response:
-        properties:
-            message:
-                type: string
-        type: object
-info:
-    contact: {}
 paths:
-    /auth/login:
-        POST:
-            description: Authenticate a user and provide a JWT to authorize API calls
-            parameters:
-                - description: string
-                  in: formData
-                  name: username
-                  required: true
-                  type: string
-                - description: string
-                  in: formData
-                  name: password
-                  required: true
-                  type: string
-            produces:
-                - application/json
-            responses:
-                "200":
-                    description: JWT
-                    schema:
-                        $ref: '#/definitions/schemas.JWT'
-                "401":
-                    description: Unauthorized
-                    schema:
-                        $ref: '#/definitions/schemas.Response'
-            tags:
-                - auth
-    /auth/register:
-        POST:
-            description: Register a new user
-            parameters:
-                - description: string
-                  in: formData
-                  name: username
-                  required: true
-                  type: string
-                - description: string
-                  in: formData
-                  name: email
-                  required: true
-                  type: string
-                - description: string
-                  in: formData
-                  name: password
-                  required: true
-                  type: string
-            produces:
-                - application/json
-            responses:
-                "200":
-                    description: User registered successfully
-                    schema:
-                        $ref: '#/definitions/schemas.Response'
-                "400":
-                    description: Invalid request
-                    schema:
-                        $ref: '#/definitions/schemas.Response'
-                "409":
-                    description: User already exists
-                    schema:
-                        $ref: '#/definitions/schemas.Response'
-            tags:
-                - auth
-    /auth/token:
-        post:
-            description: Authenticates a user and provides a JWT to Authorize API calls
-            operationId: Authentication
-            parameters:
-                - description: Username
-                  in: formData
-                  name: username
-                  required: true
-                  type: string
-                - description: Password
-                  in: formData
-                  name: password
-                  required: true
-                  type: string
-            produces:
-                - application/json
-            responses:
-                "200":
-                    description: OK
-                    schema:
-                        $ref: '#/definitions/schemas.JWT'
-                "401":
-                    description: Unauthorized
-                    schema:
-                        $ref: '#/definitions/schemas.Response'
-            summary: Provides a JSON Web Token
-securityDefinitions:
-    bearerAuth:
-        in: header
-        name: Authorization
-        type: apiKey
-swagger: "2.0"
+  /auth/login:
+    POST:
+      description: Authenticate a user and provide a JWT to authorize API calls
+      parameters:
+      - description: string
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: string
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: JWT
+          schema:
+            $ref: '#/definitions/schemas.JWT'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      tags:
+      - auth

@@ -13,7 +13,14 @@ import (
 	"strings"
 )
 
-func updateDocTemplate(filePath string) (string, error) {
+type SwaggerUpdatedDocFile interface {
+	UpdateDocTemplate(filePath string) (string, error)
+	RemoveSchemesLine(rawValue string) string
+	UpdateDocTemplateWithJSON(filePath, tmpFilePath string) error
+}
+
+func UpdateDocTemplate(filePath string) (string, error) {
+	fmt.Printf("Processing file: %s\n", filePath)
 	fset := token.NewFileSet()
 	node, err := parser.ParseFile(fset, filePath, nil, parser.AllErrors)
 	if err != nil {
@@ -37,10 +44,9 @@ func updateDocTemplate(filePath string) (string, error) {
 			if valueSpec.Names[0].Name == "docTemplate" {
 				// Extract the value (it will include backticks and the raw string literal)
 				rawValue := valueSpec.Values[0].(*ast.BasicLit).Value
-				// Remove the surrounding backticks
 				rawValue = strings.Trim(rawValue, "`")
-				// Remove the "schemes" line
-				rawValue = removeSchemesLine(rawValue)
+				rawValue = RemoveSchemesLine(rawValue)
+				os.WriteFile("tmp.json", []byte(rawValue), 0644)
 				return rawValue, nil
 			}
 		}
@@ -51,7 +57,7 @@ func updateDocTemplate(filePath string) (string, error) {
 }
 
 
-func removeSchemesLine(rawValue string) string {
+func RemoveSchemesLine(rawValue string) string {
 	re := regexp.MustCompile(`(?m)^\s*"schemes":.*\n`)
 
 	updatedValue := re.ReplaceAllString(rawValue, "")
@@ -59,14 +65,13 @@ func removeSchemesLine(rawValue string) string {
 	return updatedValue
 }
 
-func updateDocTemplateWithJSON(filePath, tmpFilePath string) error {
+func UpdateDocTemplateWithJSON(filePath, tmpFilePath string) error {
 	// Read the content of tmp.json
 	tmpContent, err := os.ReadFile(tmpFilePath)
 	if err != nil {
 		return fmt.Errorf("error reading tmp.json: %w", err)
 	}
 
-	// Prefix with "schemes" line and format as JSON
 	prefixedContent := fmt.Sprintf(`{
   "schemes": {{ marshal .Schemes }},
 %s`, tmpContent[1:])
@@ -92,7 +97,6 @@ func updateDocTemplateWithJSON(filePath, tmpFilePath string) error {
 				continue
 			}
 
-			// Check if this is the `docTemplate` constant
 			if valueSpec.Names[0].Name == "docTemplate" {
 				// Update its value
 				rawString := fmt.Sprintf("`%s`", prefixedContent)

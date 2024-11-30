@@ -4,28 +4,38 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 
 	"github.com/Tom-Mendy/SentryLink/schemas"
 )
 
-func impactSwaggerFiles(routes []schemas.Route) {
+type SwaggerFile interface {
+	ResolvePath(relativePath string) string
+	ImpactSwaggerFiles(routes []schemas.Route)
+	ProcessFile(filePath string, route schemas.Route)
+}
+
+func ResolvePath(relativePath string) string {
+	basePath, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	return filepath.Join(basePath, relativePath)
+}
+
+func ImpactSwaggerFiles(routes []schemas.Route) {
 	var filePathOfFiles = []string{
-		"docs/docs.go",
-		"docs/swagger.json",
-		"docs/swagger.yaml",
+		ResolvePath("docs/docs.go"),
+		ResolvePath("docs/swagger.json"),
+		ResolvePath("docs/swagger.yaml"),
 	}
 	for _, route := range routes {
 		for _, file := range filePathOfFiles {
-			processFile(file, route)
+			ProcessFile(file, route)
 		}
 	}
 }
 
-func processFile(filePath string, route schemas.Route) {
-
-
+func ProcessFile(filePath string, route schemas.Route) {
 
 	fileData, err := os.ReadFile(filePath)
 	if err != nil {
@@ -34,22 +44,24 @@ func processFile(filePath string, route schemas.Route) {
 	}
 
 	var paths map[string]interface{}
+	var yamlPath interface{}
 
-	if isGOFile(filePath) {
-		jsonValueInGoFile, err := updateDocTemplate(filePath)
-		err = json.Unmarshal([]byte(jsonValueInGoFile), &paths)
+	if IsGOFile(filePath) {
+		_, err := UpdateDocTemplate(filePath)
+		// tmpFileData, err := os.ReadFile("tmp.json")
+		// err = json.Unmarshal(tmpFileData, &paths)
 		if err != nil {
 			fmt.Printf("Error reading file %s: %s\n", filePath, err)
 			return
 		}
-	} else if isJSONFile(filePath) {
+	} else if IsJSONFile(filePath) {
 		err = json.Unmarshal(fileData, &paths)
 		if err != nil {
 			fmt.Printf("Error unmarshalling JSON file %s: %s\n", filePath, err)
 			return
 		}
-	} else if isYAMLFile(filePath) {
-		err = yaml.Unmarshal(fileData, &paths)
+	} else if IsYAMLFile(filePath) {
+		err = yaml.Unmarshal(fileData, &yamlPath)
 		if err != nil {
 			fmt.Printf("Error unmarshalling YAML file %s: %s\n", filePath, err)
 			return
@@ -66,22 +78,22 @@ func processFile(filePath string, route schemas.Route) {
 		paths["paths"] = make(map[string]interface{})
 	}
 	pathsMap := paths["paths"].(map[string]interface{})
-	pathsMap[route.Path] = buildRouteEntry(route)
+	pathsMap[route.Path] = BuildRouteEntry(route)
 
-	if isGOFile(filePath) {
+	if IsGOFile(filePath) {
 		_, err := json.MarshalIndent(paths, "", "  ")
 		if err != nil {
 			fmt.Printf("Error serializing JSON for file %s: %v\n", filePath, err)
 			return
 		}
 		newActualFilePath := "tmp.json"
-		err = updateDocTemplateWithJSON(filePath, newActualFilePath)
+		err = UpdateDocTemplateWithJSON(filePath, newActualFilePath)
 		if err != nil {
 			fmt.Printf("Error updating docTemplate in file %s: %v\n", filePath, err)
 			return
 		}
 
-	} else if isJSONFile(filePath) {
+	} else if IsJSONFile(filePath) {
 		updatedJSON, err := json.MarshalIndent(paths, "", "  ")
 		if err != nil {
 			fmt.Printf("Error serializing JSON for file %s: %v\n", filePath, err)
@@ -93,8 +105,9 @@ func processFile(filePath string, route schemas.Route) {
 			fmt.Printf("Error writing JSON to file %s: %v\n", filePath, err)
 			return
 		}
-	} else if isYAMLFile(filePath) {
+	} else if IsYAMLFile(filePath) {
 		updatedYAML, err := yaml.Marshal(paths)
+
 		if err != nil {
 			fmt.Printf("Error serializing YAML for file %s: %v\n", filePath, err)
 			return

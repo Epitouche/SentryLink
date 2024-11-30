@@ -6,6 +6,10 @@ import "github.com/swaggo/swag"
 const docTemplate = `{
   "schemes": {{ marshal .Schemes }},
 
+
+
+
+
     "swagger": "2.0",
     "info": {
         "description": "{{escape .Description}}",
@@ -106,7 +110,7 @@ const docTemplate = `{
                     }
                 }
             }
-        },
+        }
     },
     "definitions": {
         "api.LinkApi": {

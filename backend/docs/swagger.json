@@ -72,13 +72,6 @@
           {
             "description": "string",
             "in": "formData",
-            "name": "username",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "description": "string",
-            "in": "formData",
             "name": "email",
             "required": true,
             "type": "string"
@@ -87,6 +80,13 @@
             "description": "string",
             "in": "formData",
             "name": "password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "string",
+            "in": "formData",
+            "name": "username",
             "required": true,
             "type": "string"
           }
@@ -117,46 +117,6 @@
         "tags": [
           "auth"
         ]
-      }
-    },
-    "/auth/token": {
-      "post": {
-        "description": "Authenticates a user and provides a JWT to Authorize API calls",
-        "operationId": "Authentication",
-        "parameters": [
-          {
-            "description": "Username",
-            "in": "formData",
-            "name": "username",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "description": "Password",
-            "in": "formData",
-            "name": "password",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/schemas.JWT"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/schemas.Response"
-            }
-          }
-        },
-        "summary": "Provides a JSON Web Token"
       }
     }
   },

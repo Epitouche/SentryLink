@@ -6,19 +6,25 @@ import (
 	"github.com/Tom-Mendy/SentryLink/schemas"
 )
 
-func buildRouteEntry(route schemas.Route) map[string]interface{} {
+type SwaggerRouteBuildFile interface {
+	BuildRouteEntry(route schemas.Route) map[string]interface{}
+	BuildResponses(responses map[int][]string) map[string]interface{}
+	BuildParameters(params map[string]string, paramType string) []map[string]interface{}
+}
+
+func BuildRouteEntry(route schemas.Route) map[string]interface{} {
 	return map[string]interface{}{
 		route.Method: map[string]interface{}{
 			"tags":        route.Tags,
 			"description": route.Description,
 			"produces":    route.Product,
-			"parameters":  buildParameters(route.Params, route.ParamQueryType),
-			"responses":   buildResponses(route.Responses),
+			"parameters":  BuildParameters(route.Params, route.ParamQueryType),
+			"responses":   BuildResponses(route.Responses),
 		},
 	}
 }
 
-func buildParameters(params map[string]string, paramType string) []map[string]interface{} {
+func BuildParameters(params map[string]string, paramType string) []map[string]interface{} {
 	var parameters []map[string]interface{}
 	for name, typ := range params {
 		parameters = append(parameters, map[string]interface{}{
@@ -32,7 +38,7 @@ func buildParameters(params map[string]string, paramType string) []map[string]in
 	return parameters
 }
 
-func buildResponses(responses map[int][]string) map[string]interface{} {
+func BuildResponses(responses map[int][]string) map[string]interface{} {
 	responseMap := make(map[string]interface{})
 	for code, descAndSchema := range responses {
 		description := descAndSchema[0]
