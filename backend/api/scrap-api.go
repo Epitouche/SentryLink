@@ -12,8 +12,8 @@ type ScrapApi struct {
 	scrapController controller.ScrapController
 }
 
-func NewScrapApi(scrapController controller.ScrapController) ScrapApi {
-	return ScrapApi{
+func NewScrapApi(scrapController controller.ScrapController) *ScrapApi {
+	return &ScrapApi{
 		scrapController: scrapController,
 	}
 }

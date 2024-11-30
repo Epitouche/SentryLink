@@ -72,6 +72,13 @@
           {
             "description": "string",
             "in": "formData",
+            "name": "username",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "string",
+            "in": "formData",
             "name": "email",
             "required": true,
             "type": "string"
@@ -80,13 +87,6 @@
             "description": "string",
             "in": "formData",
             "name": "password",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "description": "string",
-            "in": "formData",
-            "name": "username",
             "required": true,
             "type": "string"
           }

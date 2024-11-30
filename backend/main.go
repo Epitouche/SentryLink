@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"os"
 
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -22,7 +20,7 @@ import (
 )
 
 
-func setupRouter() *gin.Engine {
+func setupRouter(deps Dependencies) *gin.Engine {
 
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
@@ -45,71 +43,39 @@ func setupRouter() *gin.Engine {
 		})
 	})
 
-	// var (
-	// 	// Database connection
-	// 	databaseConnection *gorm.DB = database.Connection()
-
-	// 	// Repositories
-	// 	linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
-	// 	githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
-	// 	userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
-	// 	scrapRepository	   repository.ScrapRepository       = repository.NewScrapRepository(databaseConnection)
-
-	// 	// Services
-	// 	linkService        service.LinkService        = service.NewLinkService(linkRepository)
-	// 	githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-	// 	userService        service.UserService        = service.NewUserService(userRepository)
-	// 	jwtService         service.JWTService         = service.NewJWTService()
-	// 	scrapService	   service.ScrapService       = service.NewScrapService(scrapRepository)
-
-	// 	// Controllers
-	// 	linkController        controller.LinkController        = controller.NewLinkController(linkService)
-	// 	githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
-	// 	userController        controller.UserController        = controller.NewUserController(userService, jwtService)
-	// 	scrapController       controller.ScrapController       = controller.NewScrapController(scrapService)
-	// )
-
-	// linkApi := api.NewLinkAPI(linkController)
-
-	// userApi := api.NewUserAPI(userController)
-
-	// githubApi := api.NewGithubAPI(githubTokenController)
-
-	// scrapApi := api.NewScrapApi(scrapController)
-
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
 		// User Auth
 		auth := apiRoutes.Group("/auth")
 		{
-			auth.POST("/login", userApi.Login)
-			auth.POST("/register", userApi.Register)
+			auth.POST("/login", deps.UserAPI.Login)
+			auth.POST("/register", deps.UserAPI.Register)
 		}
 
 		// Links
 		links := apiRoutes.Group("/links", middlewares.AuthorizeJWT())
 		{
-			links.GET("", linkApi.GetLink)
-			links.POST("", linkApi.CreateLink)
-			links.PUT(":id", linkApi.UpdateLink)
-			links.DELETE(":id", linkApi.DeleteLink)
+			links.GET("", deps.LinkAPI.GetLink)
+			links.POST("", deps.LinkAPI.CreateLink)
+			links.PUT(":id", deps.LinkAPI.UpdateLink)
+			links.DELETE(":id", deps.LinkAPI.DeleteLink)
 		}
 
 		// Scrap
 		scrap := apiRoutes.Group("/scrap")
 		{
-			scrap.GET("", scrapApi.GetScrappedUrl)
+			scrap.GET("", deps.ScrapAPI.GetScrappedUrl)
 		}
 
 		// Github
 		github := apiRoutes.Group("/github")
 		{
 			github.GET("/auth", func(c *gin.Context) {
-				githubApi.RedirectToGithub(c, github.BasePath()+"/auth/callback")
+				deps.GithubAPI.RedirectToGithub(c, github.BasePath()+"/auth/callback")
 			})
 
 			github.GET("/auth/callback", func(c *gin.Context) {
-				githubApi.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
+				deps.GithubAPI.HandleGithubTokenCallback(c, github.BasePath()+"/auth/callback")
 			})
 		}
 	}
@@ -125,51 +91,60 @@ func setupRouter() *gin.Engine {
 	return router
 }
 
-var (
+type Dependencies struct {
+	UserAPI   *api.UserApi
+	LinkAPI   *api.LinkApi
+	ScrapAPI  *api.ScrapApi
+	GithubAPI *api.GithubApi
+}
+
+// initDependencies initializes all required dependencies
+func initDependencies() Dependencies {
 	// Database connection
-	databaseConnection *gorm.DB = database.Connection()
+	databaseConnection := database.Connection()
 
 	// Repositories
-	linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
-	githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
-	userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
-	scrapRepository	   repository.ScrapRepository       = repository.NewScrapRepository(databaseConnection)
+	linkRepository := repository.NewLinkRepository(databaseConnection)
+	githubTokenRepository := repository.NewGithubTokenRepository(databaseConnection)
+	userRepository := repository.NewUserRepository(databaseConnection)
+	scrapRepository := repository.NewScrapRepository(databaseConnection)
 
 	// Services
-	linkService        service.LinkService        = service.NewLinkService(linkRepository)
-	githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-	userService        service.UserService        = service.NewUserService(userRepository)
-	jwtService         service.JWTService         = service.NewJWTService()
-	scrapService	   service.ScrapService       = service.NewScrapService(scrapRepository)
+	linkService := service.NewLinkService(linkRepository)
+	githubTokenService := service.NewGithubTokenService(githubTokenRepository)
+	userService := service.NewUserService(userRepository)
+	jwtService := service.NewJWTService()
+	scrapService := service.NewScrapService(scrapRepository)
 
 	// Controllers
-	linkController        controller.LinkController        = controller.NewLinkController(linkService)
-	githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService)
-	userController        controller.UserController        = controller.NewUserController(userService, jwtService)
-	scrapController       controller.ScrapController       = controller.NewScrapController(scrapService)
-)
+	linkController := controller.NewLinkController(linkService)
+	githubTokenController := controller.NewGithubTokenController(githubTokenService)
+	userController := controller.NewUserController(userService, jwtService)
+	scrapController := controller.NewScrapController(scrapService)
 
-var (
-	linkApi = api.NewLinkAPI(linkController)
-	userApi = api.NewUserAPI(userController)
-	githubApi = api.NewGithubAPI(githubTokenController)
-	scrapApi = api.NewScrapApi(scrapController)
-)
+	// APIs
+	return Dependencies{
+		UserAPI:   api.NewUserAPI(userController),
+		LinkAPI:   api.NewLinkAPI(linkController),
+		ScrapAPI:  api.NewScrapApi(scrapController),
+		GithubAPI: api.NewGithubAPI(githubTokenController),
+	}
+}
 
-func init() {
-
+// initRoutes initializes custom routes (e.g., Swagger routes)
+func initRoutes(deps Dependencies) {
 	var routes = []schemas.Route{
 		{
-			Path: "/auth/register",
-			Method: "POST",
-			Handler: userApi.Register,
+			Path:        "/auth/register",
+			Method:      "POST",
+			Handler:     deps.UserAPI.Register,
 			Description: "Register a new user",
-			Product: []string{"application/json"},
-			Tags: []string{"auth"},
+			Product:     []string{"application/json"},
+			Tags:        []string{"auth"},
 			ParamQueryType: "formData",
 			Params: map[string]string{
 				"username": "string",
-				"email": "string",
+				"email":    "string",
 				"password": "string",
 			},
 			Responses: map[int][]string{
@@ -188,12 +163,12 @@ func init() {
 			},
 		},
 		{
-			Path: "/auth/login",
-			Method: "POST",
-			Handler: userApi.Login,
+			Path:        "/auth/login",
+			Method:      "POST",
+			Handler:     deps.UserAPI.Login,
 			Description: "Authenticate a user and provide a JWT to authorize API calls",
-			Product: []string{"application/json"},
-			Tags: []string{"auth"},
+			Product:     []string{"application/json"},
+			Tags:        []string{"auth"},
 			ParamQueryType: "formData",
 			Params: map[string]string{
 				"username": "string",
@@ -212,14 +187,19 @@ func init() {
 		},
 	}
 	swaggerui.ImpactSwaggerFiles(routes)
-
 }
+
 
 // @securityDefinitions.apiKey bearerAuth
 // @in header
 // @name Authorization
 func main() {
-	router := setupRouter()
+
+	deps := initDependencies()
+
+	initRoutes(deps)
+
+	router := setupRouter(deps)
 
 	// Listen and Server in 0.0.0.0:8000
 	err := router.Run(":8000")
