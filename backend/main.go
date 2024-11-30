@@ -1,10 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/printer"
+	"go/token"
+	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -114,39 +121,126 @@ func buildRouteEntry(route schemas.Route) map[string]interface{} {
 	}
 }
 
-func updateDocTemplate(content string, route schemas.Route) string {
-	startIndex := strings.Index(content, `"paths": {`)
-	if startIndex == -1 {
-		fmt.Println("Could not find paths section in docTemplate")
-		return content
-	}
 
-	endIndex := strings.Index(content[startIndex:], `}`)
-	if endIndex == -1 {
-		fmt.Println("Could not find end of paths section in docTemplate")
-		return content
-	}
-	endIndex += startIndex
-
-	pathsContent := content[startIndex:endIndex+1]
-	var paths map[string]interface{}
-	err := json.Unmarshal([]byte(pathsContent), &paths)
+func updateDocTemplate(filePath string) (string, error) {
+	fset := token.NewFileSet()
+	node, err := parser.ParseFile(fset, filePath, nil, parser.AllErrors)
 	if err != nil {
-		fmt.Printf("Error unmarshalling docTemplate paths: %v\n", err)
-		return content
+		log.Fatalf("Failed to parse file: %v", err)
 	}
 
-	paths["paths"].(map[string]interface{})[route.Path] = buildRouteEntry(route)
-	updatedPaths, err := json.MarshalIndent(paths, "", "  ")
-	if err != nil {
-		fmt.Printf("Error marshalling updated paths: %v\n", err)
-		return content
+	// Iterate through the declarations to find the const `docTemplate`
+	for _, decl := range node.Decls {
+		genDecl, ok := decl.(*ast.GenDecl)
+		if !ok || genDecl.Tok.String() != "const" {
+			continue
+		}
+
+		for _, spec := range genDecl.Specs {
+			valueSpec, ok := spec.(*ast.ValueSpec)
+			if !ok || len(valueSpec.Names) == 0 {
+				continue
+			}
+
+			// Check if the constant is named `docTemplate`
+			if valueSpec.Names[0].Name == "docTemplate" {
+				// Extract the value (it will include backticks and the raw string literal)
+				rawValue := valueSpec.Values[0].(*ast.BasicLit).Value
+				// Remove the surrounding backticks
+				rawValue = strings.Trim(rawValue, "`")
+				// Remove the "schemes" line
+				rawValue = removeSchemesLine(rawValue)
+				return rawValue, nil
+			}
+		}
 	}
 
-	return content[:startIndex] + string(updatedPaths) + content[endIndex+1:]
+	fmt.Println("docTemplate constant not found.")
+	return "", nil
 }
 
+
+func removeSchemesLine(rawValue string) string {
+	re := regexp.MustCompile(`(?m)^\s*"schemes":.*\n`)
+
+	updatedValue := re.ReplaceAllString(rawValue, "")
+
+	return updatedValue
+}
+
+func updateDocTemplateWithJSON(filePath, tmpFilePath string) error {
+	// Read the content of tmp.json
+	tmpContent, err := os.ReadFile(tmpFilePath)
+	if err != nil {
+		return fmt.Errorf("error reading tmp.json: %w", err)
+	}
+
+	// Prefix with "schemes" line and format as JSON
+	prefixedContent := fmt.Sprintf(`{
+  "schemes": {{ marshal .Schemes }},
+%s`, tmpContent[1:])
+
+	// Parse the Go file
+	fset := token.NewFileSet()
+	node, err := parser.ParseFile(fset, filePath, nil, parser.ParseComments)
+	if err != nil {
+		return fmt.Errorf("failed to parse Go file: %w", err)
+	}
+
+	// Locate the `docTemplate` constant in the AST
+	var found bool
+	ast.Inspect(node, func(n ast.Node) bool {
+		genDecl, ok := n.(*ast.GenDecl)
+		if !ok || genDecl.Tok != token.CONST {
+			return true // Continue traversing
+		}
+
+		for _, spec := range genDecl.Specs {
+			valueSpec, ok := spec.(*ast.ValueSpec)
+			if !ok || len(valueSpec.Names) == 0 {
+				continue
+			}
+
+			// Check if this is the `docTemplate` constant
+			if valueSpec.Names[0].Name == "docTemplate" {
+				// Update its value
+				rawString := fmt.Sprintf("`%s`", prefixedContent)
+				valueSpec.Values[0] = &ast.BasicLit{
+					Kind:  token.STRING,
+					Value: rawString,
+				}
+				found = true
+				return false // Stop traversing
+			}
+		}
+		return true
+	})
+
+	if !found {
+		return fmt.Errorf("docTemplate constant not found in file: %s", filePath)
+	}
+
+	// Write the updated AST back to the file
+	var buf bytes.Buffer
+	if err := printer.Fprint(&buf, fset, node); err != nil {
+		return fmt.Errorf("error printing updated Go file: %w", err)
+	}
+
+	err = os.WriteFile(filePath, buf.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("error writing updated Go file: %w", err)
+	}
+
+	fmt.Printf("Successfully updated docTemplate in file: %s\n", filePath)
+	return nil
+}
+
+
+
 func processFile(filePath string, route schemas.Route) {
+
+
+
 	fileData, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Printf("Error reading file %s: %s\n", filePath, err)
@@ -164,7 +258,14 @@ func processFile(filePath string, route schemas.Route) {
 	// 		fmt.Printf("Route added successfully to %s\n", filePath)
 	// 	}
 	// 	return
-	if isJSONFile(filePath) {
+	if isGOFile(filePath) {
+		jsonValueInGoFile, err := updateDocTemplate(filePath)
+		err = json.Unmarshal([]byte(jsonValueInGoFile), &paths)
+		if err != nil {
+			fmt.Printf("Error reading file %s: %s\n", filePath, err)
+			return
+		}
+	} else if isJSONFile(filePath) {
 		err = json.Unmarshal(fileData, &paths)
 		if err != nil {
 			fmt.Printf("Error unmarshalling JSON file %s: %s\n", filePath, err)
@@ -190,7 +291,20 @@ func processFile(filePath string, route schemas.Route) {
 	pathsMap := paths["paths"].(map[string]interface{})
 	pathsMap[route.Path] = buildRouteEntry(route)
 
-	if isJSONFile(filePath) {
+	if isGOFile(filePath) {
+		_, err := json.MarshalIndent(paths, "", "  ")
+		if err != nil {
+			fmt.Printf("Error serializing JSON for file %s: %v\n", filePath, err)
+			return
+		}
+		newActualFilePath := "tmp.json"
+		err = updateDocTemplateWithJSON(filePath, newActualFilePath)
+		if err != nil {
+			fmt.Printf("Error updating docTemplate in file %s: %v\n", filePath, err)
+			return
+		}
+
+	} else if isJSONFile(filePath) {
 		updatedJSON, err := json.MarshalIndent(paths, "", "  ")
 		if err != nil {
 			fmt.Printf("Error serializing JSON for file %s: %v\n", filePath, err)
@@ -464,7 +578,6 @@ func init() {
 			},
 		},
 	}
-	// GenerateSwaggerDocs(routes)
 	impactSwaggerFiles(routes)
 
 	// err := .Load()
