@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
+	"github.com/Tom-Mendy/SentryLink/schemas"
 	"github.com/Tom-Mendy/SentryLink/service"
 )
 
@@ -81,6 +82,15 @@ func (controller *scrapController) Scrap(ctx *gin.Context) []string {
 		log.Println("Error:", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 
+	}
+	for _, link := range links {
+		valueInDb := schemas.LinkToLinkUrl {
+			ActualLink: pageURL,
+			UrlId: schemas.LinkUrl {
+				Url: link,
+			},
+		}
+		controller.service.Save(valueInDb)
 	}
 
 	return links

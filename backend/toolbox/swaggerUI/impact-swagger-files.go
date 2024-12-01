@@ -18,18 +18,19 @@ type SwaggerFile interface {
 }
 
 func ResolvePath(relativePath string) string {
-	basePath, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	basePath, _ := filepath.Abs(filepath.Dir(os.Args[1]))
+	fmt.Printf("basePath: %s\n", basePath)
 	return filepath.Join(basePath, relativePath)
 }
 
 func ImpactSwaggerFiles(routes []schemas.Route) {
 	var filePathOfFiles = []string{
-		ResolvePath("docs/docs.go"),
 		ResolvePath("docs/swagger.json"),
 		ResolvePath("docs/swagger.yaml"),
+		ResolvePath("docs/docs.go"),
 	}
-	for _, route := range routes {
-		for _, file := range filePathOfFiles {
+	for _, file := range filePathOfFiles {
+		for _, route := range routes {
 			ProcessFile(file, route)
 		}
 	}
@@ -54,6 +55,18 @@ func ProcessFile(filePath string, route schemas.Route) {
 			fmt.Printf("Error reading file %s: %s\n", filePath, err)
 			return
 		}
+		newActualFilePath := "tmp.json"
+		newFileData, err := os.ReadFile(newActualFilePath)
+		err = json.Unmarshal(newFileData, &paths)
+		if err != nil {
+			fmt.Printf("Error unmarshalling JSON file %s: %s\n", newActualFilePath, err)
+			return
+		}
+		// err = UpdateDocTemplateWithJSON(filePath, newActualFilePath, paths)
+		// if err != nil {
+		// 	fmt.Printf("Error updating docTemplate in file %s: %v\n", filePath, err)
+		// 	return
+		// }
 	} else if IsJSONFile(filePath) {
 		err = json.Unmarshal(fileData, &paths)
 		if err != nil {
@@ -87,7 +100,7 @@ func ProcessFile(filePath string, route schemas.Route) {
 			return
 		}
 		newActualFilePath := "tmp.json"
-		err = UpdateDocTemplateWithJSON(filePath, newActualFilePath)
+		err = UpdateDocTemplateWithJSON(filePath, newActualFilePath, paths)
 		if err != nil {
 			fmt.Printf("Error updating docTemplate in file %s: %v\n", filePath, err)
 			return

@@ -2,6 +2,7 @@ package swaggerui
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"go/ast"
 	"go/parser"
@@ -15,7 +16,7 @@ import (
 
 type SwaggerUpdatedDocFile interface {
 	UpdateDocTemplate(filePath string) (string, error)
-	RemoveSchemesLine(rawValue string) string
+	RemoveSpecialLines(rawValue string) string
 	UpdateDocTemplateWithJSON(filePath, tmpFilePath string) error
 }
 
@@ -45,7 +46,7 @@ func UpdateDocTemplate(filePath string) (string, error) {
 				// Extract the value (it will include backticks and the raw string literal)
 				rawValue := valueSpec.Values[0].(*ast.BasicLit).Value
 				rawValue = strings.Trim(rawValue, "`")
-				rawValue = RemoveSchemesLine(rawValue)
+				rawValue = RemoveSpecialLines(rawValue)
 				os.WriteFile("tmp.json", []byte(rawValue), 0644)
 				return rawValue, nil
 			}
@@ -57,24 +58,83 @@ func UpdateDocTemplate(filePath string) (string, error) {
 }
 
 
-func RemoveSchemesLine(rawValue string) string {
+func RemoveSpecialLines(rawValue string) string {
 	re := regexp.MustCompile(`(?m)^\s*"schemes":.*\n`)
 
 	updatedValue := re.ReplaceAllString(rawValue, "")
 
+	re = regexp.MustCompile(`(?m)^\s*"basePath":.*\n`)
+	updatedValue = re.ReplaceAllString(updatedValue, "")
+
+
+	re = regexp.MustCompile(`(?m)^\s*"host":.*\n`)
+	updatedValue = re.ReplaceAllString(updatedValue, "")
+
+	re = regexp.MustCompile(`(?m)^\s*"info": \{\s*\n\s*"contact": \{\},\s*\n\s*"description": ".*",\s*\n\s*"title": ".*",\s*\n\s*"version": ".*"\s*\n\s*\},\s*\n`)
+	updatedValue = re.ReplaceAllString(updatedValue, "")
+
+
+
 	return updatedValue
 }
 
-func UpdateDocTemplateWithJSON(filePath, tmpFilePath string) error {
+func formatHTTPMethodName(updatedJSON []byte) []byte {
+	re := regexp.MustCompile(`(?m)^\s*"POST":.*\n`)
+	updatedJSON = re.ReplaceAll(updatedJSON, []byte(`"post": {`))
+
+	re = regexp.MustCompile(`(?m)^\s*"GET":.*\n`)
+	updatedJSON = re.ReplaceAll(updatedJSON, []byte(`"get": {`))
+
+	re = regexp.MustCompile(`(?m)^\s*"DELETE":.*\n`)
+	updatedJSON = re.ReplaceAll(updatedJSON, []byte(`"delete": {`))
+
+	re = regexp.MustCompile(`(?m)^\s*"PUT":.*\n`)
+	updatedJSON = re.ReplaceAll(updatedJSON, []byte(`"put": {`))
+
+	return updatedJSON
+}
+
+func UpdateDocTemplateWithJSON(filePath, tmpFilePath string, paths map[string]interface{}) error {
 	// Read the content of tmp.json
 	tmpContent, err := os.ReadFile(tmpFilePath)
+
+	if err != nil {
+		return fmt.Errorf("error reading tmp.json: %w", err)
+	}
+	updatedJSON, err := json.MarshalIndent(paths, "", "  ")
+	if err != nil {
+		fmt.Printf("Error serializing JSON for file %s: %v\n", tmpFilePath, err)
+		return err
+	}
+	// make all POST / GET / DELETE / PUT in tmp.json to be lowercase
+	updatedJSON = formatHTTPMethodName(updatedJSON)
+
+
+	err = os.WriteFile(tmpFilePath, updatedJSON, 0644)
+	if err != nil {
+		fmt.Printf("Error writing JSON to file %s: %v\n", tmpFilePath, err)
+		return err
+	}
+
+	tmpContent, err = os.ReadFile(tmpFilePath)
 	if err != nil {
 		return fmt.Errorf("error reading tmp.json: %w", err)
 	}
 
+
 	prefixedContent := fmt.Sprintf(`{
   "schemes": {{ marshal .Schemes }},
+  "basePath": "{{.BasePath}}",
+  "host": "{{.Host}}",
+  "info": {
+    "contact": {},
+    "description": "{{escape .Description}}",
+    "title": "{{.Title}}",
+    "version": "{{.Version}}"
+  },
 %s`, tmpContent[1:])
+
+	fmt.Println(prefixedContent)
 
 	// Parse the Go file
 	fset := token.NewFileSet()
