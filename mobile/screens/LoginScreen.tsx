@@ -10,7 +10,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '' });
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     let hasError = false;
     const newErrors = { username: '', password: '' };
 
@@ -26,8 +26,24 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     setErrors(newErrors);
 
     if (!hasError) {
-      console.log('Username:', username);
-      console.log('Password:', password);
+      try {
+        const response = await fetch('http://localhost:8080/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Data:', data);
+        } else {
+          console.error('Error:', response.status);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
 

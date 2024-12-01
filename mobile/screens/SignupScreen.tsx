@@ -11,7 +11,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '', email: '' });
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     let hasError = false;
     const newErrors = { username: '', password: '', email: '' };
 
@@ -32,9 +32,24 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
     setErrors(newErrors);
 
     if (!hasError) {
-      console.log('Username:', username);
-      console.log('Password:', password);
-      console.log('Email:', email);
+      try {
+        const response = await fetch('http://localhost:8080/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password, email }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Data:', data);
+          navigation.navigate('Login');
+        } else {
+          console.error('Error:', response.status);
+        }
+      } catch (error) {
+        console.error('Error', error);
     }
   };
 
