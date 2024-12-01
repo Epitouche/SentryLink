@@ -50,8 +50,9 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
         }
       } catch (error) {
         console.error('Error', error);
-    }
-  };
+      }
+    };
+  }
 
   const switchToLogin = () => {
     console.log('Switch to login');
@@ -79,7 +80,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
         onChangeText={(text) => setEmail(text)}
       />
       {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
-      
+
       <TextInput
         style={styles.input}
         placeholder="Enter password"
