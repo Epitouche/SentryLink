@@ -38,6 +38,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         if (response.ok) {
           const data = await response.json();
           console.log('Data:', data);
+          navigation.navigate('Home');
         } else {
           console.error('Error:', response.status);
         }
