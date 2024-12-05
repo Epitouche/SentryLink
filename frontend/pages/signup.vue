@@ -13,14 +13,15 @@ interface RegisterResponse {
 const apps = ref<string[]>(['i-logos-google-icon', 'i-logos-google-icon', 'i-logos-google-icon']);
 
 const handleSignup = async () => {
-    if (!username.value || !password.value) {
-        signupError.value = 'Please enter a username and a password.';
-        return;
-    }
     try {
         signupError.value = null;
 
-        // const response = await $fetch<RegisterResponse>('/api/signup', {
+        if (!username.value || !password.value) {
+            signupError.value = 'Please enter a username and a password.';
+            return;
+        }
+
+        // const response = await $fetch<RegisterResponse>('/api/register', {
         //     method: 'POST',
         //     body: {
         //         username: username.value,
