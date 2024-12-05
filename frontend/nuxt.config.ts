@@ -11,5 +11,5 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: "2024-10-10",
-  modules: ["@nuxt/ui", "@nuxt/image", "@nuxt/icon"],
+  modules: ["@nuxt/ui", "@nuxt/eslint"],
 });

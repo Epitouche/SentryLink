@@ -26,21 +26,21 @@ const InfoCard = {
       />
     </div>
     <HomeCard
-      :isReversed="false"
+      :is-reversed="false"
       :title="InfoCard.title"
       :subtitle="InfoCard.subtitle"
       :content="InfoCard.content"
       :image="InfoCard.image"
     />
     <HomeCard
-      :isReversed="true"
+      :is-reversed="true"
       :title="InfoCard.title"
       :subtitle="InfoCard.subtitle"
       :content="InfoCard.content"
       :image="InfoCard.image"
     />
     <HomeCard
-      :isReversed="false"
+      :is-reversed="false"
       :title="InfoCard.title"
       :subtitle="InfoCard.subtitle"
       :content="InfoCard.content"
@@ -52,12 +52,14 @@ const InfoCard = {
         :price="0"
         :features="['Feature 1', 'Feature 2']"
       />
-      <PriceCard class="flex flex-row gap-10"
+      <PriceCard
+class="flex flex-row gap-10"
         plan="Pro"
         :price="30"
         :features="['Feature 1', 'Feature 2', 'Feature 3']"
       />
-      <PriceCard class="flex flex-row gap-10"
+      <PriceCard
+class="flex flex-row gap-10"
         plan="Enterprise"
         :price="80"
         :features="['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4']"

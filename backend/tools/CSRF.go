@@ -9,7 +9,7 @@ type CSRF interface {
 	GenerateCSRFToken() (string, error)
 }
 
-// Generate a random CSRF token
+// Generate a random CSRF token.
 func GenerateCSRFToken() (string, error) {
 	bytes := make([]byte, 16)
 	_, err := rand.Read(bytes)

@@ -1,89 +1,83 @@
+name: sentry-link-dev
 services:
   backend:
-    image: mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
-    volumes:
-      - .:/workspace:cached
-        #  SSH keys
-      - "${HOME}/.ssh:/home/vscode/.ssh:cached"
-      #  ZSH with Zinit and Powerlevel10k
-      - "${HOME}/.zshrc:/home/vscode/.zshrc:cached"
-      - "${HOME}/.zsh_history:/home/vscode/.zsh_history:cached"
-      - "zinit:/home/vscode/.zinit"
-      - "${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached"
-    env_file:
-      - ./backend/.env
-    command: sleep infinity
-    # links:
-    #   - frontend
-    ports:
-      - 8080:8080
+    image: mcr.microsoft.com/devcontainers/go:1-1.23-bookworm
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
+    volumes:
+      - .:/workspace:cached #  SSH keys
+      - ${HOME}/.ssh:/home/vscode/.ssh:cached
+      #  ZSH with Zinit and Powerlevel10k
+      - ${HOME}/.zshrc:/home/vscode/.zshrc:cached
+      - ${HOME}/.zsh_history:/home/vscode/.zsh_history:cached
+      - zinit:/home/vscode/.zinit
+      - ${HOME}/.p10k.zsh:/home/vscode/.p10k.zsh:cached
+    env_file:
+      - .env
+    ports:
+      - '0.0.0.0:8080:8080'
     networks:
       - app-networks
+    command: sleep infinity
+
+  db:
+    image: postgres:13
+    container_name: sentry-db
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: sentry-link-db
+      POSTGRES_USER: admin
+      DB_HOST: postgres
+    networks:
+      - app-networks
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d sentry-link-db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   frontend:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
     volumes:
       - .:/workspace:cached
       #  SSH keys
-      - "${HOME}/.ssh:/home/node/.ssh:cached"
+      - ${HOME}/.ssh:/home/node/.ssh:cached
       #  ZSH with Zinit and Powerlevel10k
-      - "${HOME}/.zshrc:/home/node/.zshrc:cached"
-      - "${HOME}/.zsh_history:/home/node/.zsh_history:cached"
-      - "zinit:/home/node/.zinit"
-      - "${HOME}/.p10k.zsh:/home/node/.p10k.zsh:cached"
+      - ${HOME}/.zshrc:/home/node/.zshrc:cached
+      - ${HOME}/.zsh_history:/home/node/.zsh_history:cached
+      - zinit:/home/node/.zinit
+      - ${HOME}/.p10k.zsh:/home/node/.p10k.zsh:cached
+    ports:
+      - '0.0.0.0:8081:8081'
+    networks:
+      - app-networks
     command: sleep infinity
-    ports:
-      - 3000:3000
-    networks:
-      - app-networks
-
-  postgres:
-    image: postgres:13
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: admin
-      DB_HOST: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - app-networks
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d mydatabase"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   pgadmin:
     build:
       context: .
       target: pgadmin
-      dockerfile: Dockerfile
+      dockerfile: pgadmin/Dockerfile
     container_name: pgadmin
-    ports:
-      - "8081:80"
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       PGADMIN_DEFAULT_EMAIL: "user@domain.com"
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
       PGADMIN_CONFIG_ENHANCED_CSFR: "False"
+    ports:
+      - '0.0.0.0:8079:80'
     networks:
       - app-networks
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-volumes:
-  db-data:
-  zinit:
-# secrets:
-#   db-password:
-#     file: db/password.txt
 networks:
   app-networks:
+
+
+volumes:
+  database-data:
+  zinit:

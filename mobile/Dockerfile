@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY mobile/package.json /app
 
-RUN apt-get update 
+RUN apt-get update
 
 RUN apt-get install -y nodejs npm
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 
 FROM node-install AS java-install
@@ -28,10 +28,20 @@ WORKDIR /app/android
 
 RUN ./gradlew :app:assembleRelease
 
-FROM alpine:latest AS final-mobile
+
+FROM alpine:latest AS build-apk
 
 WORKDIR /app/public/apk
 
 COPY --from=build /app/android/app/build/outputs/apk/release/app-release.apk /app/public/apk/client.apk
 
 CMD ["echo", "Mobile build complete"]
+
+
+FROM java-install AS run
+
+WORKDIR /app
+
+COPY mobile/ /app
+
+CMD ["npm", "start"]

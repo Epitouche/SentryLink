@@ -1,20 +1,16 @@
-name: format frontend
+name: lint docker-compose
 
 on:
   pull_request:
   push:
-
-defaults:
-  run:
-    working-directory: ./frontend
 
 # Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 permissions:
   contents: write
 
 jobs:
-  run-frontend-formatter:
-    name: Run Frontend formatter
+  run-docker-compose-linter:
+    name: Run docker-compose linter
     runs-on: self-hosted
 
     steps:
@@ -27,7 +23,7 @@ jobs:
           node-version: 20
 
       - name: Install Node.js dependencies
-        run: npm ci
+        run: npm install --save-dev dclint
 
-      - name: Run Formatter
-        run: npx prettier --write .
+      - name: Run Formater
+        run: npx dclint --fix .

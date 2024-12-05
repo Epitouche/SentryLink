@@ -1,4 +1,4 @@
-name: format frontend
+name: lint frontend
 
 on:
   pull_request:
@@ -13,8 +13,8 @@ permissions:
   contents: write
 
 jobs:
-  run-frontend-formatter:
-    name: Run Frontend formatter
+  run-frontend-linter:
+    name: Run Frontend linter
     runs-on: self-hosted
 
     steps:
@@ -29,5 +29,5 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
-      - name: Run Formatter
-        run: npx prettier --write .
+      - name: Run Formater
+        run: npx eslint --fix --ignore-pattern .nuxt --ignore-pattern dist

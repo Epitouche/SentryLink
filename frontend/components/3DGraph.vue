@@ -1,5 +1,5 @@
 <template>
-  <div ref="graph" class="graph-container"></div>
+  <div ref="graph" class="graph-container"/>
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     async create3DGraph() {
-      if (process.client) {
+      if (import.meta.client) {
         try {
           const ForceGraph3D = (await import('3d-force-graph')).default;
 
