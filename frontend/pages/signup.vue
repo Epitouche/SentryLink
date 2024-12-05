@@ -20,19 +20,19 @@ const handleSignup = async () => {
     try {
         signupError.value = null;
 
-        const response = await $fetch<RegisterResponse>('/api/signup', {
-            method: 'POST',
-            body: {
-                username: username.value,
-                password: password.value,
-            },
-        });
+        // const response = await $fetch<RegisterResponse>('/api/signup', {
+        //     method: 'POST',
+        //     body: {
+        //         username: username.value,
+        //         password: password.value,
+        //     },
+        // });
 
-        if (response.token) {
-            token.value = response.token;
-            console.log('Token stored in localStorage:', response.token);
-        }
-        console.log('Signup successful:', response);
+        // if (response.token) {
+        //     token.value = response.token;
+        //     console.log('Token stored in localStorage:', response.token);
+        // }
+        // console.log('Signup successful:', response);
         navigateTo('/');
     } catch (error: any) {
         console.error('Signup failed:', error);
