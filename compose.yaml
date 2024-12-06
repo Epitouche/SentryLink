@@ -64,8 +64,9 @@ services:
 
   mobile:
     build:
+      context: ./mobile
       target: build-apk
-      dockerfile: mobile/Dockerfile
+      dockerfile: Dockerfile
     container_name: mobile
     volumes:
       - shared_apk:/app/public/apk
