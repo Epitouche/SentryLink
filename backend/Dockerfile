@@ -26,6 +26,8 @@ FROM alpine:3.15 AS run
 
 WORKDIR /app
 
+COPY backend/docs docs/
+
 COPY --from=build /app/SentryLink .
 
 EXPOSE 8080
