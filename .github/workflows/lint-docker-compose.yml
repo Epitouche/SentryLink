@@ -1,0 +1,29 @@
+name: lint docker-compose
+
+on:
+  pull_request:
+  push:
+
+# Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+permissions:
+  contents: write
+
+jobs:
+  run-docker-compose-linter:
+    name: Run docker-compose linter
+    runs-on: self-hosted
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node.js dependencies
+        run: npm install --save-dev dclint
+
+      - name: Run Formater
+        run: npx dclint --fix .

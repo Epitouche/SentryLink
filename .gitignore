@@ -1,6 +1,6 @@
 # database configuration file password
 password.txt
 
-.vscode
+**/.vscode
 
 **/.env

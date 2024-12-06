@@ -27,5 +27,7 @@ go.work.sum
 # gin binary
 gin-bin
 
+# Unwanted tmp files
+tmp.json
 # air
 tmp
