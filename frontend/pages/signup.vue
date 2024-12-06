@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const username = ref('')
 const password = ref('')
+const confirmPassword = ref('')
 
 const token = useCookie('token')
 const signupError = ref<string | null>(null);
@@ -18,6 +19,11 @@ const handleSignup = async () => {
 
         if (!username.value || !password.value) {
             signupError.value = 'Please enter a username and a password.';
+            return;
+        }
+
+        if (password.value !== confirmPassword.value) {
+            signupError.value = 'Passwords do not match.';
             return;
         }
 
@@ -59,6 +65,12 @@ const handleSignup = async () => {
                     <UInput type="password"
                         :ui="{ base: 'w-full focus:outline border-2 border-custom-line opacity-100', rounded: 'rounded-[3.125rem]', placeholder: '!px-5 font-light', color: { white: { outline: 'shadow-none bg-custom ring-0' } }, size: { sm: 'text-5xl' } }"
                         v-model="password" />
+                </div>
+                <div class="flex flex-col">
+                    <h2 class="text-3xl px-5">Confirm Password</h2>
+                    <UInput type="password"
+                        :ui="{ base: 'w-full focus:outline border-2 border-custom-line opacity-100', rounded: 'rounded-[3.125rem]', placeholder: '!px-5 font-light', color: { white: { outline: 'shadow-none bg-custom ring-0' } }, size: { sm: 'text-5xl' } }"
+                        v-model="confirmPassword" />
                 </div>
                 <div class="flex flex-col items-center min-w-full">
                     <div v-if="signupError" class="text-red-500 text-xl mb-4">
