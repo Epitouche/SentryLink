@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
-
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from 'react-native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../App';
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-const SignupScreen: React.FC<Props> = ({ navigation }) => {
+const SignupScreen: React.FC<Props> = ({ navigation, route }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '', email: '' });
+  const ip = route.params?.ip || 'localhost';
 
   const handleSignup = async () => {
     let hasError = false;
@@ -33,20 +40,25 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
     if (!hasError) {
       try {
-        const response = await fetch('http://localhost:8080/auth/signup', {
+        if (!ip) {
+          console.log('Please enter an IP address');
+          return;
+        }
+
+        const response = await fetch(`http://${ip}:8080/api/v1/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ username, password, email }),
+          body: JSON.stringify({ email, username, password }),
         });
 
         if (response.ok) {
           const data = await response.json();
           console.log('Data:', data);
-          navigation.navigate('Login');
+          navigation.navigate('Login', { 'ip': ip });
         } else {
-          console.error('Error:', response.status);
+          console.error('Error:', response.status, " | " , response.statusText);
         }
       } catch (error) {
         console.error('Error', error);
@@ -56,7 +68,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
   const switchToLogin = () => {
     console.log('Switch to login');
-    navigation.navigate('Login');
+    navigation.navigate('Login', { 'ip': ip });
   }
 
   return (
@@ -68,7 +80,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
         placeholder="Enter username"
         placeholderTextColor="#aaa"
         value={username}
-        onChangeText={(text) => setUsername(text)}
+        onChangeText={text => setUsername(text)}
       />
       {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
 
@@ -77,7 +89,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
         placeholder="Enter email"
         placeholderTextColor="#aaa"
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={text => setEmail(text)}
       />
       {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
@@ -87,7 +99,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
         placeholderTextColor="#aaa"
         secureTextEntry
         value={password}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={text => setPassword(text)}
       />
       {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 

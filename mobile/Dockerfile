@@ -2,7 +2,7 @@ FROM reactnativecommunity/react-native-android AS node-install
 
 WORKDIR /app
 
-COPY mobile/package.json /app
+COPY ./package.json ./package-lock.json /app/
 
 RUN apt-get update
 
@@ -22,11 +22,11 @@ FROM java-install AS build
 
 WORKDIR /app
 
-COPY mobile/ /app
+COPY ./ /app
 
 WORKDIR /app/android
 
-RUN ./gradlew :app:assembleRelease
+RUN ./gradlew clean :app:assembleRelease --stacktrace
 
 
 FROM alpine:latest AS build-apk
@@ -42,6 +42,6 @@ FROM java-install AS run
 
 WORKDIR /app
 
-COPY mobile/ /app
+COPY ./ /app
 
 CMD ["npm", "start"]

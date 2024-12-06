@@ -4,15 +4,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
+import AreaView from './screens/AreaView';
 
-// Define the types for navigation parameters
 export type RootStackParamList = {
-  Home: undefined;
-  Login: undefined;
-  SignUp: undefined;
+  Home: { ip: string };
+  Login: { ip: string };
+  SignUp: { ip: string };
+  AreaView: { ip: string };
 };
 
-// Create the Stack Navigator
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App: React.FC = () => {
@@ -22,6 +22,7 @@ const App: React.FC = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignupScreen} />
+        <Stack.Screen name="AreaView" component={AreaView} />
       </Stack.Navigator>
     </NavigationContainer>
   );
