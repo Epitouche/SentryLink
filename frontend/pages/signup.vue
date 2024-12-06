@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+    layout: 'nosidebar'
+});
+
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -40,6 +44,7 @@ const handleSignup = async () => {
         //     console.log('Token stored in localStorage:', response.token);
         // }
         // console.log('Signup successful:', response);
+
         navigateTo('/');
     } catch (error: any) {
         console.error('Signup failed:', error);
@@ -52,7 +57,7 @@ const handleSignup = async () => {
     <div class="flex items-center justify-center h-screen w-screen bg-custom">
         <UContainer :ui="{ base: 'mx-0', padding: 'p-10', constrained: 'min-w-[30%] max-w-[80%]' }"
             class="bg-custom-section flex flex-col items-center gap-12 border-custom-line border-2 rounded-[3.125rem]">
-            <h1 class="text-9xl">Sign Up</h1>
+            <h1 class="text-9xl pb-5">Sign Up</h1>
             <div class="flex flex-col gap-10 min-w-[80%] max-w-[80%]">
                 <div class="flex flex-col">
                     <h2 class="text-3xl px-5">Username</h2>
@@ -79,7 +84,10 @@ const handleSignup = async () => {
                     <UButton @click="handleSignup" color="black" class="rounded-[3.125rem] min-w-[30%] max-w-[30%]">
                         <p class="text-center text-4xl py-2 min-w-full">Sign up</p>
                     </UButton>
+                    <p class="text-xl">Already signed up? <ULink to="/login" class="text-custom-link"><u>Log in</u></ULink>
+                    </p>
                 </div>
+                <AppConnectContainer :apps="apps" />
             </div>
         </UContainer>
     </div>

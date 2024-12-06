@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: 'nosidebar'
+});
+
 const username = ref('')
 const password = ref('')
 
@@ -71,6 +75,7 @@ const handleLogin = async () => {
                     <p class="text-xl">New? <ULink to="/signup" class="text-custom-link"><u>Sign Up</u></ULink>
                     </p>
                 </div>
+                <AppConnectContainer :apps="apps" />
             </div>
         </UContainer>
     </div>
