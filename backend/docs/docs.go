@@ -84,13 +84,6 @@ const docTemplate = `{
           {
             "description": "string",
             "in": "formData",
-            "name": "password",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "description": "string",
-            "in": "formData",
             "name": "username",
             "required": true,
             "type": "string"
@@ -99,6 +92,13 @@ const docTemplate = `{
             "description": "string",
             "in": "formData",
             "name": "email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "string",
+            "in": "formData",
+            "name": "password",
             "required": true,
             "type": "string"
           }
@@ -173,7 +173,9 @@ const docTemplate = `{
     }
   },
   "swagger": "2.0"
-}` // SwaggerInfo holds exported Swagger Info so clients can modify it
+}`
+
+// SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:		"",
 	Host:			"",

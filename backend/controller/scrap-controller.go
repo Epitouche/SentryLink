@@ -83,12 +83,10 @@ func (controller *scrapController) Scrap(ctx *gin.Context) []string {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 
 	}
-	for _, link := range links {
+	for range links {
 		valueInDb := schemas.LinkToLinkUrl {
 			ActualLink: pageURL,
-			UrlId: schemas.LinkUrl {
-				Url: link,
-			},
+			// UrlId: ,
 		}
 		controller.service.Save(valueInDb)
 	}

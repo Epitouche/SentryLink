@@ -31,10 +31,10 @@ func NewScrapRepository(conn *gorm.DB) ScrapRepository {
 }
 
 func (repo *scrapRepository) Save(scrap schemas.LinkToLinkUrl) {
-	err := repo.db.Connection.Create(&scrap)
-	if err.Error != nil {
-		panic(err.Error)
-	}
+	repo.db.Connection.Create(&scrap)
+	// if err.Error != nil {
+		// panic(err.Error)
+	// }
 }
 
 func (repo *scrapRepository) Update(scrap schemas.LinkToLinkUrl) {

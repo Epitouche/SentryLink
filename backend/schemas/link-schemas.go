@@ -20,7 +20,8 @@ type Link struct {
 }
 
 type LinkToLinkUrl struct {
-	LinkId uint64 `json:"link_id" binding:"required"`
-	ActualLink  string `json:"actual_link" binding:"required"`
-	UrlId  LinkUrl `json:"url_id,omitempty" gorm:"foreignKey:LinkId;references:Id"`
+	LinkId 		uint64 		`json:"link_id" binding:"required"`
+	ActualLink  string 		`json:"actual_link" binding:"required"`
+	// UrlId 		uint64 		`json:"-"`
+	// Url  		LinkUrl 	`json:"url_id,omitempty" gorm:"foreignKey:LinkId;references:Id"`
 }

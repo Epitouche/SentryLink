@@ -57,7 +57,6 @@ func UpdateDocTemplate(filePath string) (string, error) {
 	return "", nil
 }
 
-
 func RemoveSpecialLines(rawValue string) string {
 	re := regexp.MustCompile(`(?m)^\s*"schemes":.*\n`)
 
@@ -66,14 +65,11 @@ func RemoveSpecialLines(rawValue string) string {
 	re = regexp.MustCompile(`(?m)^\s*"basePath":.*\n`)
 	updatedValue = re.ReplaceAllString(updatedValue, "")
 
-
 	re = regexp.MustCompile(`(?m)^\s*"host":.*\n`)
 	updatedValue = re.ReplaceAllString(updatedValue, "")
 
 	re = regexp.MustCompile(`(?m)^\s*"info": \{\s*\n\s*"contact": \{\},\s*\n\s*"description": ".*",\s*\n\s*"title": ".*",\s*\n\s*"version": ".*"\s*\n\s*\},\s*\n`)
 	updatedValue = re.ReplaceAllString(updatedValue, "")
-
-
 
 	return updatedValue
 }
@@ -109,7 +105,6 @@ func UpdateDocTemplateWithJSON(filePath, tmpFilePath string, paths map[string]in
 	// make all POST / GET / DELETE / PUT in tmp.json to be lowercase
 	updatedJSON = formatHTTPMethodName(updatedJSON)
 
-
 	err = os.WriteFile(tmpFilePath, updatedJSON, 0644)
 	if err != nil {
 		fmt.Printf("Error writing JSON to file %s: %v\n", tmpFilePath, err)
@@ -120,7 +115,6 @@ func UpdateDocTemplateWithJSON(filePath, tmpFilePath string, paths map[string]in
 	if err != nil {
 		return fmt.Errorf("error reading tmp.json: %w", err)
 	}
-
 
 	prefixedContent := fmt.Sprintf(`{
   "schemes": {{ marshal .Schemes }},
@@ -134,7 +128,7 @@ func UpdateDocTemplateWithJSON(filePath, tmpFilePath string, paths map[string]in
   },
 %s`, tmpContent[1:])
 
-	fmt.Println(prefixedContent)
+	// fmt.Println(prefixedContent)
 
 	// Parse the Go file
 	fset := token.NewFileSet()

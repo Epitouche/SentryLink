@@ -31,14 +31,14 @@
           {
             "description": "string",
             "in": "formData",
-            "name": "username",
+            "name": "password",
             "required": true,
             "type": "string"
           },
           {
             "description": "string",
             "in": "formData",
-            "name": "password",
+            "name": "username",
             "required": true,
             "type": "string"
           }
