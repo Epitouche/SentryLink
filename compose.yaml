@@ -3,7 +3,8 @@ services:
   backend:
     build:
       target: run
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
+      context: backend
     container_name: backend
     depends_on:
       db:

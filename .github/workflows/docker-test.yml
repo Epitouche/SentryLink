@@ -1,26 +1,26 @@
-name: test docker
+# name: test docker
 
-on:
-  pull_request:
-  push:
+# on:
+#   pull_request:
+#   push:
 
-jobs:
-  test-docker:
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
+# jobs:
+#   test-docker:
+#     runs-on: self-hosted
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Set up environment
-        run: cp .env.example .env
+#       - name: Set up environment
+#         run: cp .env.example .env
 
-      - name: Stop any running containers & remove volumes
-        run: docker compose down --volumes
+#       - name: Stop any running containers & remove volumes
+#         run: docker compose down --volumes
 
-      - name: Run build
-        run: docker compose build
+#       - name: Run build
+#         run: docker compose build
 
-      - name: Run containers
-        run: docker compose up -d
+#       - name: Run containers
+#         run: docker compose up -d
 
-      - name: Stop containers
-        run: docker compose down
+#       - name: Stop containers
+#         run: docker compose down

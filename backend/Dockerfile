@@ -2,29 +2,31 @@ FROM golang:1.23-alpine AS dependencies
 
 WORKDIR /app
 
-COPY backend/go.mod .
+COPY go.mod .
 
-COPY backend/go.sum .
+COPY go.sum .
 
 RUN go mod download
 
 
 FROM dependencies AS build
 
-COPY backend/ .
+COPY . /app/
 
 RUN go build -o /app
 
 
 FROM dependencies AS test
 
-COPY backend/ .
+COPY backend /app/
 
 CMD ["go", "test", "-v"]
 
 FROM alpine:3.15 AS run
 
 WORKDIR /app
+
+COPY docs /app/docs
 
 COPY --from=build /app/SentryLink .
 
