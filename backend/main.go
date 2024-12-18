@@ -160,7 +160,6 @@ func setupRouter() *gin.Engine {
 
 // }
 
-
 func handleAction(mychannel chan ActionService, active *bool) {
 	for {
 		x := <-mychannel
@@ -174,43 +173,42 @@ func handleAction(mychannel chan ActionService, active *bool) {
 }
 
 var (
-		// Database connection
-		databaseConnection *gorm.DB = database.Connection()
-		// Repositories
-		linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
-		githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
-		userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
-		scrapRepository	   repository.ScrapRepository       = repository.NewScrapRepository(databaseConnection)
-		// Services
-		linkService        service.LinkService        = service.NewLinkService(linkRepository)
-		githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
-		jwtService         service.JWTService         = service.NewJWTService()
-		userService        service.UserService        = service.NewUserService(userRepository, jwtService)
-		scrapService	   service.ScrapService       = service.NewScrapService(scrapRepository)
-		// Controllers
-		linkController        controller.LinkController        = controller.NewLinkController(linkService)
-		githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService, userService)
-		userController        controller.UserController        = controller.NewUserController(userService, jwtService)
-		scrapController       controller.ScrapController       = controller.NewScrapController(scrapService)
-	)
-
-var (
-	linkApi 	  *api.LinkApi        = api.NewLinkAPI(linkController)
-	githubApi     *api.GithubApi      = api.NewGithubAPI(githubTokenController)
-	userApi       *api.UserApi        = api.NewUserAPI(userController)
-	scrapApi      *api.ScrapApi       = api.NewScrapApi(scrapController)
+	// Database connection
+	databaseConnection *gorm.DB = database.Connection()
+	// Repositories
+	linkRepository        repository.LinkRepository        = repository.NewLinkRepository(databaseConnection)
+	githubTokenRepository repository.GithubTokenRepository = repository.NewGithubTokenRepository(databaseConnection)
+	userRepository        repository.UserRepository        = repository.NewUserRepository(databaseConnection)
+	scrapRepository       repository.ScrapRepository       = repository.NewScrapRepository(databaseConnection)
+	// Services
+	linkService        service.LinkService        = service.NewLinkService(linkRepository)
+	githubTokenService service.GithubTokenService = service.NewGithubTokenService(githubTokenRepository)
+	jwtService         service.JWTService         = service.NewJWTService()
+	userService        service.UserService        = service.NewUserService(userRepository, jwtService)
+	scrapService       service.ScrapService       = service.NewScrapService(scrapRepository)
+	// Controllers
+	linkController        controller.LinkController        = controller.NewLinkController(linkService)
+	githubTokenController controller.GithubTokenController = controller.NewGithubTokenController(githubTokenService, userService)
+	userController        controller.UserController        = controller.NewUserController(userService, jwtService)
+	scrapController       controller.ScrapController       = controller.NewScrapController(scrapService)
 )
 
+var (
+	linkApi   *api.LinkApi   = api.NewLinkAPI(linkController)
+	githubApi *api.GithubApi = api.NewGithubAPI(githubTokenController)
+	userApi   *api.UserApi   = api.NewUserAPI(userController)
+	scrapApi  *api.ScrapApi  = api.NewScrapApi(scrapController)
+)
 
 func ensureSwaggerDocsUpdated() {
 	var routes = []schemas.Route{
 		{
-			Path:        "/auth/register",
-			Method:      "POST",
-			Handler:     userApi.Register,
-			Description: "Register a new user",
-			Product:     []string{"application/json"},
-			Tags:        []string{"auth"},
+			Path:           "/auth/register",
+			Method:         "POST",
+			Handler:        userApi.Register,
+			Description:    "Register a new user",
+			Product:        []string{"application/json"},
+			Tags:           []string{"auth"},
 			ParamQueryType: "formData",
 			Params: map[string]string{
 				"username": "string",
@@ -233,12 +231,12 @@ func ensureSwaggerDocsUpdated() {
 			},
 		},
 		{
-			Path:        "/auth/login",
-			Method:      "POST",
-			Handler:     userApi.Login,
-			Description: "Authenticate a user and provide a JWT to authorize API calls",
-			Product:     []string{"application/json"},
-			Tags:        []string{"auth"},
+			Path:           "/auth/login",
+			Method:         "POST",
+			Handler:        userApi.Login,
+			Description:    "Authenticate a user and provide a JWT to authorize API calls",
+			Product:        []string{"application/json"},
+			Tags:           []string{"auth"},
 			ParamQueryType: "formData",
 			Params: map[string]string{
 				"username": "string",
@@ -256,12 +254,12 @@ func ensureSwaggerDocsUpdated() {
 			},
 		},
 		{
-			Path:        "/scrap",
-			Method:      "GET",
-			Handler:     scrapApi.GetScrappedUrl,
-			Description: "Scrap an url and return all the links",
-			Product:     []string{"application/json"},
-			Tags:        []string{"scrap"},
+			Path:           "/scrap",
+			Method:         "GET",
+			Handler:        scrapApi.GetScrappedUrl,
+			Description:    "Scrap an url and return all the links",
+			Product:        []string{"application/json"},
+			Tags:           []string{"scrap"},
 			ParamQueryType: "query",
 			Params: map[string]string{
 				"linkToScrap": "string",
@@ -299,11 +297,8 @@ func ensureSwaggerDocsUpdated() {
 		swaggerui.ImpactSwaggerFiles(routes)
 	}
 
-
-
 	println("Updated docs/docs.go")
 }
-
 
 // @securityDefinitions.apiKey bearerAuth
 // @in header
