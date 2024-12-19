@@ -55,6 +55,11 @@ func setupRouter() *gin.Engine {
 
 	router := gin.Default()
 
+	// Redirect the '/' route to the Swagger UI page
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+	})
+
 	// Ping test
 	router.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, &schemas.Response{
