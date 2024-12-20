@@ -325,6 +325,13 @@ func ensureSwaggerDocsUpdated() {
 // @in header
 // @name Authorization.
 func main() {
+
+	basePathValue, _ := swaggerui.DetectBasePathFromProject("main.go")
+	fmt.Printf("basePathValue : %s\n", basePathValue.BasePath)
+
+	routesFoundInGOFiles, _ := swaggerui.ExtractRouteFromProject("main.go", basePathValue)
+
+	fmt.Printf("Routes found: %++v\n", routesFoundInGOFiles)
 	ensureSwaggerDocsUpdated()
 
 	// Create a channel list
