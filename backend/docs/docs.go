@@ -36,6 +36,25 @@ const docTemplate = `{
     }
   },
   "paths": {
+    "/apart/ping": {
+"get": {        "description": "Ping test",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Pong",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "tags": [
+          "apart"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "description": "Authenticate a user and provide a JWT to authorize API calls",
@@ -128,25 +147,6 @@ const docTemplate = `{
         },
         "tags": [
           "auth"
-        ]
-      }
-    },
-    "/ping": {
-"get": {        "description": "Ping test",
-        "parameters": null,
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Pong",
-            "schema": {
-              "$ref": "#/definitions/schemas.Response"
-            }
-          }
-        },
-        "tags": [
-          ""
         ]
       }
     },

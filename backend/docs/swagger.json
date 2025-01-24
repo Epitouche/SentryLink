@@ -24,6 +24,26 @@
     "contact": {}
   },
   "paths": {
+    "/apart/ping": {
+      "GET": {
+        "description": "Ping test",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Pong",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "tags": [
+          "apart"
+        ]
+      }
+    },
     "/auth/login": {
       "POST": {
         "description": "Authenticate a user and provide a JWT to authorize API calls",
@@ -116,26 +136,6 @@
         },
         "tags": [
           "auth"
-        ]
-      }
-    },
-    "/ping": {
-      "GET": {
-        "description": "Ping test",
-        "parameters": null,
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Pong",
-            "schema": {
-              "$ref": "#/definitions/schemas.Response"
-            }
-          }
-        },
-        "tags": [
-          ""
         ]
       }
     },

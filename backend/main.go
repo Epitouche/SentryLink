@@ -61,14 +61,16 @@ func setupRouter() *gin.Engine {
 	})
 
 	// Ping test
-	router.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, &schemas.Response{
-			Message: "pong",
-		})
-	})
+	// router.GET("/ping", pongApi.Pong)
 
 	apiRoutes := router.Group(docs.SwaggerInfo.BasePath)
 	{
+		// Apart
+		apart := apiRoutes.Group("/apart")
+		{
+			apart.GET("/ping", pongApi.Pong)
+		}
+
 		// User Auth
 		auth := apiRoutes.Group("/auth")
 		{
@@ -202,6 +204,7 @@ var (
 	githubApi *api.GithubApi = api.NewGithubAPI(githubTokenController)
 	userApi   *api.UserApi   = api.NewUserAPI(userController)
 	scrapApi  *api.ScrapApi  = api.NewScrapApi(scrapController)
+	pongApi   *api.PongApi   = api.NewPongApi()
 )
 
 func ensureSwaggerDocsUpdated() {
@@ -280,7 +283,7 @@ func ensureSwaggerDocsUpdated() {
 			},
 		},
 		{
-			Path:   "/ping",
+			Path:   "/apart/ping",
 			Method: "GET",
 			Handler: func(ctx *gin.Context) {
 				ctx.JSON(http.StatusOK, &schemas.Response{
@@ -289,7 +292,7 @@ func ensureSwaggerDocsUpdated() {
 			},
 			Description:    "Ping test",
 			Product:        []string{"application/json"},
-			Tags:           []string{""},
+			Tags:           []string{"apart"},
 			ParamQueryType: "",
 			Params:         map[string]string{},
 			Responses: map[int][]string{

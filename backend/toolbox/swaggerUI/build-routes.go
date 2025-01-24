@@ -26,6 +26,9 @@ func BuildRouteEntry(route schemas.Route) map[string]interface{} {
 
 func BuildParameters(params map[string]string, paramType string) []map[string]interface{} {
 	var parameters []map[string]interface{}
+	if len(params) == 0 {
+		return []map[string]interface{}{}
+	}
 	for name, typ := range params {
 		parameters = append(parameters, map[string]interface{}{
 			"type":        typ,
