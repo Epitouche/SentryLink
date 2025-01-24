@@ -279,6 +279,26 @@ func ensureSwaggerDocsUpdated() {
 				},
 			},
 		},
+		{
+			Path:   "/ping",
+			Method: "GET",
+			Handler: func(ctx *gin.Context) {
+				ctx.JSON(http.StatusOK, &schemas.Response{
+					Message: "pong",
+				})
+			},
+			Description:    "Ping test",
+			Product:        []string{"application/json"},
+			Tags:           []string{""},
+			ParamQueryType: "",
+			Params:         map[string]string{},
+			Responses: map[int][]string{
+				http.StatusOK: {
+					"Pong",
+					"schemas.Response",
+				},
+			},
+		},
 		// {
 		// 	Path:           "/toto",
 		// 	Method:         "GET",
@@ -329,8 +349,11 @@ func main() {
 	basePathValue, _ := swaggerui.DetectBasePathFromProject("main.go")
 	fmt.Printf("basePathValue : %s\n", basePathValue.BasePath)
 
+	schemasValues := swaggerui.ExtractSchemaFromProject("schemas")
+	fmt.Printf("Schemas found: %++v\n", schemasValues)
 	routesFoundInGOFiles, _ := swaggerui.ExtractRouteFromProject("main.go", basePathValue)
 
+	// fmt.Printf("Schemas found: %++v\n", schemasFoundInGOFiles)
 	fmt.Printf("Routes found: %++v\n", routesFoundInGOFiles)
 	ensureSwaggerDocsUpdated()
 

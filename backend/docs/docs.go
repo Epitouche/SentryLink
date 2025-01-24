@@ -131,8 +131,28 @@ const docTemplate = `{
         ]
       }
     },
+    "/ping": {
+"get": {        "description": "Ping test",
+        "parameters": null,
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Pong",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "tags": [
+          ""
+        ]
+      }
+    },
     "/scrap": {
-"get": {        "description": "Scrap an url and return all the links",
+      "get": {
+        "description": "Scrap an url and return all the links",
         "parameters": [
           {
             "description": "string",
@@ -174,7 +194,6 @@ const docTemplate = `{
   },
   "swagger": "2.0"
 }`
-
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:		"",

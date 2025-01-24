@@ -119,6 +119,26 @@
         ]
       }
     },
+    "/ping": {
+      "GET": {
+        "description": "Ping test",
+        "parameters": null,
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Pong",
+            "schema": {
+              "$ref": "#/definitions/schemas.Response"
+            }
+          }
+        },
+        "tags": [
+          ""
+        ]
+      }
+    },
     "/scrap": {
       "GET": {
         "description": "Scrap an url and return all the links",

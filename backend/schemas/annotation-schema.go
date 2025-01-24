@@ -2,7 +2,7 @@ package schemas
 
 import "github.com/gin-gonic/gin"
 
-
+// @Ignore
 type Route struct {
 	Path string
 	Method string
